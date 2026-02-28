@@ -1,0 +1,4 @@
+# Railway: backend de Pato (raíz del servicio = carpeta server en el dashboard)
+# Start: node index.js (por defecto npm start)
+[deploy]
+startCommand = "node index.js"

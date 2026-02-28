@@ -78,6 +78,10 @@ Ver `server/.env.example`. Resumen:
 - **YouTube:** `YOUTUBE_CLIENT_ID`, `YOUTUBE_CLIENT_SECRET`, `YOUTUBE_REDIRECT_URI`, `YOUTUBE_API_KEY` (crear en [Google Cloud Console](https://console.cloud.google.com/apis/credentials)). Para móvil, añade también la URI con tu IP.
 - Opcional: `FRONTEND_URL`, `HOST` (por defecto `0.0.0.0`), `PORT` (por defecto 3001), `YTMUSIC_BROWSER_JSON` (ytmusicapi).
 
+## Despliegue (Fase 5)
+
+Para subir la página a un dominio y usarla desde el móvil sin depender de tu IP: verificación previa del código, opciones de hosting (Vercel/Netlify + Railway/Render), variables de producción y ambiente de pruebas separado están en **[docs/DEPLOY.md](docs/DEPLOY.md)**.
+
 ## Carpetas de contenido
 
 - **`/images`** — Imágenes de patos para el menú lateral y los módulos. Para que la app las sirva, su contenido debe estar también en **`public/images`** (Vite sirve archivos desde `public`).

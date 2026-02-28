@@ -8,7 +8,7 @@ export function Layout({ children }) {
   const location = useLocation()
 
   return (
-    <div className="min-h-screen bg-pato-cream flex min-h-[100dvh]">
+    <div className="min-h-[100dvh] bg-pato-cream flex">
       <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} currentPath={location.pathname} currentHash={location.hash} />
       <main
         className="flex-1 relative min-w-0 pl-14 sm:pl-16"

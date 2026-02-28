@@ -1,0 +1,11 @@
+# Netlify: build y publicar el frontend de Pato
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+# Redirecciones para SPA (React Router) ya están en public/_redirects
+# y se copian a dist. Por si acaso:
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

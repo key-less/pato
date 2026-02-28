@@ -1,6 +1,7 @@
 import 'dotenv/config'
 import express from 'express'
 import cors from 'cors'
+import rateLimit from 'express-rate-limit'
 import nodemailer from 'nodemailer'
 import { spawn } from 'child_process'
 import { fileURLToPath } from 'url'
@@ -12,6 +13,29 @@ const PORT = process.env.PORT || 3001
 
 app.use(cors({ origin: true }))
 app.use(express.json({ limit: '1mb' }))
+
+// Rate limiting: evita abuso (correos masivos, peticiones excesivas al API)
+const apiLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 120,
+  message: { ok: false, error: 'Demasiadas peticiones. Espera un momento.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+})
+app.use('/api/', apiLimiter)
+
+// Límite más estricto para envío de correo
+const emailLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 10,
+  message: { ok: false, error: 'Límite de envíos por minuto. Espera un poco.' },
+})
+app.use('/api/send-email', emailLimiter)
+
+// Health check para plataformas de despliegue (Railway, Render, etc.)
+app.get('/api/health', (_req, res) => {
+  res.json({ ok: true, service: 'pato-api' })
+})
 
 const gmailUser = (process.env.GMAIL_USER || '').trim()
 const gmailAppPassword = (process.env.GMAIL_APP_PASSWORD || '').trim().replace(/\s/g, '')
@@ -539,9 +563,24 @@ app.get('/api/youtube/me', async (req, res) => {
   }
 })
 
+// Validación al arrancar: qué integraciones están disponibles (útil en producción)
+function logIntegrations() {
+  const gmail = !!(process.env.GMAIL_USER?.trim() && process.env.GMAIL_APP_PASSWORD?.trim())
+  const spotify = !!(process.env.SPOTIFY_CLIENT_ID?.trim() && process.env.SPOTIFY_CLIENT_SECRET?.trim())
+  const youtube = !!(process.env.YOUTUBE_CLIENT_ID?.trim() && process.env.YOUTUBE_CLIENT_SECRET?.trim())
+  const youtubeApiKey = !!process.env.YOUTUBE_API_KEY?.trim()
+  console.log('Integraciones:', {
+    Gmail: gmail ? 'ok' : 'no configurado',
+    Spotify: spotify ? 'ok' : 'no configurado',
+    YouTube_OAuth: youtube ? 'ok' : 'no configurado',
+    YouTube_API_key: youtubeApiKey ? 'ok' : 'no configurado',
+  })
+}
+
 const HOST = process.env.HOST || '0.0.0.0'
 app.listen(PORT, HOST, () => {
   console.log(`Pato API escuchando en http://${HOST === '0.0.0.0' ? 'localhost' : HOST}:${PORT}`)
+  logIntegrations()
   if (HOST === '0.0.0.0') {
     console.log('  (Accesible en la red local; en el móvil usa la IP de esta PC y el puerto', PORT + ')')
   }

@@ -4,16 +4,20 @@ server/.env
 server/ytmusicapi/browser.json
 server/ytmusicapi/oauth.json
 server/client_secret_*.json
+server/pato-488718-5b7ff95b3de5.json
+server/*-*.json
 
 # Dependencias y build
 node_modules/
 server/node_modules/
 dist/
 
+# Contenido personal (fotos/vídeos de la pareja)
+photos_videos/
+public/photos_videos/
+
 # IDE / OS
 .idea/
 .vscode/
 *.log
 .DS_Store
-server/pato-488718-5b7ff95b3de5.json
-*.json
