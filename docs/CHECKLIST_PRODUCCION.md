@@ -12,7 +12,7 @@ En Railway → tu proyecto → **servicio del backend** → **Variables**. Añad
 
 | Variable | Valor |
 |---------|--------|
-| `FRONTEND_URL` | `https://voluble-buttercream-643073.netlify.app` |
+| `FRONTEND_URL` | `https://pa-to.netlify.app` |
 | `SPOTIFY_REDIRECT_URI` | `https://pato-production.up.railway.app/api/spotify/callback` |
 | `YOUTUBE_REDIRECT_URI` | `https://pato-production.up.railway.app/api/youtube/callback` |
 

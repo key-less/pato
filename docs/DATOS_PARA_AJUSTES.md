@@ -2,7 +2,7 @@
 
 URLs actuales:
 
-- **Frontend (Netlify):** https://voluble-buttercream-643073.netlify.app
+- **Frontend (Netlify):** https://pa-to.netlify.app
 - **Backend (Railway):** https://pato-production.up.railway.app
 
 ---
@@ -57,7 +57,7 @@ En el **servicio** del backend → **Variables**, asegúrate de tener:
 
 | Variable | Valor |
 |----------|--------|
-| **FRONTEND_URL** | `https://voluble-buttercream-643073.netlify.app` |
+| **FRONTEND_URL** | `https://pa-to.netlify.app` |
 | **SPOTIFY_REDIRECT_URI** | `https://pato-production.up.railway.app/api/spotify/callback` |
 | **YOUTUBE_REDIRECT_URI** | `https://pato-production.up.railway.app/api/youtube/callback` |
 
