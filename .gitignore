@@ -15,3 +15,5 @@ dist/
 .vscode/
 *.log
 .DS_Store
+server/pato-488718-5b7ff95b3de5.json
+*.json
