@@ -1,0 +1,13 @@
+/** Icono tipo pato para la marca Pato */
+export function PatoIcon({ className = 'w-8 h-8' }) {
+  return (
+    <svg className={className} viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="28" cy="26" rx="10" ry="12" fill="#e8a598" />
+      <circle cx="34" cy="24" r="6" fill="#fef3d9" />
+      <circle cx="36" cy="23" r="2" fill="#333" />
+      <path d="M22 20 Q18 16 14 18 Q12 20 14 24" stroke="#e8a598" strokeWidth="2" fill="none" strokeLinecap="round" />
+      <ellipse cx="28" cy="38" rx="8" ry="6" fill="#f2c4c4" />
+      <path d="M38 30 L48 28 L50 32 L46 36 Z" fill="#f5e6c8" />
+    </svg>
+  )
+}

@@ -1,0 +1,17 @@
+# Entorno y credenciales (no subir a repositorio)
+.env
+server/.env
+server/ytmusicapi/browser.json
+server/ytmusicapi/oauth.json
+server/client_secret_*.json
+
+# Dependencias y build
+node_modules/
+server/node_modules/
+dist/
+
+# IDE / OS
+.idea/
+.vscode/
+*.log
+.DS_Store
