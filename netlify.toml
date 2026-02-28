@@ -1,4 +1,6 @@
 # Netlify: build y publicar el frontend de Pato
+# Importante: en Site settings → Environment variables define VITE_API_URL = https://pato-production.up.railway.app
+# (sin barra final). Después de cambiar variables, haz "Trigger deploy" para que el build use el nuevo valor.
 [build]
   command = "npm run build"
   publish = "dist"

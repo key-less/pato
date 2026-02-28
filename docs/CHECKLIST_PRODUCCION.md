@@ -71,8 +71,20 @@ Sin esto, al hacer clic en “Conectar Spotify” o “Conectar YouTube” en pr
 
 ## 3. Netlify
 
-- **`VITE_API_URL`** = `https://pato-production.up.railway.app` (sin barra final).
-- Después de añadirla o cambiarla: **Deploys** → **Trigger deploy** → **Deploy site**.
+### Build settings (Site settings → Build & deploy → Build settings)
+
+No hace falta cambiar nada: **Build command** = `npm run build`, **Publish directory** = `dist`, **Base directory** vacío. El `netlify.toml` del repo ya define lo mismo.
+
+### Variable imprescindible
+
+- **Environment variables** (Site settings → Environment variables):
+  - **`VITE_API_URL`** = `https://pato-production.up.railway.app` (sin barra final, sin espacio).
+- Haz clic en el ojo para revelar el valor y comprueba que sea exactamente esa URL.
+- **Después de añadir o editar la variable:** **Deploys** → **Trigger deploy** → **Deploy site**. Si no redepliegas, el build anterior sigue usando el valor viejo (Vite incluye las variables en el build).
+
+### Comprobar que el backend responde
+
+Abre en el navegador: `https://pato-production.up.railway.app/api/health`. Debe devolver algo como `{"ok":true}`. Si no carga, el problema es de Railway o de red; si sí carga, el fallo suele ser `VITE_API_URL` en Netlify o falta de redeploy.
 
 ---
 
