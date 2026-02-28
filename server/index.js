@@ -29,6 +29,9 @@ app.set('trust proxy', 1)
 app.use(cors({ origin: true }))
 app.use(express.json({ limit: '1mb' }))
 
+// Health en raíz también (por si Railway/healthcheck prefiere GET /)
+app.get('/', (_req, res) => res.json({ ok: true, service: 'pato-api' }))
+
 // Rate limiting: evita abuso (correos masivos, peticiones excesivas al API)
 const apiLimiter = rateLimit({
   windowMs: 60 * 1000,

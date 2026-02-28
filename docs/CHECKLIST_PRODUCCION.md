@@ -100,6 +100,7 @@ Abre en el navegador: `https://pato-production.up.railway.app/api/health`. Debe 
    - `[Pato] API escuchando en http://0.0.0.0:XXXX` → ya acepta peticiones (el 502 debería desaparecer).
    Si ves `uncaughtException` o `Error al hacer listen`, ese es el motivo del fallo.
 4. **"No package manager inferred, using npm default":** es solo informativo. Con Root Directory = `server`, en `server/` hay `package.json` y `package-lock.json`, y el `nixpacks.toml` fija el comando de inicio `node index.js`.
+5. **"Attempt failed with service unavailable" en el healthcheck:** Railway llama a la ruta de health antes de que la app responda. Revisa los logs: si no aparece `[Pato] API escuchando`, la app no arranca. Si sí aparece, en Deploy → **Healthcheck Path** prueba con **`/`** (la raíz también devuelve `{ "ok": true }`) o desactiva el healthcheck temporalmente para comprobar si la API responde al abrir la URL en el navegador.
 
 ---
 
