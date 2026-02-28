@@ -27,7 +27,11 @@ export async function fetchPlaylistByUrl(url) {
     if (!res.ok) return { ok: false, error: data.error || `Error ${res.status}` }
     return data
   } catch (err) {
-    return { ok: false, error: err.message || 'No se pudo conectar con el servidor. Comprueba la conexión.' }
+    const isProd = typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1'
+    const hint = isProd && API_BASE && API_BASE.includes(window.location.hostname)
+      ? ' En producción, configura VITE_API_URL en Netlify apuntando a tu API (Railway).'
+      : ''
+    return { ok: false, error: (err.message || 'No se pudo conectar con el servidor.') + hint }
   }
 }
 

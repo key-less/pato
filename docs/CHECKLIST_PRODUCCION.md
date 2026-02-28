@@ -76,6 +76,16 @@ Sin esto, al hacer clic en “Conectar Spotify” o “Conectar YouTube” en pr
 
 ---
 
+## Si agregar playlist o conectar Spotify falla
+
+1. **Revisa los logs de Railway** (tu servicio → **Deployments** → último deploy → **View Logs**). Verás mensajes como:
+   - `Playlist fetch: Spotify token no obtenido...` → Faltan o están mal `SPOTIFY_CLIENT_ID` / `SPOTIFY_CLIENT_SECRET` en Railway.
+   - `Spotify token error: 401` → Spotify rechaza las credenciales; revisa que Client ID y Secret sean los de la misma app y estén bien copiados.
+   - `Playlist fetch Spotify: 404` → La playlist no existe o no es pública.
+2. **En la app**: si ves "No se pudo conectar con el servidor" y un aviso de configurar `VITE_API_URL`, en Netlify define `VITE_API_URL` = `https://pato-production.up.railway.app` y haz un nuevo deploy.
+
+---
+
 ## Resumen rápido
 
 | Dónde | Qué hacer |

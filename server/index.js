@@ -138,8 +138,15 @@ async function getSpotifyToken() {
       Authorization: 'Basic ' + Buffer.from(`${id}:${secret}`).toString('base64'),
     },
     body: new URLSearchParams({ grant_type: 'client_credentials' }),
-  }).catch(() => null)
-  if (!res?.ok) return null
+  }).catch((e) => {
+    console.warn('Spotify token request failed:', e.message)
+    return null
+  })
+  if (!res?.ok) {
+    const errBody = await res?.text().catch(() => '')
+    console.warn('Spotify token error:', res?.status, errBody)
+    return null
+  }
   const data = await res.json()
   spotifyToken = { access_token: data.access_token, expires_at: Date.now() + (data.expires_in - 60) * 1000 }
   return spotifyToken.access_token
@@ -156,13 +163,17 @@ app.get('/api/playlist/fetch', async (req, res) => {
       const id = match ? match[1] : null
       if (!id) return res.status(400).json({ ok: false, error: 'URL de Spotify no válida.' })
       const token = await getSpotifyToken()
-      if (!token) return res.status(503).json({ ok: false, error: 'Configura SPOTIFY_CLIENT_ID y SPOTIFY_CLIENT_SECRET en .env' })
+      if (!token) {
+        console.warn('Playlist fetch: Spotify token no obtenido. Revisa SPOTIFY_CLIENT_ID y SPOTIFY_CLIENT_SECRET en Railway.')
+        return res.status(503).json({ ok: false, error: 'Spotify no configurado en el servidor. Revisa SPOTIFY_CLIENT_ID y SPOTIFY_CLIENT_SECRET en Railway.' })
+      }
       const spRes = await fetch(`https://api.spotify.com/v1/playlists/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       if (!spRes.ok) {
         const err = await spRes.json().catch(() => ({}))
         const msg = err.error?.message || ''
+        console.warn('Playlist fetch Spotify:', spRes.status, msg || spRes.statusText)
         const friendlyMsg = spRes.status === 404 || /not found|resource not found/i.test(msg)
           ? 'Playlist no encontrada. Comprueba que el enlace sea correcto y que la playlist sea pública en Spotify.'
           : (msg || 'Playlist no encontrada.')
