@@ -11,6 +11,10 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const app = express()
 const PORT = process.env.PORT || 3001
 
+// En Railway/Render el tráfico llega por HTTPS mediante proxy; sin esto req.protocol sería 'http'
+// y Spotify rechazaría el redirect_uri (debe coincidir con https en el Dashboard).
+app.set('trust proxy', 1)
+
 app.use(cors({ origin: true }))
 app.use(express.json({ limit: '1mb' }))
 
@@ -226,18 +230,20 @@ const spotifyUserTokensByProfile = { 0: null, 1: null }
 function getSpotifyOAuthConfig(req) {
   const clientId = (process.env.SPOTIFY_CLIENT_ID || '').trim()
   const clientSecret = (process.env.SPOTIFY_CLIENT_SECRET || '').trim()
+  const explicitRedirect = (process.env.SPOTIFY_REDIRECT_URI || '').trim()
+  const explicitFrontend = (process.env.FRONTEND_URL || '').trim()
   let redirectUri
   let frontendUrl
   const hostHeader = req && req.get && req.get('Host')
   const isLocalHost = hostHeader && (/^localhost(:\d+)?$/i.test(hostHeader) || hostHeader.indexOf('127.0.0.1') === 0)
   if (hostHeader && !isLocalHost) {
     const protocol = (req.protocol || 'http') + '://'
-    redirectUri = (protocol + hostHeader + '/api/spotify/callback').replace(/localhost/i, '127.0.0.1')
-    frontendUrl = process.env.FRONTEND_URL || (protocol + hostHeader.split(':')[0] + ':5173')
+    redirectUri = explicitRedirect || (protocol + hostHeader + '/api/spotify/callback').replace(/localhost/i, '127.0.0.1')
+    frontendUrl = explicitFrontend || (protocol + hostHeader.split(':')[0] + ':5173')
   } else {
-    redirectUri = (process.env.SPOTIFY_REDIRECT_URI || '').trim() || `http://127.0.0.1:${PORT}/api/spotify/callback`
+    redirectUri = explicitRedirect || `http://127.0.0.1:${PORT}/api/spotify/callback`
     redirectUri = redirectUri.replace(/(https?:\/\/)localhost(\/|:|\?|$)/i, '$1127.0.0.1$2')
-    frontendUrl = (process.env.FRONTEND_URL || '').trim() || 'http://localhost:5173'
+    frontendUrl = explicitFrontend || 'http://localhost:5173'
   }
   return { clientId, clientSecret, redirectUri, frontendUrl }
 }

@@ -54,6 +54,7 @@ Sin esto, al hacer clic en “Conectar Spotify” o “Conectar YouTube” en pr
    ```text
    https://pato-production.up.railway.app/api/spotify/callback
    ```
+   Debe ser **exactamente** esta URL (con `https`, sin barra final, sin puerto en el dominio). Si en producción "Conectar Spotify" o agregar playlist falla, comprueba que esta URI esté en la lista y que en Railway tengas `SPOTIFY_REDIRECT_URI` con el mismo valor.
 4. **Save**.
 
 ### Google (YouTube)
