@@ -6,6 +6,9 @@ Para que los usuarios puedan usar **Gmail (cartas)**, **Spotify (Ahora suena / p
 
 ## 1. Variables en Railway (todas)
 
+**Si al abrir la URL del backend ves "Application failed to respond":**  
+En Railway → tu proyecto → **servicio del backend** → **Settings** → **Root Directory** (o "Source" / "Monorepo"). Pon **`server`** y guarda. Así Railway ejecuta `node index.js` desde la carpeta correcta. Luego **Redeploy** (Deployments → tres puntos del último deploy → Redeploy). Revisa también los **Deploy logs** para ver el error concreto (ej. "Cannot find module" o "npm ERR missing script: start").
+
 En Railway → tu proyecto → **servicio del backend** → **Variables**. Añade o revisa **todas** estas variables:
 
 ### URLs (valores exactos)
@@ -85,6 +88,18 @@ No hace falta cambiar nada: **Build command** = `npm run build`, **Publish direc
 ### Comprobar que el backend responde
 
 Abre en el navegador: `https://pato-production.up.railway.app/api/health`. Debe devolver algo como `{"ok":true}`. Si no carga, el problema es de Railway o de red; si sí carga, el fallo suele ser `VITE_API_URL` en Netlify o falta de redeploy.
+
+---
+
+## Si ves "Application failed to respond" o **502 Bad Gateway**
+
+1. **Root Directory (obligatorio):** Settings del servicio → **Root Directory** = **`server`** (sin barra). Sin esto, Railway ejecuta desde la raíz del repo, no encuentra `index.js` y el proceso no responde → 502.
+2. **Redeploy** después de cambiar Root Directory (Deployments → Redeploy).
+3. **Revisar logs de ejecución** (no solo el build): en los logs debe aparecer:
+   - `[Pato] Iniciando... PORT= XXXX` → el proceso arrancó.
+   - `[Pato] API escuchando en http://0.0.0.0:XXXX` → ya acepta peticiones (el 502 debería desaparecer).
+   Si ves `uncaughtException` o `Error al hacer listen`, ese es el motivo del fallo.
+4. **"No package manager inferred, using npm default":** es solo informativo. Con Root Directory = `server`, en `server/` hay `package.json` y `package-lock.json`, y el `nixpacks.toml` fija el comando de inicio `node index.js`.
 
 ---
 

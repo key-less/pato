@@ -1,0 +1,9 @@
+# Para que Railway/Nixpacks use Node y arranque este backend (evita 502)
+[phases.setup]
+nixPkgs = ["nodejs_20"]
+
+[phases.install]
+cmds = ["npm ci --omit=dev"]
+
+[start]
+cmd = "node index.js"

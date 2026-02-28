@@ -7,9 +7,20 @@ import { spawn } from 'child_process'
 import { fileURLToPath } from 'url'
 import path from 'path'
 
+// Logs y captura de errores para ver en Railway por qué falla el arranque
+const PORT = process.env.PORT || 3001
+console.log('[Pato] Iniciando... PORT=', PORT, 'NODE_ENV=', process.env.NODE_ENV)
+
+process.on('uncaughtException', (err) => {
+  console.error('[Pato] uncaughtException:', err)
+  process.exit(1)
+})
+process.on('unhandledRejection', (reason, p) => {
+  console.error('[Pato] unhandledRejection:', reason, p)
+})
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const app = express()
-const PORT = process.env.PORT || 3001
 
 // En Railway/Render el tráfico llega por HTTPS mediante proxy; sin esto req.protocol sería 'http'
 // y Spotify rechazaría el redirect_uri (debe coincidir con https en el Dashboard).
@@ -596,9 +607,12 @@ function logIntegrations() {
 
 const HOST = process.env.HOST || '0.0.0.0'
 app.listen(PORT, HOST, () => {
-  console.log(`Pato API escuchando en http://${HOST === '0.0.0.0' ? 'localhost' : HOST}:${PORT}`)
+  console.log(`[Pato] API escuchando en http://${HOST}:${PORT} (listo para peticiones)`)
   logIntegrations()
   if (HOST === '0.0.0.0') {
-    console.log('  (Accesible en la red local; en el móvil usa la IP de esta PC y el puerto', PORT + ')')
+    console.log('  (Accesible en la red; Railway usa PORT=', PORT, ')')
   }
+}).on('error', (err) => {
+  console.error('[Pato] Error al hacer listen:', err.message)
+  process.exit(1)
 })
