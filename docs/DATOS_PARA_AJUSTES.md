@@ -41,7 +41,7 @@ En Railway el **Root Directory** no suele estar en la pestaña **Deploy** (donde
 
 - **Settings** del **servicio** (el backend) → sección **Source** (o **Repository** / **Build**).
 - Ahí busca **Root Directory** o **Service root**.
-- Valor: **`server`** (solo esa palabra, sin `/` delante ni detrás).
+- Valor: **`server`** o **`/server`** (dependiendo de la versión de Railway; si uno da error, usa el otro).
 
 Si no ves "Source" ni "Root Directory", puede que tu versión de Railway lo tenga en otro nombre; revisa todas las secciones de **Settings** del servicio.
 

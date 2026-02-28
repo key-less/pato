@@ -55,6 +55,17 @@ app.get('/api/health', (_req, res) => {
   res.json({ ok: true, service: 'pato-api' })
 })
 
+// Arrancar el servidor YA para que el healthcheck de Railway reciba respuesta (el resto de rutas se añade después)
+const HOST = process.env.HOST || '0.0.0.0'
+app.listen(PORT, HOST, () => {
+  console.log(`[Pato] API escuchando en http://${HOST}:${PORT} (listo para peticiones)`)
+  logIntegrations()
+  if (HOST === '0.0.0.0') console.log('  (Accesible en la red; Railway usa PORT=', PORT, ')')
+}).on('error', (err) => {
+  console.error('[Pato] Error al hacer listen:', err.message)
+  process.exit(1)
+})
+
 const gmailUser = (process.env.GMAIL_USER || '').trim()
 const gmailAppPassword = (process.env.GMAIL_APP_PASSWORD || '').trim().replace(/\s/g, '')
 
@@ -608,14 +619,3 @@ function logIntegrations() {
   })
 }
 
-const HOST = process.env.HOST || '0.0.0.0'
-app.listen(PORT, HOST, () => {
-  console.log(`[Pato] API escuchando en http://${HOST}:${PORT} (listo para peticiones)`)
-  logIntegrations()
-  if (HOST === '0.0.0.0') {
-    console.log('  (Accesible en la red; Railway usa PORT=', PORT, ')')
-  }
-}).on('error', (err) => {
-  console.error('[Pato] Error al hacer listen:', err.message)
-  process.exit(1)
-})

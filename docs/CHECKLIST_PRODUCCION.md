@@ -7,7 +7,7 @@ Para que los usuarios puedan usar **Gmail (cartas)**, **Spotify (Ahora suena / p
 ## 1. Variables en Railway (todas)
 
 **Si al abrir la URL del backend ves "Application failed to respond":**  
-En Railway → tu proyecto → **servicio del backend** → **Settings** → **Root Directory** (o "Source" / "Monorepo"). Pon **`server`** y guarda. Así Railway ejecuta `node index.js` desde la carpeta correcta. Luego **Redeploy** (Deployments → tres puntos del último deploy → Redeploy). Revisa también los **Deploy logs** para ver el error concreto (ej. "Cannot find module" o "npm ERR missing script: start").
+En Railway → tu proyecto → **servicio del backend** → **Settings** → **Root Directory** (o "Source" / "Monorepo"). Pon **`server`** o **`/server`** (según lo que acepte tu versión de Railway; si uno da error, usa el otro) y guarda. Así Railway ejecuta `node index.js` desde la carpeta correcta. Luego **Redeploy** (Deployments → tres puntos del último deploy → Redeploy). Revisa también los **Deploy logs** para ver el error concreto (ej. "Cannot find module" o "npm ERR missing script: start").
 
 En Railway → tu proyecto → **servicio del backend** → **Variables**. Añade o revisa **todas** estas variables:
 
@@ -93,7 +93,7 @@ Abre en el navegador: `https://pato-production.up.railway.app/api/health`. Debe 
 
 ## Si ves "Application failed to respond" o **502 Bad Gateway**
 
-1. **Root Directory (obligatorio):** Settings del servicio → **Root Directory** = **`server`** (sin barra). Sin esto, Railway ejecuta desde la raíz del repo, no encuentra `index.js` y el proceso no responde → 502.
+1. **Root Directory (obligatorio):** Settings del servicio → **Root Directory** = **`server`** o **`/server`** (usa el valor que Railway acepte sin dar error). Sin esto, Railway ejecuta desde la raíz del repo, no encuentra `index.js` y el proceso no responde → 502.
 2. **Redeploy** después de cambiar Root Directory (Deployments → Redeploy).
 3. **Revisar logs de ejecución** (no solo el build): en los logs debe aparecer:
    - `[Pato] Iniciando... PORT= XXXX` → el proceso arrancó.
