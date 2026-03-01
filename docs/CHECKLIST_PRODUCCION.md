@@ -104,13 +104,17 @@ Abre en el navegador: `https://pato-production.up.railway.app/api/health`. Debe 
 
 ---
 
-## Si agregar playlist o conectar Spotify falla
+## Si agregar playlist (Spotify o YouTube) no responde
 
-1. **Revisa los logs de Railway** (tu servicio → **Deployments** → último deploy → **View Logs**). Verás mensajes como:
-   - `Playlist fetch: Spotify token no obtenido...` → Faltan o están mal `SPOTIFY_CLIENT_ID` / `SPOTIFY_CLIENT_SECRET` en Railway.
-   - `Spotify token error: 401` → Spotify rechaza las credenciales; revisa que Client ID y Secret sean los de la misma app y estén bien copiados.
-   - `Playlist fetch Spotify: 404` → La playlist no existe o no es pública.
-2. **En la app**: si ves "No se pudo conectar con el servidor" y un aviso de configurar `VITE_API_URL`, en Netlify define `VITE_API_URL` = `https://pato-production.up.railway.app` y haz un nuevo deploy.
+1. **Logs de Railway al intentar agregar:** Deployments → **View Logs**. Busca la línea:
+   - `[Playlist] fetch: ... | Spotify env: true/false | YouTube API key: true/false`
+   - Si **Spotify env: false** → En Railway → **Variables** añade o corrige `SPOTIFY_CLIENT_ID` y `SPOTIFY_CLIENT_SECRET` (desde [Spotify for Developers](https://developer.spotify.com/dashboard) → tu app → Client ID y Settings → Client secret). Sin espacios al pegar.
+   - Si **YouTube API key: false** → Añade `YOUTUBE_API_KEY` en Railway (Google Cloud Console → Credenciales → Crear clave de API; en Biblioteca habilita **YouTube Data API v3**).
+2. **Otros mensajes en logs:**
+   - `Playlist fetch: Spotify token no obtenido` → Las variables de Spotify están vacías o incorrectas.
+   - `Spotify token error: 401` → Spotify rechaza las credenciales; comprueba que ID y Secret sean de la misma app.
+   - `Playlist fetch Spotify: 404` → La playlist debe ser **pública** en Spotify (abre la playlist → ⋮ → Hacer pública).
+3. **En la app:** Si ves "No se pudo conectar" o "Error del servidor (404)", en Netlify define `VITE_API_URL` = `https://pato-production.up.railway.app` y **Trigger deploy**.
 
 ---
 
