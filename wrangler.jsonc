@@ -1,0 +1,10 @@
+{
+  // Cloudflare Pages: frontend estático (Vite + React). Sin este archivo, el deploy puede crear uno automático.
+  // SPA: rutas como /playlists o /perfil sirven index.html para que React Router funcione.
+  "name": "pato",
+  "compatibility_date": "2025-09-27",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "single-page-application"
+  }
+}

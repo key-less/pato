@@ -15,7 +15,7 @@ En Railway → tu proyecto → **servicio del backend** → **Variables**. Añad
 
 | Variable | Valor |
 |---------|--------|
-| `FRONTEND_URL` | `https://pa-to.netlify.app` |
+| `FRONTEND_URL` | URL de tu frontend en producción (ej. `https://pato.xxx.pages.dev` en Cloudflare Pages o `https://pa-to.netlify.app` en Netlify) |
 | `SPOTIFY_REDIRECT_URI` | `https://pato-production.up.railway.app/api/spotify/callback` |
 | `YOUTUBE_REDIRECT_URI` | `https://pato-production.up.railway.app/api/youtube/callback` |
 
@@ -72,22 +72,25 @@ Sin esto, al hacer clic en “Conectar Spotify” o “Conectar YouTube” en pr
 
 ---
 
-## 3. Netlify
+## 3. Frontend: Cloudflare Pages o Netlify
 
-### Build settings (Site settings → Build & deploy → Build settings)
+La variable **`VITE_API_URL`** debe estar definida en el host del frontend y ser **`https://pato-production.up.railway.app`** (sin barra final). Después de añadirla o cambiarla, hay que **volver a desplegar** (Vite la incluye en el build).
 
-No hace falta cambiar nada: **Build command** = `npm run build`, **Publish directory** = `dist`, **Base directory** vacío. El `netlify.toml` del repo ya define lo mismo.
+### Cloudflare Pages
 
-### Variable imprescindible
+- **Build:** Connect to Git → **Build command** = `npm run build`, **Deploy command** = `npx wrangler deploy`, **Root directory** vacío. El repo incluye `wrangler.jsonc` con SPA (rutas no encontradas sirven `index.html`).
+- **Variables:** En el proyecto → **Build** → **Variables and secrets** → **+ Add** → **Variable** → nombre `VITE_API_URL`, valor `https://pato-production.up.railway.app`. Las variables de "Worker" (runtime) no aplican a static assets; usa solo las de **Build**.
+- **Después de cambiar la variable:** **Deployments** → **Retry deployment** o **Create deployment**.
+- No uses `_redirects` en `public/` (provoca error de bucle en Cloudflare); el SPA se resuelve con `wrangler.jsonc` → `not_found_handling: "single-page-application"`.
 
-- **Environment variables** (Site settings → Environment variables):
-  - **`VITE_API_URL`** = `https://pato-production.up.railway.app` (sin barra final, sin espacio).
-- Haz clic en el ojo para revelar el valor y comprueba que sea exactamente esa URL.
-- **Después de añadir o editar la variable:** **Deploys** → **Trigger deploy** → **Deploy site**. Si no redepliegas, el build anterior sigue usando el valor viejo (Vite incluye las variables en el build).
+### Netlify
+
+- **Build:** **Build command** = `npm run build`, **Publish directory** = `dist`, **Base directory** vacío. El `netlify.toml` del repo ya lo define.
+- **Variables:** Site settings → **Environment variables** → `VITE_API_URL` = `https://pato-production.up.railway.app`. Después: **Deploys** → **Trigger deploy**.
 
 ### Comprobar que el backend responde
 
-Abre en el navegador: `https://pato-production.up.railway.app/api/health`. Debe devolver algo como `{"ok":true}`. Si no carga, el problema es de Railway o de red; si sí carga, el fallo suele ser `VITE_API_URL` en Netlify o falta de redeploy.
+Abre en el navegador: `https://pato-production.up.railway.app/api/health`. Debe devolver algo como `{"ok":true}`. Si no carga, el problema es de Railway o de red; si sí carga, el fallo suele ser `VITE_API_URL` en el frontend o falta de redeploy.
 
 ---
 
@@ -114,7 +117,7 @@ Abre en el navegador: `https://pato-production.up.railway.app/api/health`. Debe 
    - `Playlist fetch: Spotify token no obtenido` → Las variables de Spotify están vacías o incorrectas.
    - `Spotify token error: 401` → Spotify rechaza las credenciales; comprueba que ID y Secret sean de la misma app.
    - `Playlist fetch Spotify: 404` → La playlist debe ser **pública** en Spotify (abre la playlist → ⋮ → Hacer pública).
-3. **En la app:** Si ves "No se pudo conectar" o "Error del servidor (404)", en Netlify define `VITE_API_URL` = `https://pato-production.up.railway.app` y **Trigger deploy**.
+3. **En la app:** Si ves "No se pudo conectar" o "Error del servidor (404)", en el frontend (Cloudflare Pages → Build → Variables, o Netlify → Environment variables) define `VITE_API_URL` = `https://pato-production.up.railway.app` y haz un **nuevo deploy**.
 
 ---
 
@@ -125,6 +128,6 @@ Abre en el navegador: `https://pato-production.up.railway.app/api/health`. Debe 
 | **Railway Variables** | Poner las 10 variables: `FRONTEND_URL`, `SPOTIFY_REDIRECT_URI`, `YOUTUBE_REDIRECT_URI`, `GMAIL_USER`, `GMAIL_APP_PASSWORD`, `SPOTIFY_CLIENT_ID`, `SPOTIFY_CLIENT_SECRET`, `YOUTUBE_CLIENT_ID`, `YOUTUBE_CLIENT_SECRET`, `YOUTUBE_API_KEY`. |
 | **Spotify Dashboard** | Añadir redirect URI de producción. |
 | **Google Cloud** | Añadir URI de redirección de producción en el cliente OAuth. |
-| **Netlify** | Tener `VITE_API_URL` y redeploy si la cambiaste. |
+| **Frontend (Cloudflare Pages o Netlify)** | Tener `VITE_API_URL` = URL del API y redeploy si la cambiaste. En Railway, `FRONTEND_URL` = URL del frontend (Pages o Netlify). |
 
 Cuando todo esté configurado, los usuarios podrán usar en producción: envío de cartas por Gmail, Conectar Spotify, Ahora suena, Conectar YouTube y playlists por URL (Spotify y YouTube).
