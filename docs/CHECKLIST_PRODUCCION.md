@@ -41,7 +41,7 @@ En Railway → tu proyecto → **servicio del backend** → **Variables**. Añad
 | `YOUTUBE_CLIENT_SECRET` | Misma credencial → **Secretos de cliente** → copiar |
 | `YOUTUBE_API_KEY` | En la misma consola, crear o usar una **Clave de API** (tipo `AIzaSy...`). Sirve para obtener datos de playlists por URL. En “Biblioteca” hay que tener habilitada **YouTube Data API v3**. |
 
-**No** hace falta definir `PORT` ni `HOST`; Railway los asigna.
+**No** hace falta definir `PORT` ni `HOST`; Railway los asigna (por ejemplo PORT=8080 en Networking). El servidor usa `process.env.PORT` y escucha en ese puerto; la URL pública no lleva puerto en el navegador.
 
 ---
 
