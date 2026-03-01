@@ -22,9 +22,13 @@ export const API_BASE = (() => {
 export async function fetchPlaylistByUrl(url) {
   if (!API_BASE) return { ok: false, error: 'Servidor no configurado. En producción configura VITE_API_URL.' }
   try {
-    const res = await fetch(`${API_BASE}/api/playlist/fetch?url=${encodeURIComponent(url)}`)
+    const apiUrl = `${API_BASE}/api/playlist/fetch?url=${encodeURIComponent(url)}`
+    const res = await fetch(apiUrl)
     const data = await res.json().catch(() => ({}))
-    if (!res.ok) return { ok: false, error: data.error || `Error del servidor (${res.status})`, status: res.status }
+    if (!res.ok) {
+      const errorMsg = data.error && String(data.error).trim() ? data.error : `Error del servidor (${res.status})`
+      return { ok: false, error: errorMsg, status: res.status }
+    }
     return data
   } catch (err) {
     const isProd = typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1'
