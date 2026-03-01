@@ -6,7 +6,9 @@
  */
 export const API_BASE = (() => {
   if (typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_URL) {
-    return String(import.meta.env.VITE_API_URL).replace(/\/$/, '')
+    let url = String(import.meta.env.VITE_API_URL).trim().replace(/\/$/, '')
+    if (url && !/^https?:\/\//i.test(url)) url = 'https://' + url
+    return url
   }
   if (typeof window !== 'undefined') {
     const host = window.location.hostname
