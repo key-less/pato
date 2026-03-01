@@ -21,3 +21,9 @@ public/photos_videos/
 .vscode/
 *.log
 .DS_Store
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+!.env.example
