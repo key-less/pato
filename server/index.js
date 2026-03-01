@@ -29,8 +29,9 @@ app.set('trust proxy', 1)
 app.use(cors({ origin: true }))
 app.use(express.json({ limit: '1mb' }))
 
-// Health en raíz también (por si Railway/healthcheck prefiere GET /)
+// Health: lo primero para que siempre respondan (raíz y /api/health)
 app.get('/', (_req, res) => res.json({ ok: true, service: 'pato-api' }))
+app.get('/api/health', (_req, res) => res.json({ ok: true, service: 'pato-api' }))
 
 // Rate limiting: evita abuso (correos masivos, peticiones excesivas al API)
 const apiLimiter = rateLimit({
@@ -49,11 +50,6 @@ const emailLimiter = rateLimit({
   message: { ok: false, error: 'Límite de envíos por minuto. Espera un poco.' },
 })
 app.use('/api/send-email', emailLimiter)
-
-// Health check para plataformas de despliegue (Railway, Render, etc.)
-app.get('/api/health', (_req, res) => {
-  res.json({ ok: true, service: 'pato-api' })
-})
 
 // Arrancar el servidor YA para que el healthcheck de Railway reciba respuesta (el resto de rutas se añade después)
 const HOST = process.env.HOST || '0.0.0.0'
