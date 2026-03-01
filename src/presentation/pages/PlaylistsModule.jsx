@@ -22,7 +22,8 @@ export function PlaylistsModule() {
     const result = await fetchPlaylistByUrl(link)
     setLoading(false)
     if (!result.ok) {
-      setError(result.error || 'No se pudo obtener la playlist.')
+      const msg = (result.error && String(result.error).trim()) || `No se pudo obtener la playlist.${result.status ? ` (${result.status})` : ''}`
+      setError(msg)
       return
     }
     await container.addPlaylist({

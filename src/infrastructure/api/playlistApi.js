@@ -24,7 +24,7 @@ export async function fetchPlaylistByUrl(url) {
   try {
     const res = await fetch(`${API_BASE}/api/playlist/fetch?url=${encodeURIComponent(url)}`)
     const data = await res.json().catch(() => ({}))
-    if (!res.ok) return { ok: false, error: data.error || `Error ${res.status}` }
+    if (!res.ok) return { ok: false, error: data.error || `Error del servidor (${res.status})`, status: res.status }
     return data
   } catch (err) {
     const isProd = typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1'
