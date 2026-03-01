@@ -12,6 +12,9 @@ node_modules/
 server/node_modules/
 dist/
 
+# Cloudflare Wrangler (generado en deploy)
+.wrangler/
+
 # Contenido personal (fotos/vídeos de la pareja)
 photos_videos/
 public/photos_videos/
