@@ -178,6 +178,10 @@ app.get('/api/playlist/fetch', async (req, res) => {
   const url = (req.query.url || '').trim()
   if (!url) return res.status(400).json({ ok: false, error: 'Falta el parámetro url.' })
 
+  const hasSpotify = !!(process.env.SPOTIFY_CLIENT_ID?.trim() && process.env.SPOTIFY_CLIENT_SECRET?.trim())
+  const hasYoutubeKey = !!process.env.YOUTUBE_API_KEY?.trim()
+  console.log('[Playlist] fetch:', url.slice(0, 50) + '...', '| Spotify env:', hasSpotify, '| YouTube API key:', hasYoutubeKey)
+
   try {
     if (url.includes('spotify.com') && url.includes('playlist')) {
       const match = url.match(/playlist\/([a-zA-Z0-9]+)/)
