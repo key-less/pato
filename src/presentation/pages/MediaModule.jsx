@@ -3,7 +3,7 @@ import { container } from '../../infrastructure/di/container.js'
 import { useAppState } from '../hooks/useAppState'
 import { LOGO_DUCK } from '../config/assets.js'
 
-export function MediaModule() {
+export default function MediaModule() {
   const { state } = useAppState()
   const [media, setMedia] = useState([])
   const [uploading, setUploading] = useState(false)

@@ -103,7 +103,7 @@ Abre en el navegador: `https://pato-production.up.railway.app/api/health`. Debe 
    - `[Pato] API escuchando en http://0.0.0.0:XXXX` → ya acepta peticiones (el 502 debería desaparecer).
    Si ves `uncaughtException` o `Error al hacer listen`, ese es el motivo del fallo.
 4. **"No package manager inferred, using npm default":** es solo informativo. Con Root Directory = `server`, en `server/` hay `package.json` y `package-lock.json`, y el `nixpacks.toml` fija el comando de inicio `node index.js`.
-5. **"Attempt failed with service unavailable" en el healthcheck:** Railway llama a la ruta de health antes de que la app responda. Revisa los logs: si no aparece `[Pato] API escuchando`, la app no arranca. Si sí aparece, en Deploy → **Healthcheck Path** prueba con **`/`** (la raíz también devuelve `{ "ok": true }`) o desactiva el healthcheck temporalmente para comprobar si la API responde al abrir la URL en el navegador.
+5. **"Attempt failed with service unavailable" en el healthcheck:** Railway llama a la ruta de health antes de que la app responda. Revisa los logs: si no aparece `[Pato] API escuchando`, la app no arranca. Si sí aparece, en Deploy → **Healthcheck Path** (o Settings → Health Check) configura **`/api/health`** o **`/`** (ambas devuelven `{ "ok": true }`). Así Railway no marcará el servicio como caído. Ver también **Pasos a corto plazo** en [docs/DEPLOY.md](DEPLOY.md) (monitoreo, rama develop).
 
 ---
 
@@ -118,6 +118,17 @@ Abre en el navegador: `https://pato-production.up.railway.app/api/health`. Debe 
    - `Spotify token error: 401` → Spotify rechaza las credenciales; comprueba que ID y Secret sean de la misma app.
    - `Playlist fetch Spotify: 404` → La playlist debe ser **pública** en Spotify (abre la playlist → ⋮ → Hacer pública).
 3. **En la app:** Si ves "No se pudo conectar" o "Error del servidor (404)", en el frontend (Cloudflare Pages → Build → Variables, o Netlify → Environment variables) define `VITE_API_URL` = `https://pato-production.up.railway.app` y haz un **nuevo deploy**.
+
+---
+
+## Robustez y optimización en producción
+
+Ajustes aplicados en el código para reducir fallos y mejorar rendimiento:
+
+- **Backend:** Timeout de 15 s en peticiones a Spotify/YouTube; si la API externa no responde, se devuelve un mensaje claro en lugar de colgar. Rutas `/api/*` no definidas responden con JSON `{ ok: false, error: "Ruta no encontrada" }` (404).
+- **Frontend:** Error Boundary global: si un componente lanza un error, se muestra un mensaje amigable y botón "Recargar" en lugar de pantalla en blanco. Rutas cargadas con lazy loading (React.lazy + Suspense) para reducir el tamaño del bundle inicial. Build de Vite con chunks separados (vendor-react) para mejor caché.
+
+Con esto la app está preparada para producción estable y para continuar con fases posteriores (p. ej. Fase 7).
 
 ---
 

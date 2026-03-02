@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { container } from '../../infrastructure/di/container.js'
 import { LOGO_DUCK } from '../config/assets.js'
 
-export function HistorialModule() {
+export default function HistorialModule() {
   const [citas, setCitas] = useState([])
   const [sentLetters, setSentLetters] = useState([])
 

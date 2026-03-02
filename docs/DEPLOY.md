@@ -17,7 +17,7 @@ Guía para desplegar Pato en un dominio estable (pruebas y producción) sin depe
 
 - **API en producción:** la URL del API prioriza `VITE_API_URL` (definida en el build). Así, en producción usas siempre la URL del backend; en local o desde IP sigues pudiendo usar la IP sin tocar código.
 - **Health check:** el backend expone `GET /api/health` para que las plataformas (Railway, Render, etc.) comprueben que el servicio está vivo y no lo marquen como caído.
-- **SPA (React Router):** están configurados `public/_redirects` (Netlify) y `vercel.json` (Vercel) para que todas las rutas sirvan `index.html` y no haya 404 al recargar o entrar por enlace directo.
+- **SPA (React Router):** en Netlify se usa `netlify.toml` (redirects); en Cloudflare Pages, `wrangler.jsonc` con `not_found_handling: "single-page-application"`. Así todas las rutas sirven `index.html` y no hay 404 al recargar.
 
 ---
 
@@ -87,6 +87,29 @@ Ventaja: ambiente de **pruebas** (otra rama o otro proyecto) y **producción** s
 
 - **Producción:** rama `main`, despliegue automático; `VITE_API_URL` y `FRONTEND_URL` apuntan a las URLs de producción.
 - **Pruebas:** otra rama (ej. `develop`) o otro proyecto en Vercel/Netlify y otro en Railway/Render, con sus propias URLs y variables. Así puedes probar sin afectar a producción.
+
+---
+
+## 6. Pasos a corto plazo (estabilidad y visibilidad)
+
+### Monitoreo básico
+
+- **Health check en Railway:** En el servicio del backend → **Settings** → **Health Check** (o **Deploy**), configura:
+  - **Healthcheck Path:** `GET /api/health` (o `/`; ambas rutas devuelven `{ "ok": true }`).
+  Así Railway no marcará el servicio como caído por error cuando el API esté respondiendo.
+- **Opcional — UptimeRobot (o similar):** Crea un monitor que haga ping cada X minutos a:
+  - URL del frontend (Netlify): `https://pa-to.netlify.app`
+  - URL del health del backend: `https://pato-production.up.railway.app/api/health`
+  Así recibes aviso si el sitio o el API dejan de responder.
+
+### Rama de pruebas (develop)
+
+- **Netlify:** Conecta el mismo repo y en **Build & deploy** → **Branch deploys** activa "Deploy previews" para ramas que no sean `main`. Cada push a `develop` (o cualquier otra rama) generará una URL de preview (ej. `deploy-preview-123--pa-to.netlify.app`). No afecta a producción.
+- **Railway (opcional):** Si quieres probar el backend sin tocar producción, crea un **segundo servicio** en el mismo proyecto conectado a la rama `develop`, con su propia URL y variables (por ejemplo `FRONTEND_URL` apuntando a la URL de preview de Netlify). Así pruebas cambios de API en paralelo.
+
+### Documentar URLs y secretos
+
+- Deja en [docs/DATOS_PARA_AJUSTES.md](docs/DATOS_PARA_AJUSTES.md) las URLs finales de producción y la tabla "Resumen de variables por servicio" (solo nombres de variables y dónde se configuran, sin escribir contraseñas). Así cualquier cambio futuro (dominio, migración) está claro.
 
 ---
 

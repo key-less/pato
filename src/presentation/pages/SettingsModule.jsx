@@ -3,7 +3,7 @@ import { useAppState } from '../hooks/useAppState'
 import { LOGO_DUCK } from '../config/assets.js'
 import { DEFAULT_STATUSES } from '../../domain/entities/RelationshipStatus.js'
 
-export function SettingsModule() {
+export default function SettingsModule() {
   const { state, loading, update } = useAppState()
   const [metSince, setMetSince] = useState('')
   const [currentStatusId, setCurrentStatusId] = useState('')

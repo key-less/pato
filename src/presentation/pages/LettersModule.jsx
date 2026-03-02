@@ -3,7 +3,7 @@ import { container } from '../../infrastructure/di/container.js'
 import { sendEmailViaApi, isEmailApiConfigured } from '../../infrastructure/api/sendEmailApi.js'
 import { LOGO_DUCK } from '../config/assets.js'
 
-export function LettersModule() {
+export default function LettersModule() {
   const [letters, setLetters] = useState([])
   const [subject, setSubject] = useState('')
   const [body, setBody] = useState('')

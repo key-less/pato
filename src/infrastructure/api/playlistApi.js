@@ -60,9 +60,10 @@ export async function fetchNowPlayingByProfiles(service) {
   try {
     const res = await fetch(`${API_BASE}/api/now-playing/${service}`)
     const data = await res.json().catch(() => ({}))
-    if (!res.ok) return { ok: false, profiles: [] }
-    return data
-  } catch {
+    if (!res.ok) return { ok: false, profiles: Array.isArray(data.profiles) ? data.profiles : [] }
+    const profiles = Array.isArray(data.profiles) ? data.profiles : []
+    return { ok: !!data.ok, profiles }
+  } catch (_err) {
     return { ok: false, profiles: [] }
   }
 }

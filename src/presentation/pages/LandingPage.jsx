@@ -7,7 +7,7 @@ import { getQuoteOfTheDay } from '../config/romanticQuotes.js'
 import { FloatingPhotos } from '../components/FloatingPhotos'
 import { FloatingVideos } from '../components/FloatingVideos'
 
-export function LandingPage() {
+export default function LandingPage() {
   const { state, loading, update: updateAppState } = useAppState()
   const { parts: counterParts } = useElapsedCounter(state?.metSince ?? null)
   const [media, setMedia] = useState([])

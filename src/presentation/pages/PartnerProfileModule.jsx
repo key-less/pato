@@ -18,7 +18,7 @@ const LABELS = {
 
 const FIELDS = Object.keys(LABELS).filter((k) => k !== 'profilePhotoUrl')
 
-export function PartnerProfileModule() {
+export default function PartnerProfileModule() {
   const [profiles, setProfiles] = useState([null, null])
   const [saved, setSaved] = useState(false)
 

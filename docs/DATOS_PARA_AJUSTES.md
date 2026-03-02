@@ -77,6 +77,25 @@ Así el login desde la página en producción redirige bien al backend en Railwa
 
 ---
 
+## Resumen de variables por servicio (sin valores secretos)
+
+Para cambios de dominio o migración, referencia rápida de qué variable se configura dónde:
+
+| Variable | Dónde se configura | Uso |
+|----------|--------------------|-----|
+| **VITE_API_URL** | Netlify (Environment variables) | URL del backend; el frontend la usa en el build para todas las llamadas API. |
+| **FRONTEND_URL** | Railway (Variables) | URL del frontend; el backend la usa para redirigir tras OAuth (Spotify/YouTube). |
+| **SPOTIFY_REDIRECT_URI** | Railway | Debe coincidir con la URI registrada en Spotify (callback del backend). |
+| **YOUTUBE_REDIRECT_URI** | Railway | Debe coincidir con la URI en Google Cloud (callback del backend). |
+| **GMAIL_USER**, **GMAIL_APP_PASSWORD** | Railway | Envío de cartas por correo. |
+| **SPOTIFY_CLIENT_ID**, **SPOTIFY_CLIENT_SECRET** | Railway | Ahora suena y playlists por URL. |
+| **YOUTUBE_CLIENT_ID**, **YOUTUBE_CLIENT_SECRET**, **YOUTUBE_API_KEY** | Railway | Vincular YouTube y playlists por URL. |
+| Redirect URIs | Spotify Dashboard / Google Cloud Console | Añadir la URL de callback del backend (ej. `https://.../api/spotify/callback`). |
+
+Nunca subas contraseñas ni secrets al repo; en producción todo se define en los paneles de Netlify y Railway.
+
+---
+
 ## Resumen
 
 | Dónde | Acción |

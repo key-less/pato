@@ -22,6 +22,14 @@ process.on('unhandledRejection', (reason, p) => {
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const app = express()
 
+// Timeout para peticiones salientes (evita colgar en producción si Spotify/YouTube no responden)
+const FETCH_TIMEOUT_MS = 15000
+function fetchWithTimeout(url, options = {}, ms = FETCH_TIMEOUT_MS) {
+  const ctrl = new AbortController()
+  const t = setTimeout(() => ctrl.abort(), ms)
+  return fetch(url, { ...options, signal: ctrl.signal }).finally(() => clearTimeout(t))
+}
+
 // En Railway/Render el tráfico llega por HTTPS mediante proxy; sin esto req.protocol sería 'http'
 // y Spotify rechazaría el redirect_uri (debe coincidir con https en el Dashboard).
 app.set('trust proxy', 1)
@@ -152,7 +160,7 @@ async function getSpotifyToken() {
   const secret = (process.env.SPOTIFY_CLIENT_SECRET || '').trim()
   if (!id || !secret) return null
   if (spotifyToken && spotifyToken.expires_at > Date.now()) return spotifyToken.access_token
-  const res = await fetch('https://accounts.spotify.com/api/token', {
+  const res = await fetchWithTimeout('https://accounts.spotify.com/api/token', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
@@ -192,7 +200,7 @@ app.get('/api/playlist/fetch', async (req, res) => {
         console.warn('Playlist fetch: Spotify token no obtenido. Revisa SPOTIFY_CLIENT_ID y SPOTIFY_CLIENT_SECRET en Railway.')
         return res.status(503).json({ ok: false, error: 'Spotify no configurado en el servidor. Revisa SPOTIFY_CLIENT_ID y SPOTIFY_CLIENT_SECRET en Railway.' })
       }
-      const spRes = await fetch(`https://api.spotify.com/v1/playlists/${id}`, {
+      const spRes = await fetchWithTimeout(`https://api.spotify.com/v1/playlists/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       if (!spRes.ok) {
@@ -229,7 +237,7 @@ app.get('/api/playlist/fetch', async (req, res) => {
       const apiKey = (process.env.YOUTUBE_API_KEY || '').trim()
       if (!apiKey) return res.status(503).json({ ok: false, error: 'Configura YOUTUBE_API_KEY en .env o añade server/ytmusicapi/browser.json para YouTube Music (ytmusicapi).' })
       // YouTube Data API v3: GET playlists con key (doc: https://developers.google.com/youtube/v3/docs/playlists/list)
-      const ytRes = await fetch(
+      const ytRes = await fetchWithTimeout(
         `https://www.googleapis.com/youtube/v3/playlists?part=snippet&id=${encodeURIComponent(id)}&key=${encodeURIComponent(apiKey)}`
       )
       const data = await ytRes.json().catch(() => ({}))
@@ -254,8 +262,12 @@ app.get('/api/playlist/fetch', async (req, res) => {
 
     return res.status(400).json({ ok: false, error: 'URL debe ser de Spotify (playlist) o YouTube/YouTube Music (list=...).' })
   } catch (err) {
-    console.error('Playlist fetch error:', err.message)
-    return res.status(500).json({ ok: false, error: err.message || 'Error al obtener la playlist.' })
+    const isTimeout = err.name === 'AbortError'
+    console.error('Playlist fetch error:', isTimeout ? 'timeout' : err.message)
+    return res.status(500).json({
+      ok: false,
+      error: isTimeout ? 'La petición tardó demasiado. Vuelve a intentarlo.' : (err.message || 'Error al obtener la playlist.'),
+    })
   }
 })
 
@@ -604,6 +616,9 @@ app.get('/api/youtube/me', async (req, res) => {
     return res.status(500).json({ ok: false, error: err.message })
   }
 })
+
+// Ruta no encontrada en /api (siempre JSON para el cliente)
+app.use('/api', (req, res) => res.status(404).json({ ok: false, error: 'Ruta no encontrada' }))
 
 // Validación al arrancar: qué integraciones están disponibles (útil en producción)
 function logIntegrations() {

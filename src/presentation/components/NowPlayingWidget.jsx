@@ -75,17 +75,17 @@ export function NowPlayingWidget() {
     container.getPartnerProfiles().then(setPartnerProfiles)
   }, [])
 
-  const loadSpotify = () => {
+  const loadSpotify = (isPolling = false) => {
     if (!API_BASE) return
-    setLoading((p) => ({ ...p, spotify: true }))
+    if (!isPolling) setLoading((p) => ({ ...p, spotify: true }))
     fetchNowPlayingByProfiles('spotify')
       .then((data) => setSpotifyProfiles(data.ok && Array.isArray(data.profiles) ? data.profiles : []))
       .finally(() => setLoading((p) => ({ ...p, spotify: false })))
   }
 
-  const loadYoutube = () => {
+  const loadYoutube = (isPolling = false) => {
     if (!API_BASE) return
-    setLoading((p) => ({ ...p, youtube: true }))
+    if (!isPolling) setLoading((p) => ({ ...p, youtube: true }))
     fetchNowPlayingByProfiles('youtube')
       .then((data) => setYoutubeProfiles(data.ok && Array.isArray(data.profiles) ? data.profiles : []))
       .finally(() => setLoading((p) => ({ ...p, youtube: false })))
@@ -96,6 +96,17 @@ export function NowPlayingWidget() {
     loadSpotify()
     loadYoutube()
   }, [])
+
+  // Actualización en vivo: mientras el panel esté expandido, refrescar cada 15 s
+  const POLL_INTERVAL_MS = 15000
+  useEffect(() => {
+    if (!API_BASE || !expanded) return
+    const interval = setInterval(() => {
+      loadSpotify(true)
+      loadYoutube(true)
+    }, POLL_INTERVAL_MS)
+    return () => clearInterval(interval)
+  }, [expanded])
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)

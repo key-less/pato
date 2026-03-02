@@ -3,7 +3,7 @@ import { container } from '../../infrastructure/di/container.js'
 import { fetchPlaylistByUrl } from '../../infrastructure/api/playlistApi.js'
 import { LOGO_DUCK } from '../config/assets.js'
 
-export function PlaylistsModule() {
+export default function PlaylistsModule() {
   const [playlists, setPlaylists] = useState([])
   const [url, setUrl] = useState('')
   const [loading, setLoading] = useState(false)
