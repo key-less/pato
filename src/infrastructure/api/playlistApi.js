@@ -21,11 +21,16 @@ export const API_BASE = (() => {
   return ''
 })()
 
+function apiHeaders() {
+  const secret = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_SECRET) || ''
+  return secret ? { 'x-api-key': secret } : {}
+}
+
 export async function fetchPlaylistByUrl(url) {
   if (!API_BASE) return { ok: false, error: 'Servidor no configurado. En producción configura VITE_API_URL.' }
   try {
     const apiUrl = `${API_BASE}/api/playlist/fetch?url=${encodeURIComponent(url)}`
-    const res = await fetch(apiUrl)
+    const res = await fetch(apiUrl, { headers: apiHeaders() })
     const data = await res.json().catch(() => ({}))
     if (!res.ok) {
       const errorMsg = data.error && String(data.error).trim() ? data.error : `Error del servidor (${res.status})`
@@ -45,7 +50,7 @@ export async function fetchPlaylistByUrl(url) {
 export async function fetchNowPlaying(service) {
   if (!API_BASE) return { ok: false, error: 'Servidor no configurado.' }
   try {
-    const res = await fetch(`${API_BASE}/api/now-playing/${service}`)
+    const res = await fetch(`${API_BASE}/api/now-playing/${service}`, { headers: apiHeaders() })
     const data = await res.json().catch(() => ({}))
     if (!res.ok) return { ok: false, error: data.error }
     return data
@@ -58,7 +63,7 @@ export async function fetchNowPlaying(service) {
 export async function fetchNowPlayingByProfiles(service) {
   if (!API_BASE) return { ok: false, profiles: [] }
   try {
-    const res = await fetch(`${API_BASE}/api/now-playing/${service}`)
+    const res = await fetch(`${API_BASE}/api/now-playing/${service}`, { headers: apiHeaders() })
     const data = await res.json().catch(() => ({}))
     if (!res.ok) return { ok: false, profiles: Array.isArray(data.profiles) ? data.profiles : [] }
     const profiles = Array.isArray(data.profiles) ? data.profiles : []
