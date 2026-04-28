@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react'
 import { container } from '../../infrastructure/di/container.js'
 import { fetchPlaylistByUrl } from '../../infrastructure/api/playlistApi.js'
-import { LOGO_DUCK } from '../config/assets.js'
+import { DuckPlaylists } from '../components/icons/Ducks.jsx'
+import GlassPanel, { glassStyle } from '../components/GlassPanel.jsx'
+import ModuleHeader from '../components/ModuleHeader.jsx'
 
 export default function PlaylistsModule() {
   const [playlists, setPlaylists] = useState([])
@@ -45,60 +47,65 @@ export default function PlaylistsModule() {
 
   return (
     <div className="max-w-4xl mx-auto pt-14 pb-28 px-4">
-      <header className="flex items-center gap-3 mb-8">
-        <img src={LOGO_DUCK} alt="" className="w-10 h-10 rounded-full object-cover ring-2 ring-pato-coral/40" />
-        <h1 className="font-display text-2xl font-semibold text-pato-ink">Playlists</h1>
-      </header>
-
-      <p className="text-pato-muted mb-6">
-        Pega el enlace de una playlist de Spotify o YouTube Music. Se creará un recuadro con nombre, autor e imagen.
-      </p>
+      <ModuleHeader
+        icon={DuckPlaylists}
+        eyebrow="Nuestra banda sonora"
+        italic="Nuestras"
+        title="playlists"
+        description="Pega un enlace de Spotify o YouTube Music. Construyamos juntos la música que nos acompaña."
+      />
 
       <form onSubmit={handleAdd} className="mb-8 flex flex-wrap gap-2">
         <input
           type="url"
           value={url}
           onChange={(e) => setUrl(e.target.value)}
-          placeholder="https://open.spotify.com/playlist/... o YouTube Music"
-          className="flex-1 min-w-[200px] rounded-xl border border-pato-honey bg-white/95 px-4 py-2 text-pato-ink placeholder-pato-muted"
+          placeholder="https://open.spotify.com/playlist/… o YouTube Music"
+          className="flex-1 min-w-[200px] rounded-2xl border border-white/70 bg-white/85 px-4 py-3 text-pato-charcoal placeholder-pato-smoke font-body focus:outline-none focus:ring-2 focus:ring-pato-coral/40"
         />
-        <button type="submit" disabled={loading} className="px-5 py-2 rounded-xl bg-pato-peach text-pato-ink font-medium disabled:opacity-60">
+        <button
+          type="submit"
+          disabled={loading}
+          className="px-6 py-3 rounded-2xl bg-pato-coral text-white font-body font-medium disabled:opacity-60 hover:bg-pato-terra transition-colors"
+        >
           {loading ? 'Buscando…' : 'Agregar playlist'}
         </button>
       </form>
 
       {error && (
-        <div className="mb-4 rounded-xl px-4 py-3 bg-pato-rose/50 text-pato-ink text-sm">{error}</div>
+        <GlassPanel className="mb-4 px-4 py-3" style={{ borderColor: 'rgba(212,137,122,0.4)' }}>
+          <p className="font-body text-sm text-pato-charcoal">{error}</p>
+        </GlassPanel>
       )}
 
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
         {playlists.map((p) => (
-          <div key={p.id} className="bg-pato-butter/90 rounded-xl overflow-hidden border border-pato-honey/60 shadow-sm">
-            <a href={p.url} target="_blank" rel="noopener noreferrer" className="block aspect-square bg-pato-honey/30">
+          <GlassPanel key={p.id} className="overflow-hidden">
+            <a href={p.url} target="_blank" rel="noopener noreferrer" className="block aspect-square bg-pato-shell/40">
               {p.imageUrl ? (
                 <img src={p.imageUrl} alt="" className="w-full h-full object-cover" />
               ) : (
-                <div className="w-full h-full flex items-center justify-center text-pato-muted text-4xl">
-                  {p.platform === 'spotify' ? '\u266B' : '\u25B6'}
+                <div className="w-full h-full flex items-center justify-center text-pato-smoke text-4xl">
+                  {p.platform === 'spotify' ? '♫' : '▶'}
                 </div>
               )}
             </a>
             <div className="p-3">
-              <p className="font-medium text-pato-ink text-sm line-clamp-2">{p.name || 'Playlist'}</p>
-              {p.createdBy && <p className="text-xs text-pato-muted mt-0.5">{p.createdBy}</p>}
+              <p className="font-body font-medium text-pato-charcoal text-sm line-clamp-2">{p.name || 'Playlist'}</p>
+              {p.createdBy && <p className="font-body text-xs text-pato-smoke mt-0.5">{p.createdBy}</p>}
               <div className="flex items-center justify-between mt-2">
-                <span className="text-xs px-1.5 py-0.5 rounded bg-pato-honey/50 text-pato-muted capitalize">{p.platform}</span>
-                <button type="button" onClick={() => handleRemove(p.id)} className="text-xs text-pato-muted hover:text-pato-ink">
+                <span className="font-body text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-white/70 text-pato-smoke">{p.platform}</span>
+                <button type="button" onClick={() => handleRemove(p.id)} className="font-body text-xs text-pato-smoke hover:text-pato-coral transition-colors">
                   Quitar
                 </button>
               </div>
             </div>
-          </div>
+          </GlassPanel>
         ))}
       </div>
 
       {playlists.length === 0 && (
-        <p className="text-pato-muted text-center py-12">Aún no hay playlists. Agrega una con el enlace de arriba.</p>
+        <p className="text-pato-smoke font-body italic text-center py-12">Aún no hay playlists. Agrega una con el enlace de arriba.</p>
       )}
     </div>
   )
