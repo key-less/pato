@@ -98,13 +98,12 @@ export default function LandingPage() {
         })()}
 
         <section className="mt-10 pt-8 border-t border-pato-honey/40">
-          <h2 className="font-display text-lg font-semibold text-pato-ink mb-3">Historial</h2>
-          <p className="text-sm text-pato-muted mb-3">Citas ya registradas.</p>
+          <h2 className="font-display text-lg font-semibold text-pato-ink mb-3">Citas</h2>
           {citas.length === 0 ? (
             <p className="text-sm text-pato-muted mb-3">Aún no hay citas registradas.</p>
           ) : (
             <ul className="space-y-3 mb-4">
-              {citas.map((c) => (
+              {citas.slice(0, 3).map((c) => (
                 <li
                   key={c.id}
                   className="rounded-xl px-4 py-3 bg-pato-butter/80 border border-pato-honey/50 text-pato-ink text-sm"
@@ -121,10 +120,10 @@ export default function LandingPage() {
             </ul>
           )}
           <Link
-            to="/historial"
+            to="/citas"
             className="inline-block text-sm text-pato-coral font-medium hover:underline"
           >
-            Ir al historial completo →
+            Ver todas las citas →
           </Link>
         </section>
       </section>
@@ -178,7 +177,7 @@ function CounterCard({ value, label }) {
 
 function formatDate(iso) {
   try {
-    const d = new Date(iso)
+    const d = new Date(iso + 'T00:00')
     return d.toLocaleDateString('es', { day: 'numeric', month: 'long', year: 'numeric' })
   } catch {
     return iso
