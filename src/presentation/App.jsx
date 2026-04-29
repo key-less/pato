@@ -9,6 +9,7 @@ const PlaylistsModule = lazy(() => import('./pages/PlaylistsModule'))
 const LettersModule = lazy(() => import('./pages/LettersModule'))
 const SettingsModule = lazy(() => import('./pages/SettingsModule'))
 const HistorialModule = lazy(() => import('./pages/HistorialModule'))
+const CitasModule = lazy(() => import('./pages/CitasModule'))
 
 function PageFallback() {
   return (
@@ -29,6 +30,7 @@ export default function App() {
             <Route path="/perfil-pareja" element={<PartnerProfileModule />} />
             <Route path="/playlists" element={<PlaylistsModule />} />
             <Route path="/cartas" element={<LettersModule />} />
+            <Route path="/citas" element={<CitasModule />} />
             <Route path="/historial" element={<HistorialModule />} />
             <Route path="/configuracion" element={<SettingsModule />} />
           </Routes>

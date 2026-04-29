@@ -3,6 +3,7 @@ import { DUCK_IMAGES, LOGO_DUCK } from '../config/assets.js'
 
 const nav = [
   { path: '/', label: 'Inicio', duck: DUCK_IMAGES[0], hash: '' },
+  { path: '/citas', label: 'Citas', duck: DUCK_IMAGES[2], hash: '' },
   { path: '/fotos', label: 'Fotos y videos', duck: DUCK_IMAGES[1], hash: '' },
   { path: '/perfil-pareja', label: 'Perfil de la pareja', duck: DUCK_IMAGES[0], hash: '' },
   { path: '/playlists', label: 'Playlists', duck: DUCK_IMAGES[1], hash: '' },
