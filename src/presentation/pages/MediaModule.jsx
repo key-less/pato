@@ -34,6 +34,10 @@ export default function MediaModule() {
           date: new Date().toISOString().slice(0, 10),
           relationshipStatusId: state?.currentRelationshipStatusId ?? null,
         })
+        await container.addActivityEvent({
+          type: 'media_added',
+          description: `Agregó ${type === 'video' ? 'un video' : 'una foto'} al álbum`,
+        })
       }
       loadMedia()
     } finally {
@@ -50,6 +54,10 @@ export default function MediaModule() {
   const handleDelete = async (id) => {
     if (window.confirm('¿Eliminar este archivo del álbum?')) {
       await container.deleteMedia(id)
+      await container.addActivityEvent({
+        type: 'media_removed',
+        description: 'Eliminó un archivo del álbum',
+      })
       loadMedia()
     }
   }
