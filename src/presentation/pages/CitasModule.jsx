@@ -43,6 +43,10 @@ function CitaForm({ onAdded }) {
     e.preventDefault()
     if (!date.trim()) return
     await container.addCita({ date: date.trim(), lugar: lugar.trim(), horaEncuentro: horaEncuentro.trim(), note: note.trim() })
+    await container.addActivityEvent({
+      type: 'cita_added',
+      description: `Agregó una nueva cita: ${formatDateShort(date.trim())}${lugar.trim() ? ` en ${lugar.trim()}` : ''}`,
+    })
     setDate('')
     setLugar('')
     setHoraEncuentro('')
@@ -106,6 +110,10 @@ function CitaCard({ cita, onRemoved }) {
   const remove = async () => {
     if (window.confirm('¿Quitar esta cita?')) {
       await container.removeCita(cita.id)
+      await container.addActivityEvent({
+        type: 'cita_removed',
+        description: `Quitó la cita del ${formatDateShort(cita.date)}${cita.lugar ? ` en ${cita.lugar}` : ''}`,
+      })
       onRemoved?.()
     }
   }
@@ -135,6 +143,14 @@ function CitaCard({ cita, onRemoved }) {
 function formatDate(iso) {
   try {
     return new Date(iso + 'T00:00').toLocaleDateString('es', { day: 'numeric', month: 'long', year: 'numeric' })
+  } catch {
+    return iso
+  }
+}
+
+function formatDateShort(iso) {
+  try {
+    return new Date(iso + 'T00:00').toLocaleDateString('es', { day: 'numeric', month: 'short', year: 'numeric' })
   } catch {
     return iso
   }
