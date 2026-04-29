@@ -49,6 +49,10 @@ export default function LettersModule() {
 
   const sendByMailto = async (letter) => {
     await container.logSentLetter(letter)
+    await container.addActivityEvent({
+      type: 'letter_sent',
+      description: `Envió una carta: "${letter.subject || '(Sin asunto)'}"`,
+    })
     const email = recipientEmail.trim() || undefined
     const url = container.buildMailtoUrl(email ?? '', letter.subject, letter.body)
     window.open(url, '_blank')
@@ -71,6 +75,10 @@ export default function LettersModule() {
     setSendResult(result)
     if (result.ok) {
       await container.logSentLetter(letter)
+      await container.addActivityEvent({
+        type: 'letter_sent',
+        description: `Envió una carta por Gmail: "${letter.subject || '(Sin asunto)'}"`,
+      })
       setTimeout(() => setSendResult(null), 8000)
     }
   }
