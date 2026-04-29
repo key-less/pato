@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useAppState } from '../hooks/useAppState'
 import { LOGO_DUCK } from '../config/assets.js'
 import { DEFAULT_STATUSES } from '../../domain/entities/RelationshipStatus.js'
+import { container } from '../../infrastructure/di/container.js'
 
 export default function SettingsModule() {
   const { state, loading, update } = useAppState()
@@ -19,11 +20,30 @@ export default function SettingsModule() {
   }, [state])
 
   const handleSave = async () => {
+    const prevMetSince = state.metSince?.slice(0, 10) ?? ''
+    const prevStatusId = state.currentRelationshipStatusId ?? ''
+
     await update({
       metSince: metSince || new Date().toISOString().slice(0, 10),
       currentRelationshipStatusId: currentStatusId,
       relationshipStatuses: statuses,
     })
+
+    if (metSince !== prevMetSince) {
+      await container.addActivityEvent({
+        type: 'date_changed',
+        description: `Cambió la fecha de inicio de la relación a ${formatDateShort(metSince)}`,
+      })
+    }
+
+    if (currentStatusId !== prevStatusId && currentStatusId) {
+      const statusLabel = statuses.find((s) => s.id === currentStatusId)?.label ?? currentStatusId
+      await container.addActivityEvent({
+        type: 'status_changed',
+        description: `Actualizó el estado de la relación a "${statusLabel}"`,
+      })
+    }
+
     setSaved(true)
     setTimeout(() => setSaved(false), 2000)
   }
@@ -130,4 +150,12 @@ export default function SettingsModule() {
       </div>
     </div>
   )
+}
+
+function formatDateShort(iso) {
+  try {
+    return new Date(iso + 'T00:00').toLocaleDateString('es', { day: 'numeric', month: 'long', year: 'numeric' })
+  } catch {
+    return iso
+  }
 }
