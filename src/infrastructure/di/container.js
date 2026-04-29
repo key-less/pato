@@ -30,6 +30,10 @@ import { clearPartnerProfile } from '../../application/useCases/clearPartnerProf
 import { getPlaylists } from '../../application/useCases/getPlaylists.js'
 import { addPlaylist } from '../../application/useCases/addPlaylist.js'
 import { removePlaylist } from '../../application/useCases/removePlaylist.js'
+import { createLocalStorageActivityEventRepository } from '../storage/localStorageActivityEventRepository.js'
+import { addActivityEvent } from '../../application/useCases/addActivityEvent.js'
+import { getActivityEvents } from '../../application/useCases/getActivityEvents.js'
+import { removeActivityEvent } from '../../application/useCases/removeActivityEvent.js'
 
 const mediaRepo = createLocalStorageMediaRepository()
 const appStateRepo = createLocalStorageAppStateRepository()
@@ -38,6 +42,7 @@ const citaRepo = createLocalStorageCitaRepository()
 const sentLetterLogRepo = createLocalStorageSentLetterLogRepository()
 const partnerProfileRepo = createLocalStoragePartnerProfileRepository()
 const playlistRepo = createLocalStoragePlaylistRepository()
+const activityEventRepo = createLocalStorageActivityEventRepository()
 
 export const container = {
   getAppState: getAppState(appStateRepo),
@@ -62,4 +67,7 @@ export const container = {
   getPlaylists: getPlaylists(playlistRepo),
   addPlaylist: addPlaylist(playlistRepo),
   removePlaylist: removePlaylist(playlistRepo),
+  addActivityEvent: addActivityEvent(activityEventRepo),
+  getActivityEvents: getActivityEvents(activityEventRepo),
+  removeActivityEvent: removeActivityEvent(activityEventRepo),
 }
