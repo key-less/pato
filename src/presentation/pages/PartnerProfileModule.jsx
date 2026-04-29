@@ -30,6 +30,12 @@ export default function PartnerProfileModule() {
     const existing = profiles[index]
     await container.savePartnerProfile({ ...data, id: existing?.id }, index)
     setProfiles(await container.getPartnerProfiles())
+    const label = index === 0 ? 'Yo' : 'Pareja'
+    await container.addActivityEvent({
+      type: 'profile_updated',
+      description: `Actualizó el perfil de ${label}`,
+    })
+    window.dispatchEvent(new Event('pato:profile-updated'))
     setSaved(true)
     setTimeout(() => setSaved(false), 2000)
   }
