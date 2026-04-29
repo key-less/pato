@@ -34,12 +34,20 @@ export default function PlaylistsModule() {
       imageUrl: result.imageUrl ?? null,
     })
     setUrl('')
+    await container.addActivityEvent({
+      type: 'playlist_added',
+      description: `Agregó la playlist "${result.name ?? 'Playlist'}" de ${result.platform === 'spotify' ? 'Spotify' : 'YouTube'}`,
+    })
     setPlaylists(await container.getPlaylists())
   }
 
   const handleRemove = async (id) => {
     if (!window.confirm('Quitar esta playlist?')) return
     await container.removePlaylist(id)
+    await container.addActivityEvent({
+      type: 'playlist_removed',
+      description: 'Eliminó una playlist',
+    })
     setPlaylists(await container.getPlaylists())
   }
 
