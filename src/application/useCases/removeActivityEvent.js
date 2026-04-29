@@ -1,3 +1,5 @@
-export const removeActivityEvent = (repo) => async (id) => {
-  await repo.remove(id)
+export function removeActivityEvent(repo) {
+  return async function execute(id) {
+    await repo.remove(id)
+  }
 }
