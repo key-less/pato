@@ -1,11 +1,24 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import { Sidebar } from './Sidebar'
 import { NowPlayingWidget } from './NowPlayingWidget'
+import { container } from '../../infrastructure/di/container.js'
 
 export function Layout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [profilePhotoUrl, setProfilePhotoUrl] = useState(null)
   const location = useLocation()
+
+  useEffect(() => {
+    const refresh = () => {
+      container.getPartnerProfiles().then((p) => {
+        setProfilePhotoUrl(p?.[0]?.profilePhotoUrl || null)
+      })
+    }
+    refresh()
+    window.addEventListener('pato:profile-updated', refresh)
+    return () => window.removeEventListener('pato:profile-updated', refresh)
+  }, [])
 
   return (
     <div className="min-h-[100dvh] bg-pato-cream flex">
@@ -17,15 +30,26 @@ export function Layout({ children }) {
           paddingBottom: 'max(5rem, env(safe-area-inset-bottom, 0px))',
         }}
       >
-        <button
-          type="button"
-          onClick={() => setSidebarOpen(true)}
-          className="fixed z-30 p-3 min-w-[44px] min-h-[44px] rounded-xl bg-pato-butter shadow-md border border-pato-honey/60 text-pato-ink hover:bg-pato-peach hover:border-pato-coral/40 transition-all touch-manipulation"
+        <div
+          className="fixed z-30 flex items-center gap-2"
           style={{ left: '0.75rem', top: 'max(1rem, env(safe-area-inset-top))' }}
-          aria-label="Abrir menú"
         >
-          <MenuIcon />
-        </button>
+          <button
+            type="button"
+            onClick={() => setSidebarOpen(true)}
+            className="p-3 min-w-[44px] min-h-[44px] rounded-xl bg-pato-butter shadow-md border border-pato-honey/60 text-pato-ink hover:bg-pato-peach hover:border-pato-coral/40 transition-all touch-manipulation"
+            aria-label="Abrir menú"
+          >
+            <MenuIcon />
+          </button>
+          {profilePhotoUrl && (
+            <img
+              src={profilePhotoUrl}
+              alt="Perfil"
+              className="w-8 h-8 rounded-full object-cover border-2 border-pato-honey/60 shadow-sm"
+            />
+          )}
+        </div>
         <NowPlayingWidget />
         {children}
       </main>
