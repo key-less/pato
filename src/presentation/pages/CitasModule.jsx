@@ -134,7 +134,7 @@ function CitaCard({ cita, onRemoved }) {
 
 function formatDate(iso) {
   try {
-    return new Date(iso).toLocaleDateString('es', { day: 'numeric', month: 'long', year: 'numeric' })
+    return new Date(iso + 'T00:00').toLocaleDateString('es', { day: 'numeric', month: 'long', year: 'numeric' })
   } catch {
     return iso
   }
