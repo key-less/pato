@@ -24,8 +24,8 @@ export default function CitasModule() {
             Aún no hay citas registradas.
           </li>
         ) : (
-          citas.map((c) => (
-            <CitaCard key={c.id} cita={c} onRemoved={loadCitas} />
+          citas.map((c, i) => (
+            <CitaCard key={c.id} cita={c} onRemoved={loadCitas} index={i} />
           ))
         )}
       </ul>
@@ -106,7 +106,7 @@ function CitaForm({ onAdded }) {
   )
 }
 
-function CitaCard({ cita, onRemoved }) {
+function CitaCard({ cita, onRemoved, index = 0 }) {
   const remove = async () => {
     if (window.confirm('¿Quitar esta cita?')) {
       await container.removeCita(cita.id)
@@ -119,7 +119,10 @@ function CitaCard({ cita, onRemoved }) {
   }
 
   return (
-    <li className="rounded-xl px-4 py-4 bg-pato-butter/80 border border-pato-honey/50 flex items-start justify-between gap-3">
+    <li
+      className="rounded-xl px-4 py-4 bg-pato-butter/80 border border-pato-honey/50 flex items-start justify-between gap-3 animate-slide-up hover:-translate-y-0.5 hover:shadow-md transition-all duration-200"
+      style={{ animationDelay: `${Math.min(index * 60, 400)}ms` }}
+    >
       <div className="min-w-0">
         <div className="font-medium text-pato-ink">{formatDate(cita.date)}</div>
         {(cita.lugar || cita.horaEncuentro) && (

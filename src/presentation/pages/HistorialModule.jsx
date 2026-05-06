@@ -31,12 +31,13 @@ export default function HistorialModule() {
         </div>
       ) : (
         <ul className="space-y-3">
-          {events.map((evt) => (
+          {events.map((evt, i) => (
             <ActivityEventCard
               key={evt.id}
               event={evt}
               profiles={profiles}
               onRemoved={load}
+              index={i}
             />
           ))}
         </ul>
@@ -45,7 +46,7 @@ export default function HistorialModule() {
   )
 }
 
-function ActivityEventCard({ event, profiles, onRemoved }) {
+function ActivityEventCard({ event, profiles, onRemoved, index = 0 }) {
   const profile = Array.isArray(profiles) ? (profiles[event.profileIndex] ?? null) : null
   const photoUrl = profile?.profilePhotoUrl || null
   const initial = profile?.nombre?.[0]?.toUpperCase() ?? '?'
@@ -58,7 +59,10 @@ function ActivityEventCard({ event, profiles, onRemoved }) {
   }
 
   return (
-    <li className="rounded-xl px-4 py-3 bg-pato-butter/80 border border-pato-honey/50 flex items-start gap-3">
+    <li
+      className="rounded-xl px-4 py-3 bg-pato-butter/80 border border-pato-honey/50 flex items-start gap-3 animate-slide-up hover:-translate-y-0.5 hover:shadow-md transition-all duration-200"
+      style={{ animationDelay: `${Math.min(index * 50, 400)}ms` }}
+    >
       <div className="shrink-0 w-9 h-9 rounded-full overflow-hidden border border-pato-honey/40 bg-pato-peach/60 flex items-center justify-center">
         {photoUrl ? (
           <img src={photoUrl} alt="" className="w-full h-full object-cover" />
