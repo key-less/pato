@@ -1,105 +1,79 @@
-# Ajustes Railway + Netlify — Pato en producción
+# Ajustes Vercel + Render — Pato en producción
 
-URLs actuales:
-
-- **Frontend (Netlify):** https://pa-to.netlify.app
-- **Backend (Railway):** https://pato-production.up.railway.app
-
----
-
-## Netlify — Lo que hay que hacer
-
-### 1. Añadir variable de entorno (obligatorio)
-
-En la captura de **Environment variables** no aparece **`VITE_API_URL`**. Sin ella, el frontend en producción no sabe a qué API llamar.
-
-**Pasos:**
-
-1. En Netlify → tu sitio → **Site configuration** (o **Build & deploy**) → **Environment variables**.
-2. Pulsa **Add a variable** (o **Add single variable**).
-3. **Key:** `VITE_API_URL`  
-   **Value:** `https://pato-production.up.railway.app`  
-   (Sin barra final. No la marques como Secret si no es necesario.)
-4. Guarda.
-5. **Importante:** Vite inyecta las variables en el **build**. Ve a **Deploys** → **Trigger deploy** → **Deploy site** para que el próximo build lleve esta variable. Si no redepliegas, la app seguirá sin la URL del API.
-
-### 2. Build settings (ya están bien)
-
-- Base directory: `/`
-- Build command: `npm run build`
-- Publish directory: `dist`
-
-No hace falta cambiar nada ahí.
+Stack de producción:
+- **Frontend (Vercel):** conectar repo → Build command `npm run build`, Output `dist`, variable `VITE_API_URL`
+- **Backend (Render):** Web Service → Root `server/`, Start `npm start`, variables de entorno en el panel
 
 ---
 
-## Railway — Lo que hay que hacer
+## Vercel — Frontend
 
-### 1. Root Directory (carpeta `server`)
+### Configuración de build
+- **Build command:** `npm run build`
+- **Output directory:** `dist`
+- **Install command:** `npm install`
 
-En Railway el **Root Directory** no suele estar en la pestaña **Deploy** (donde está el toggle Serverless). Suele estar en:
-
-- **Settings** del **servicio** (el backend) → sección **Source** (o **Repository** / **Build**).
-- Ahí busca **Root Directory** o **Service root**.
-- Valor: **`server`** o **`/server`** (dependiendo de la versión de Railway; si uno da error, usa el otro).
-
-Si no ves "Source" ni "Root Directory", puede que tu versión de Railway lo tenga en otro nombre; revisa todas las secciones de **Settings** del servicio.
-
-**Comprobar si ya está bien:** abre en el navegador:
-
-- https://pato-production.up.railway.app/api/health
-
-Si ves `{"ok":true,"service":"pato-api"}`, el backend está arrancando desde la carpeta correcta (aunque no veas el campo Root Directory, puede que esté bien). Si ves 404 o error de Express, entonces el servicio está usando la raíz del repo y hay que poner Root Directory = `server`.
-
-### 2. Variables de entorno en Railway
-
-En el **servicio** del backend → **Variables**, asegúrate de tener:
+### Variable de entorno obligatoria
+En Vercel → tu proyecto → **Settings → Environment Variables**:
 
 | Variable | Valor |
-|----------|--------|
-| **FRONTEND_URL** | `https://pa-to.netlify.app` |
-| **SPOTIFY_REDIRECT_URI** | `https://pato-production.up.railway.app/api/spotify/callback` |
-| **YOUTUBE_REDIRECT_URI** | `https://pato-production.up.railway.app/api/youtube/callback` |
+|----------|-------|
+| `VITE_API_URL` | URL pública del backend en Render (ej. `https://pato-api.onrender.com`) sin barra final |
 
-El resto (Gmail, Spotify client id/secret, YouTube client id/secret, `YOUTUBE_API_KEY`, etc.) como en `server/.env.example`.
+Después de añadir o cambiar la variable → **Deployments → Redeploy** para que el build la incluya.
 
-### 3. OAuth en Spotify y Google
-
-En el **Dashboard de Spotify** → tu app → **Redirect URIs**, añade:
-
-- `https://pato-production.up.railway.app/api/spotify/callback`
-
-En **Google Cloud Console** → credenciales OAuth → **URIs de redirección**, añade:
-
-- `https://pato-production.up.railway.app/api/youtube/callback`
-
-Así el login desde la página en producción redirige bien al backend en Railway.
+### SPA (React Router)
+El `vercel.json` en la raíz del repo ya configura el rewrite necesario para que todas las rutas sirvan `index.html`.
 
 ---
 
-## Resumen de variables por servicio (sin valores secretos)
+## Render — Backend
 
-Para cambios de dominio o migración, referencia rápida de qué variable se configura dónde:
+### Configuración del servicio
+- **Type:** Web Service
+- **Root directory:** `server`
+- **Build command:** `npm install`
+- **Start command:** `npm start`
+
+### Variables de entorno en Render
+En el servicio → **Environment**:
+
+| Variable | Uso |
+|----------|-----|
+| `FRONTEND_URL` | URL del frontend en Vercel (ej. `https://pato.vercel.app`) |
+| `SPOTIFY_REDIRECT_URI` | `https://tu-api.onrender.com/api/spotify/callback` |
+| `YOUTUBE_REDIRECT_URI` | `https://tu-api.onrender.com/api/youtube/callback` |
+| `GMAIL_USER` | Correo Gmail |
+| `GMAIL_APP_PASSWORD` | Contraseña de aplicación Gmail |
+| `SPOTIFY_CLIENT_ID` | Desde Spotify for Developers |
+| `SPOTIFY_CLIENT_SECRET` | Desde Spotify for Developers |
+| `YOUTUBE_CLIENT_ID` | Desde Google Cloud Console |
+| `YOUTUBE_CLIENT_SECRET` | Desde Google Cloud Console |
+| `YOUTUBE_API_KEY` | Desde Google Cloud Console |
+
+### Health check
+En Render → servicio → **Settings → Health Check Path**: `/api/health`
+
+---
+
+## OAuth (Spotify y Google) en producción
+
+### Spotify Dashboard
+Añadir en Redirect URIs: `https://tu-api.onrender.com/api/spotify/callback`
+
+### Google Cloud Console
+En credenciales OAuth → URIs de redirección: `https://tu-api.onrender.com/api/youtube/callback`
+
+---
+
+## Resumen de variables por servicio
 
 | Variable | Dónde se configura | Uso |
 |----------|--------------------|-----|
-| **VITE_API_URL** | Netlify (Environment variables) | URL del backend; el frontend la usa en el build para todas las llamadas API. |
-| **FRONTEND_URL** | Railway (Variables) | URL del frontend; el backend la usa para redirigir tras OAuth (Spotify/YouTube). |
-| **SPOTIFY_REDIRECT_URI** | Railway | Debe coincidir con la URI registrada en Spotify (callback del backend). |
-| **YOUTUBE_REDIRECT_URI** | Railway | Debe coincidir con la URI en Google Cloud (callback del backend). |
-| **GMAIL_USER**, **GMAIL_APP_PASSWORD** | Railway | Envío de cartas por correo. |
-| **SPOTIFY_CLIENT_ID**, **SPOTIFY_CLIENT_SECRET** | Railway | Ahora suena y playlists por URL. |
-| **YOUTUBE_CLIENT_ID**, **YOUTUBE_CLIENT_SECRET**, **YOUTUBE_API_KEY** | Railway | Vincular YouTube y playlists por URL. |
-| Redirect URIs | Spotify Dashboard / Google Cloud Console | Añadir la URL de callback del backend (ej. `https://.../api/spotify/callback`). |
-
-Nunca subas contraseñas ni secrets al repo; en producción todo se define en los paneles de Netlify y Railway.
-
----
-
-## Resumen
-
-| Dónde | Acción |
-|--------|--------|
-| **Netlify** | Añadir `VITE_API_URL` = `https://pato-production.up.railway.app` y hacer **Trigger deploy**. |
-| **Railway** | En Settings del servicio, buscar **Root Directory** (Source/Build) y poner `server` si no está. Definir **FRONTEND_URL** y los redirect URIs de Spotify/YouTube con la URL de Railway. |
-| **Spotify / Google** | Añadir los redirect URIs de producción con `https://pato-production.up.railway.app`. |
+| `VITE_API_URL` | Vercel (Environment Variables) | URL del backend; se inyecta en build time |
+| `FRONTEND_URL` | Render (Environment) | URL del frontend; usada por backend en redirects OAuth |
+| `SPOTIFY_REDIRECT_URI` | Render | Callback OAuth Spotify |
+| `YOUTUBE_REDIRECT_URI` | Render | Callback OAuth YouTube |
+| `GMAIL_USER`, `GMAIL_APP_PASSWORD` | Render | Envío de cartas |
+| `SPOTIFY_CLIENT_ID`, `SPOTIFY_CLIENT_SECRET` | Render | Ahora suena y playlists |
+| `YOUTUBE_CLIENT_ID`, `YOUTUBE_CLIENT_SECRET`, `YOUTUBE_API_KEY` | Render | YouTube playlists y OAuth |
