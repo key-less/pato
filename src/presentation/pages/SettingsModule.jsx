@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useAppState } from '../hooks/useAppState'
-import { LOGO_DUCK } from '../config/assets.js'
+import { DuckSettings } from '../components/icons/Ducks.jsx'
+import GlassPanel from '../components/GlassPanel.jsx'
+import ModuleHeader from '../components/ModuleHeader.jsx'
 import { DEFAULT_STATUSES } from '../../domain/entities/RelationshipStatus.js'
 import { container } from '../../infrastructure/di/container.js'
 
@@ -65,55 +67,57 @@ export default function SettingsModule() {
   if (loading || !state) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-pulse text-pato-coral">Cargando...</div>
+        <div className="animate-pulse font-body text-pato-coral">Cargando…</div>
       </div>
     )
   }
 
   return (
     <div className="max-w-xl mx-auto pt-14 pb-28 px-4">
-      <header className="flex items-center gap-3 mb-8">
-        <img src={LOGO_DUCK} alt="" className="w-10 h-10 rounded-full object-cover ring-2 ring-pato-coral/40" />
-        <h1 className="font-display text-2xl font-semibold text-pato-ink">Configuración</h1>
-      </header>
+      <ModuleHeader
+        icon={DuckSettings}
+        eyebrow="Personaliza tu Pato"
+        italic="Tus"
+        title="ajustes"
+      />
 
-      <div className="space-y-8">
-        <section className="bg-pato-butter/90 rounded-2xl p-6 border border-pato-honey/60 shadow-sm">
-          <h2 className="font-display font-medium text-pato-ink mb-4">Fecha en que se conocieron</h2>
+      <div className="space-y-6">
+        <GlassPanel className="p-6">
+          <h2 className="font-display text-xl text-pato-charcoal mb-4">Fecha en que se conocieron</h2>
           <input
             type="date"
             value={metSince}
             onChange={(e) => setMetSince(e.target.value)}
-            className="w-full rounded-xl border border-pato-honey bg-white/95 px-4 py-3 text-pato-ink"
+            className="w-full rounded-2xl border border-white/70 bg-white/85 px-4 py-3 font-body text-pato-charcoal focus:outline-none focus:ring-2 focus:ring-pato-coral/40"
           />
-        </section>
+        </GlassPanel>
 
-        <section className="bg-pato-butter/90 rounded-2xl p-6 border border-pato-honey/60 shadow-sm">
-          <h2 className="font-display font-medium text-pato-ink mb-4">Estado actual de la relación</h2>
+        <GlassPanel className="p-6">
+          <h2 className="font-display text-xl text-pato-charcoal mb-4">Estado actual de la relación</h2>
           <select
             value={currentStatusId}
             onChange={(e) => setCurrentStatusId(e.target.value)}
-            className="w-full rounded-xl border border-pato-honey bg-white/95 px-4 py-3 text-pato-ink"
+            className="w-full rounded-2xl border border-white/70 bg-white/85 px-4 py-3 font-body text-pato-charcoal focus:outline-none focus:ring-2 focus:ring-pato-coral/40"
           >
             <option value="">— Seleccionar —</option>
             {statuses.map((s) => (
               <option key={s.id} value={s.id}>{s.label}</option>
             ))}
           </select>
-        </section>
+        </GlassPanel>
 
-        <section className="bg-pato-butter/90 rounded-2xl p-6 border border-pato-honey/60 shadow-sm">
-          <h2 className="font-display font-medium text-pato-ink mb-4">Estados personalizados</h2>
-          <p className="text-sm text-pato-muted mb-3">Puedes agregar más estados además de los predefinidos.</p>
-          <ul className="space-y-2 mb-4">
+        <GlassPanel className="p-6">
+          <h2 className="font-display text-xl text-pato-charcoal mb-2">Estados personalizados</h2>
+          <p className="font-body text-sm text-pato-smoke mb-4">Puedes agregar más estados además de los predefinidos.</p>
+          <ul className="space-y-1 mb-4">
             {statuses.map((s) => (
-              <li key={s.id} className="flex items-center justify-between gap-2 py-2 border-b border-pato-honey/40 last:border-0">
-                <span className="text-pato-ink">{s.label}</span>
+              <li key={s.id} className="flex items-center justify-between gap-2 py-2 border-b border-white/40 last:border-0">
+                <span className="font-body text-pato-charcoal">{s.label}</span>
                 {!DEFAULT_STATUSES.some((d) => d.id === s.id) && (
                   <button
                     type="button"
                     onClick={() => removeStatus(s.id)}
-                    className="text-pato-muted text-sm hover:text-pato-ink hover:underline"
+                    className="font-body text-sm text-pato-smoke hover:text-pato-coral transition-colors"
                   >
                     Quitar
                   </button>
@@ -128,24 +132,24 @@ export default function SettingsModule() {
               onChange={(e) => setNewStatusLabel(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && addStatus()}
               placeholder="Ej: Mejor amigues"
-              className="flex-1 rounded-xl border border-pato-honey bg-white/95 px-4 py-2 text-pato-ink placeholder-pato-muted"
+              className="flex-1 rounded-2xl border border-white/70 bg-white/85 px-4 py-2 font-body text-pato-charcoal placeholder-pato-smoke focus:outline-none focus:ring-2 focus:ring-pato-coral/40"
             />
             <button
               type="button"
               onClick={addStatus}
-              className="px-4 py-2 rounded-xl bg-pato-sage/70 text-pato-ink font-medium"
+              className="px-4 py-2 rounded-2xl bg-white/70 text-pato-charcoal font-body font-medium hover:bg-white transition-colors"
             >
               Agregar
             </button>
           </div>
-        </section>
+        </GlassPanel>
 
         <button
           type="button"
           onClick={handleSave}
-          className="w-full py-3 rounded-xl bg-pato-peach text-pato-ink font-medium hover:bg-pato-rose transition-colors"
+          className="w-full py-3 rounded-2xl bg-pato-coral text-white font-body font-medium hover:bg-pato-terra transition-colors"
         >
-          {saved ? 'Guardado' : 'Guardar cambios'}
+          {saved ? '✓ Guardado' : 'Guardar cambios'}
         </button>
       </div>
     </div>

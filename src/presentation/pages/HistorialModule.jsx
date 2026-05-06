@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import { container } from '../../infrastructure/di/container.js'
-import { LOGO_DUCK } from '../config/assets.js'
+import { DuckHistory } from '../components/icons/Ducks.jsx'
+import GlassPanel from '../components/GlassPanel.jsx'
+import ModuleHeader from '../components/ModuleHeader.jsx'
 
 export default function HistorialModule() {
   const [events, setEvents] = useState([])
@@ -19,16 +21,20 @@ export default function HistorialModule() {
 
   return (
     <div className="max-w-3xl mx-auto pt-14 pb-28 px-4">
-      <header className="flex items-center gap-3 mb-8">
-        <img src={LOGO_DUCK} alt="" className="w-10 h-10 rounded-full object-cover ring-2 ring-pato-coral/40" />
-        <h1 className="font-display text-2xl font-semibold text-pato-ink">Historial</h1>
-        <span className="text-pato-muted text-sm">· Actividad de la app</span>
-      </header>
+      <ModuleHeader
+        icon={DuckHistory}
+        eyebrow="Registro de actividad"
+        italic="Nuestro"
+        title="historial"
+        description="Todo lo que han hecho en la app, ordenado del más reciente al más antiguo."
+      />
 
       {events.length === 0 ? (
-        <div className="rounded-xl px-4 py-10 bg-pato-butter/60 border border-pato-honey/40 text-pato-muted text-sm text-center">
-          Aún no hay actividad registrada. Las acciones que realicen en la app irán apareciendo aquí.
-        </div>
+        <GlassPanel className="px-5 py-10 text-center">
+          <p className="font-body italic text-pato-smoke text-sm">
+            Aún no hay actividad registrada. Las acciones que realicen en la app irán apareciendo aquí.
+          </p>
+        </GlassPanel>
       ) : (
         <ul className="space-y-3">
           {events.map((evt, i) => (
@@ -60,29 +66,31 @@ function ActivityEventCard({ event, profiles, onRemoved, index = 0 }) {
 
   return (
     <li
-      className="rounded-xl px-4 py-3 bg-pato-butter/80 border border-pato-honey/50 flex items-start gap-3 animate-slide-up hover:-translate-y-0.5 hover:shadow-md transition-all duration-200"
+      className="animate-slide-up"
       style={{ animationDelay: `${Math.min(index * 50, 400)}ms` }}
     >
-      <div className="shrink-0 w-9 h-9 rounded-full overflow-hidden border border-pato-honey/40 bg-pato-peach/60 flex items-center justify-center">
-        {photoUrl ? (
-          <img src={photoUrl} alt="" className="w-full h-full object-cover" />
-        ) : (
-          <span className="text-sm font-medium text-pato-ink select-none">{initial}</span>
-        )}
-      </div>
+      <GlassPanel className="px-4 py-3 flex items-start gap-3 hover:-translate-y-0.5 hover:shadow-glass transition-all duration-200">
+        <div className="shrink-0 w-9 h-9 rounded-full overflow-hidden border border-white/60 bg-pato-shell flex items-center justify-center">
+          {photoUrl ? (
+            <img src={photoUrl} alt="" className="w-full h-full object-cover" />
+          ) : (
+            <span className="text-sm font-medium text-pato-charcoal select-none">{initial}</span>
+          )}
+        </div>
 
-      <div className="flex-1 min-w-0">
-        <p className="text-sm text-pato-ink leading-snug">{event.description}</p>
-        <time className="text-xs text-pato-muted mt-0.5 block">{formatRelativeTime(event.createdAt)}</time>
-      </div>
+        <div className="flex-1 min-w-0">
+          <p className="font-body text-sm text-pato-charcoal leading-snug">{event.description}</p>
+          <time className="font-body text-xs text-pato-smoke mt-0.5 block">{formatRelativeTime(event.createdAt)}</time>
+        </div>
 
-      <button
-        type="button"
-        onClick={remove}
-        className="shrink-0 text-pato-muted text-xs hover:text-pato-coral hover:underline mt-0.5"
-      >
-        Quitar
-      </button>
+        <button
+          type="button"
+          onClick={remove}
+          className="shrink-0 font-body text-xs text-pato-smoke hover:text-pato-coral transition-colors mt-0.5"
+        >
+          Quitar
+        </button>
+      </GlassPanel>
     </li>
   )
 }

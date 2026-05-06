@@ -16,6 +16,11 @@ const API_BASE = (() => {
   return ''
 })()
 
+function apiHeaders() {
+  const secret = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_SECRET) || ''
+  return secret ? { 'x-api-key': secret } : {}
+}
+
 export async function sendEmailViaApi({ to, subject, text }) {
   if (!API_BASE) {
     return { ok: false, error: 'No está configurada la URL del servidor (VITE_API_URL).' }
@@ -24,7 +29,7 @@ export async function sendEmailViaApi({ to, subject, text }) {
   try {
     const res = await fetch(`${API_BASE}/api/send-email`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...apiHeaders() },
       body: JSON.stringify({ to: to.trim(), subject: subject || '', text: text || '' }),
     })
     const data = await res.json().catch(() => ({}))

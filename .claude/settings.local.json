@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git rm *)",
+      "Bash(grep -v \"//.*&&\")",
+      "Bash(npm run *)",
+      "Bash(git pull *)",
+      "Bash(git rebase *)",
+      "Bash(git merge *)",
+      "Bash(git checkout *)",
+      "Bash(sed -i 's/{ path: .\\\\/., label: .Inicio., Icon: MODULE_ICONS.inicio },/{ path: '\"'\"'\\\\/'\"'\"', label: '\"'\"'Inicio'\"'\"', Icon: MODULE_ICONS.inicio },\\\\n  { path: '\"'\"'\\\\/citas'\"'\"', label: '\"'\"'Citas'\"'\"', Icon: MODULE_ICONS.citas },/' src/presentation/components/Sidebar.jsx)"
+    ]
+  }
+}

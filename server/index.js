@@ -1,6 +1,7 @@
 import 'dotenv/config'
 import express from 'express'
 import cors from 'cors'
+import helmet from 'helmet'
 import rateLimit from 'express-rate-limit'
 import nodemailer from 'nodemailer'
 import { spawn } from 'child_process'
@@ -33,8 +34,12 @@ function fetchWithTimeout(url, options = {}, ms = FETCH_TIMEOUT_MS) {
 // En Railway/Render el tráfico llega por HTTPS mediante proxy; sin esto req.protocol sería 'http'
 // y Spotify rechazaría el redirect_uri (debe coincidir con https en el Dashboard).
 app.set('trust proxy', 1)
+app.use(helmet())
 
-app.use(cors({ origin: true }))
+// CORS: solo permite el origen del frontend configurado
+const allowedOrigin = (process.env.FRONTEND_URL || 'http://localhost:5173').trim().replace(/\/$/, '')
+app.use(cors({ origin: allowedOrigin, credentials: true }))
+
 app.use(express.json({ limit: '1mb' }))
 
 // Health: lo primero para que siempre respondan (raíz y /api/health)
@@ -44,7 +49,7 @@ app.get('/api/health', (_req, res) => res.json({ ok: true, service: 'pato-api' }
 // Rate limiting: evita abuso (correos masivos, peticiones excesivas al API)
 const apiLimiter = rateLimit({
   windowMs: 60 * 1000,
-  max: 120,
+  max: 30,
   message: { ok: false, error: 'Demasiadas peticiones. Espera un momento.' },
   standardHeaders: true,
   legacyHeaders: false,
@@ -54,10 +59,28 @@ app.use('/api/', apiLimiter)
 // Límite más estricto para envío de correo
 const emailLimiter = rateLimit({
   windowMs: 60 * 1000,
-  max: 10,
+  max: 5,
   message: { ok: false, error: 'Límite de envíos por minuto. Espera un poco.' },
 })
 app.use('/api/send-email', emailLimiter)
+
+// API key: todos los endpoints /api/* excepto los flujos OAuth (redirects de navegador/proveedor)
+const OAUTH_PATHS = new Set([
+  '/api/spotify/auth',
+  '/api/spotify/callback',
+  '/api/youtube/auth',
+  '/api/youtube/callback',
+])
+app.use('/api', (req, res, next) => {
+  const reqPath = req.originalUrl.split('?')[0]
+  if (OAUTH_PATHS.has(reqPath)) return next()
+  const apiSecret = (process.env.API_SECRET || '').trim()
+  if (!apiSecret) return next() // sin API_SECRET: modo dev sin auth
+  if (req.headers['x-api-key'] !== apiSecret) {
+    return res.status(401).json({ ok: false, error: 'No autorizado.' })
+  }
+  next()
+})
 
 // Arrancar el servidor YA para que el healthcheck de Railway reciba respuesta (el resto de rutas se añade después)
 const HOST = process.env.HOST || '0.0.0.0'
@@ -120,6 +143,11 @@ async function fetchPlaylistViaYtmusicapi(url) {
   })
 }
 
+// Strip CRLF to prevent email header injection
+function sanitizeHeader(value) {
+  return typeof value === 'string' ? value.replace(/[\r\n]/g, '') : ''
+}
+
 app.post('/api/send-email', async (req, res) => {
   const { to, subject, text } = req.body || {}
 
@@ -134,10 +162,21 @@ app.post('/api/send-email', async (req, res) => {
     return res.status(400).json({ ok: false, error: 'Falta el correo del destinatario (to).' })
   }
 
+  const sanitizedTo = sanitizeHeader(to).trim()
+
+  // Validar contra lista de destinatarios permitidos si está configurada
+  const allowedRecipientsEnv = (process.env.ALLOWED_EMAIL_RECIPIENTS || '').trim()
+  if (allowedRecipientsEnv) {
+    const allowed = allowedRecipientsEnv.split(',').map((e) => e.trim().toLowerCase()).filter(Boolean)
+    if (!allowed.includes(sanitizedTo.toLowerCase())) {
+      return res.status(403).json({ ok: false, error: 'Destinatario no permitido.' })
+    }
+  }
+
   const mailOptions = {
     from: gmailUser,
-    to: to.trim(),
-    subject: typeof subject === 'string' ? subject : '(Sin asunto)',
+    to: sanitizedTo,
+    subject: sanitizeHeader(typeof subject === 'string' ? subject : '(Sin asunto)'),
     text: typeof text === 'string' ? text : '',
   }
 
@@ -148,7 +187,7 @@ app.post('/api/send-email', async (req, res) => {
     console.error('Send email error:', err.message)
     return res.status(500).json({
       ok: false,
-      error: err.message || 'No se pudo enviar el correo.',
+      error: 'No se pudo enviar el correo.',
     })
   }
 })
@@ -266,7 +305,7 @@ app.get('/api/playlist/fetch', async (req, res) => {
     console.error('Playlist fetch error:', isTimeout ? 'timeout' : err.message)
     return res.status(500).json({
       ok: false,
-      error: isTimeout ? 'La petición tardó demasiado. Vuelve a intentarlo.' : (err.message || 'Error al obtener la playlist.'),
+      error: isTimeout ? 'La petición tardó demasiado. Vuelve a intentarlo.' : 'Error al obtener la playlist.',
     })
   }
 })
@@ -308,7 +347,7 @@ app.get('/api/spotify/auth', (req, res) => {
   }
   const nonce = Buffer.from(Date.now().toString(36) + Math.random().toString(36)).toString('base64url')
   const state = Buffer.from(JSON.stringify({ nonce, profileIndex })).toString('base64url')
-  spotifyAuthState = { state, profileIndex }
+  spotifyAuthState = { state, profileIndex, expiresAt: Date.now() + 5 * 60 * 1000 }
   const scope = 'user-read-currently-playing user-read-playback-state'
   const url = new URL('https://accounts.spotify.com/authorize')
   url.searchParams.set('response_type', 'code')
@@ -333,7 +372,7 @@ app.get('/api/spotify/callback', async (req, res) => {
       const decoded = JSON.parse(Buffer.from(state, 'base64url').toString())
       if (decoded.profileIndex === 0 || decoded.profileIndex === 1) profileIndex = decoded.profileIndex
     } catch {}
-    if (spotifyAuthState && state !== spotifyAuthState.state) {
+    if (!spotifyAuthState || state !== spotifyAuthState.state || Date.now() > spotifyAuthState.expiresAt) {
       spotifyAuthState = null
       return res.redirect(frontendUrl + '?spotify_error=invalid_callback')
     }
@@ -375,7 +414,7 @@ app.get('/api/spotify/callback', async (req, res) => {
     res.redirect(frontendUrl + '?spotify=connected&profile=' + profileIndex)
   } catch (err) {
     console.error('Spotify callback error:', err.message)
-    res.redirect(frontendUrl + '?spotify_error=' + encodeURIComponent(err.message))
+    res.redirect(frontendUrl + '?spotify_error=callback_failed')
   }
 })
 
@@ -446,7 +485,7 @@ app.get('/api/now-playing/spotify', async (req, res) => {
       })
     } catch (err) {
       console.error('Now playing error (profile ' + profileIndex + '):', err.message)
-      profiles.push({ profileIndex, track: null, error: err.message, connected: true })
+      profiles.push({ profileIndex, track: null, error: 'Error al obtener la canción.', connected: true })
     }
   }
   return res.json({ ok: true, profiles })
@@ -500,14 +539,14 @@ app.get('/api/youtube/auth', (req, res) => {
   if (!clientId) {
     return res.status(503).json({ ok: false, error: 'Configura YOUTUBE_CLIENT_ID y YOUTUBE_REDIRECT_URI en .env' })
   }
-  const state = Buffer.from(Date.now().toString(36) + Math.random().toString(36)).toString('base64url')
-  youtubeAuthState = state
+  const stateValue = Buffer.from(Date.now().toString(36) + Math.random().toString(36)).toString('base64url')
+  youtubeAuthState = { value: stateValue, expiresAt: Date.now() + 5 * 60 * 1000 }
   const url = new URL('https://accounts.google.com/o/oauth2/v2/auth')
   url.searchParams.set('client_id', clientId)
   url.searchParams.set('redirect_uri', redirectUri)
   url.searchParams.set('response_type', 'code')
   url.searchParams.set('scope', YOUTUBE_SCOPES)
-  url.searchParams.set('state', state)
+  url.searchParams.set('state', stateValue)
   url.searchParams.set('access_type', 'offline')
   url.searchParams.set('prompt', 'consent')
   res.redirect(url.toString())
@@ -521,7 +560,8 @@ app.get('/api/youtube/callback', async (req, res) => {
   if (error) {
     return res.redirect(frontendUrl + '?youtube_error=' + encodeURIComponent(error))
   }
-  if (!code || state !== youtubeAuthState) {
+  if (!code || !youtubeAuthState || state !== youtubeAuthState.value || Date.now() > youtubeAuthState.expiresAt) {
+    youtubeAuthState = null
     return res.redirect(frontendUrl + '?youtube_error=invalid_callback')
   }
   youtubeAuthState = null
@@ -557,11 +597,11 @@ app.get('/api/youtube/callback', async (req, res) => {
     res.redirect(frontendUrl + '?youtube=connected')
   } catch (err) {
     console.error('YouTube callback error:', err.message)
-    res.redirect(frontendUrl + '?youtube_error=' + encodeURIComponent(err.message))
+    res.redirect(frontendUrl + '?youtube_error=callback_failed')
   }
 })
 
-// Opcional: obtener access_token válido (refrescar si expiró)
+// Obtener access_token válido (refrescar si expiró)
 async function getYoutubeUserAccessToken() {
   if (!youtubeUserTokens?.refresh_token) return null
   const { clientId, clientSecret } = getYoutubeOAuthConfig()
@@ -613,7 +653,8 @@ app.get('/api/youtube/me', async (req, res) => {
       channel: channel ? { id: channel.id, title: channel.snippet?.title, thumb: channel.snippet?.thumbnails?.default?.url } : null,
     })
   } catch (err) {
-    return res.status(500).json({ ok: false, error: err.message })
+    console.error('YouTube me error:', err.message)
+    return res.status(500).json({ ok: false, error: 'api_error' })
   }
 })
 
@@ -633,4 +674,3 @@ function logIntegrations() {
     YouTube_API_key: youtubeApiKey ? 'ok' : 'no configurado',
   })
 }
-
