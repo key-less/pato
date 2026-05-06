@@ -1,25 +1,35 @@
 const KEY = 'pato_activity_events'
 
 export function createLocalStorageActivityEventRepository() {
-  const getAll = async () => {
+  let cache = null
+
+  const load = () => {
+    if (cache !== null) return cache
     try {
-      return JSON.parse(localStorage.getItem(KEY) || '[]')
+      cache = JSON.parse(localStorage.getItem(KEY) || '[]')
     } catch {
-      return []
+      cache = []
     }
+    return cache
   }
 
+  const persist = (items) => {
+    cache = items
+    localStorage.setItem(KEY, JSON.stringify(items))
+  }
+
+  const getAll = async () => load()
+
   const save = async (event) => {
-    const all = await getAll()
+    const all = load()
     const idx = all.findIndex((e) => e.id === event.id)
     if (idx >= 0) all[idx] = event
     else all.push(event)
-    localStorage.setItem(KEY, JSON.stringify(all))
+    persist(all)
   }
 
   const remove = async (id) => {
-    const all = await getAll()
-    localStorage.setItem(KEY, JSON.stringify(all.filter((e) => e.id !== id)))
+    persist(load().filter((e) => e.id !== id))
   }
 
   return { getAll, save, remove }

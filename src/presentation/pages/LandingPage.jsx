@@ -15,13 +15,15 @@ export default function LandingPage() {
   const [partnerProfiles, setPartnerProfiles] = useState([null, null])
 
   useEffect(() => {
-    container.getMediaList().then(setMedia)
-  }, [])
-  useEffect(() => {
-    container.getCitas().then(setCitas)
-  }, [])
-  useEffect(() => {
-    container.getPartnerProfiles().then(setPartnerProfiles)
+    Promise.all([
+      container.getMediaList(),
+      container.getCitas(),
+      container.getPartnerProfiles(),
+    ]).then(([m, c, p]) => {
+      setMedia(m)
+      setCitas(c)
+      setPartnerProfiles(p)
+    })
   }, [])
 
   const floatingMedia = useMemo(

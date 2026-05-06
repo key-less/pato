@@ -1,16 +1,21 @@
 const STORAGE_KEY = 'pato-citas'
 
 export function createLocalStorageCitaRepository() {
+  let cache = null
+
   function load() {
+    if (cache !== null) return cache
     try {
       const raw = localStorage.getItem(STORAGE_KEY)
-      return raw ? JSON.parse(raw) : []
+      cache = raw ? JSON.parse(raw) : []
     } catch {
-      return []
+      cache = []
     }
+    return cache
   }
 
-  function save(items) {
+  function persist(items) {
+    cache = items
     localStorage.setItem(STORAGE_KEY, JSON.stringify(items))
   }
 
@@ -23,10 +28,10 @@ export function createLocalStorageCitaRepository() {
       const idx = items.findIndex((c) => c.id === cita.id)
       if (idx >= 0) items[idx] = cita
       else items.push(cita)
-      save(items)
+      persist(items)
     },
     async remove(id) {
-      save(load().filter((c) => c.id !== id))
+      persist(load().filter((c) => c.id !== id))
     },
   }
 }

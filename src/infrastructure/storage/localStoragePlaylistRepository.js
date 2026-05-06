@@ -1,16 +1,21 @@
 const STORAGE_KEY = 'pato-playlists'
 
 export function createLocalStoragePlaylistRepository() {
+  let cache = null
+
   function load() {
+    if (cache !== null) return cache
     try {
       const raw = localStorage.getItem(STORAGE_KEY)
-      return raw ? JSON.parse(raw) : []
+      cache = raw ? JSON.parse(raw) : []
     } catch {
-      return []
+      cache = []
     }
+    return cache
   }
 
-  function save(items) {
+  function persist(items) {
+    cache = items
     localStorage.setItem(STORAGE_KEY, JSON.stringify(items))
   }
 
@@ -23,10 +28,10 @@ export function createLocalStoragePlaylistRepository() {
       const idx = items.findIndex((p) => p.id === playlist.id)
       if (idx >= 0) items[idx] = playlist
       else items.push(playlist)
-      save(items)
+      persist(items)
     },
     async remove(id) {
-      save(load().filter((p) => p.id !== id))
+      persist(load().filter((p) => p.id !== id))
     },
   }
 }

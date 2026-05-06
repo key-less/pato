@@ -1,19 +1,24 @@
 const STORAGE_KEY = 'pato-partner-profiles'
 
 export function createLocalStoragePartnerProfileRepository() {
+  let cache = null
+
   function load() {
+    if (cache !== null) return cache
     try {
       const raw = localStorage.getItem(STORAGE_KEY)
-      return raw ? JSON.parse(raw) : [null, null]
+      cache = raw ? JSON.parse(raw) : [null, null]
     } catch {
-      return [null, null]
+      cache = [null, null]
     }
+    return cache
   }
 
-  function save(profiles) {
+  function persist(profiles) {
     const list = Array.isArray(profiles) && profiles.length >= 2
       ? [profiles[0] ?? null, profiles[1] ?? null]
       : load()
+    cache = list
     localStorage.setItem(STORAGE_KEY, JSON.stringify(list))
   }
 
@@ -24,7 +29,7 @@ export function createLocalStoragePartnerProfileRepository() {
     async save(profile, index) {
       const list = load()
       list[index] = profile
-      save(list)
+      persist(list)
     },
   }
 }
