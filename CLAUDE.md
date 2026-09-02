@@ -6,6 +6,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Pato** — a couples web app with shared memories, a relationship counter, dates log, photo/video gallery, letters, partner profiles, playlists, and a "now playing" widget (Spotify + YouTube Music). Pastel design (cream, honey, peach, coral), optimized for mobile.
 
+## Roadmap
+
+Planned work is defined in `docs/ROADMAP.md` (5 numbered phases with written scope).
+The V2 plan under `docs/superpowers/plans/` is **complete** — do not treat its unchecked
+boxes as pending work; its header records what was verified.
+
 ## Commands
 
 ```bash

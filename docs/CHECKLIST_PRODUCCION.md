@@ -121,7 +121,7 @@ Ajustes aplicados en el código para reducir fallos y mejorar rendimiento:
 - **Backend:** Timeout de 15 s en peticiones a Spotify/YouTube; si la API externa no responde, se devuelve un mensaje claro en lugar de colgar. Rutas `/api/*` no definidas responden con JSON `{ ok: false, error: "Ruta no encontrada" }` (404).
 - **Frontend:** Error Boundary global: si un componente lanza un error, se muestra un mensaje amigable y botón "Recargar" en lugar de pantalla en blanco. Rutas cargadas con lazy loading (React.lazy + Suspense) para reducir el tamaño del bundle inicial. Build de Vite con chunks separados (vendor-react) para mejor caché.
 
-Con esto la app está preparada para producción estable y para continuar con fases posteriores (p. ej. Fase 7).
+Con esto la app está preparada para producción estable. Las etapas siguientes, con su alcance definido, están en [docs/ROADMAP.md](ROADMAP.md).
 
 ---
 

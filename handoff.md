@@ -130,19 +130,37 @@ conectada y ejecutando checks.
    desconéctalo en el dashboard de Cloudflare y borra `wrangler.jsonc`; mientras siga
    conectado, el archivo debe quedarse o todos los PR saldrán en rojo.
 
-**Deuda técnica pendiente (por prioridad):**
-1. **Sin tests automatizados.** Todo se verifica a mano. El candidato natural es Vitest
-   sobre los use cases y los repositorios de `localStorage`: son funciones puras con
-   dependencias inyectadas, así que se prueban sin navegador.
-2. **Tokens de OAuth en memoria del proceso.** Cada reinicio de Render desconecta
-   Spotify y YouTube, y el plan gratuito duerme el servicio. Persistirlos (Supabase ya
-   está reservado en la arquitectura) o asumir la reconexión manual.
-3. **Media como data URLs en `localStorage`.** Límite práctico ~5 MB por dominio: con
-   pocos vídeos la app dejará de guardar sin aviso claro. Falta detectar
-   `QuotaExceededError` y mostrar un mensaje útil; a medio plazo, mover a Supabase Storage.
-4. **Marcar las casillas del plan V2** o archivar el documento como completado, para que
-   no parezca trabajo pendiente en la próxima sesión.
-5. `caniuse-lite` desactualizado (7 meses) — `npx update-browserslist-db@latest`.
+**Plan de trabajo:** las etapas siguientes están definidas, numeradas y con alcance
+escrito en **[docs/ROADMAP.md](docs/ROADMAP.md)**. Resumen:
+
+| Fase | Qué resuelve |
+|---|---|
+| 1 — Tests automatizados | Habilita con seguridad todo lo demás |
+| 2 — Límite de almacenamiento | Un fallo silencioso que rompe **hoy** |
+| 3 — Supabase | Que la pareja comparta datos de verdad (la fase que cambia el producto) |
+| 4 — Tokens OAuth persistidos | Spotify deja de desconectarse en cada reinicio |
+| 5 — Tiempo real y pulido | Feed vivo entre los dos teléfonos |
+
+**Los tres problemas estructurales** que justifican ese orden (verificados en el código,
+detallados en el roadmap):
+
+1. **Nada se comparte.** Los ocho repositorios escriben solo en `localStorage` y no hay
+   sincronización con ningún servidor. Cada navegador y cada dispositivo es un silo
+   separado: en una app de pareja, la pareja no comparte. Ni siquiera el teléfono y el
+   portátil de la misma persona.
+2. **El almacenamiento rompe sin avisar.** `localStorageMediaRepository.save()` no tiene
+   `try/catch`; al agotar los ~5 MB de cuota, `setItem` lanza `QuotaExceededError` sin
+   que nadie lo capture. Los datos parecen guardarse y no se guardan.
+3. **Faltan contratos de repositorio.** `src/domain/repositories/` solo define tres de
+   ocho. Hoy no molesta; con una segunda implementación (Supabase) es donde ambas se
+   desincronizarán, porque nada obliga a que cumplan la misma forma.
+
+**Menor:** `caniuse-lite` desactualizado (7 meses) — `npx update-browserslist-db@latest`.
+
+**Estado del Plan V2:** marcado como completado y verificado contra el código. Quedan
+6 casillas de verificación manual en navegador sin marcar **a propósito**: requieren una
+persona delante y nadie las ha ejecutado. El código compila; el comportamiento en
+pantalla no está comprobado.
 
 ---
 
