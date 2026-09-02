@@ -145,7 +145,8 @@ describe('cuota de localStorage agotada (defecto conocido, se corrige en la Fase
     // en falso: `save` no lanza y la aserción de rechazo falla. No he identificado la
     // causa exacta dentro de happy-dom/vitest; la identidad del prototipo y de
     // `Storage.prototype` sí coinciden en ese punto. El espía sobre la instancia es
-    // determinista en ambos casos, así que es el que se usa.
+    // determinista en ambos casos, así que es el que se usa. Comprobado en happy-dom 15
+    // y 20: el comportamiento es el mismo en ambas.
     vi.spyOn(localStorage, 'setItem').mockImplementation(() => {
       const err = new Error('cuota agotada')
       err.name = 'QuotaExceededError'
