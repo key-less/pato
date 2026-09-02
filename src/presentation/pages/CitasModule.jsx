@@ -1,6 +1,10 @@
 import { useState, useEffect } from 'react'
 import { container } from '../../infrastructure/di/container.js'
-import { LOGO_DUCK } from '../config/assets.js'
+import { MODULE_ICONS } from '../config/assets.js'
+import ModuleHeader from '../components/ModuleHeader.jsx'
+import { glassStyle } from '../components/GlassPanel.jsx'
+import ActionButton from '../components/ActionButton.jsx'
+import Field from '../components/Field.jsx'
 
 export default function CitasModule() {
   const [citas, setCitas] = useState([])
@@ -10,18 +14,30 @@ export default function CitasModule() {
   useEffect(() => { loadCitas() }, [])
 
   return (
-    <div className="max-w-3xl mx-auto pt-14 pb-28 px-4">
-      <header className="flex items-center gap-3 mb-8">
-        <img src={LOGO_DUCK} alt="" className="w-10 h-10 rounded-full object-cover ring-2 ring-pato-coral/40" />
-        <h1 className="font-display text-2xl font-semibold text-pato-ink">Citas</h1>
-      </header>
+    <div className="max-w-3xl mx-auto pt-14 pb-16 px-4">
+      <ModuleHeader
+        icon={MODULE_ICONS.citas}
+        eyebrow="Nuestros encuentros"
+        italic="Nuestras"
+        title="citas"
+        description="Cada lugar y cada hora que quisimos recordar."
+      />
 
       <CitaForm onAdded={loadCitas} />
 
       <ul className="mt-6 space-y-3">
         {citas.length === 0 ? (
-          <li className="rounded-xl px-4 py-5 bg-pato-butter/60 border border-pato-honey/40 text-pato-muted text-sm text-center">
-            Aún no hay citas registradas.
+          <li
+            className="rounded-3xl px-6 py-10 text-center"
+            style={{
+              // Estado vacío: borde punteado en lugar de superficie sólida. Comunica
+              // "aquí va a haber algo" en vez de parecer una tarjeta más ya rellenada.
+              border: '1px dashed rgba(217, 179, 168, 0.75)',
+              background: 'rgba(255,255,255,0.28)',
+            }}
+          >
+            <p className="font-display text-lg text-pato-charcoal/80 italic">Aún no hay citas registradas.</p>
+            <p className="font-body text-xs text-pato-smoke mt-1.5">La primera que guardéis aparecerá aquí.</p>
           </li>
         ) : (
           citas.map((c, i) => (
@@ -55,53 +71,38 @@ function CitaForm({ onAdded }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="rounded-xl p-4 bg-pato-butter/80 border border-pato-honey/50 space-y-3">
+    <form onSubmit={handleSubmit} className="rounded-3xl p-6 space-y-4" style={glassStyle}>
       <div className="grid sm:grid-cols-2 gap-3">
-        <div>
-          <label className="block text-xs font-medium text-pato-muted mb-1">Fecha de la cita</label>
-          <input
-            type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-            className="w-full rounded-xl border border-pato-honey bg-white/95 px-3 py-2 text-pato-ink text-sm"
-          />
-        </div>
-        <div>
-          <label className="block text-xs font-medium text-pato-muted mb-1">Hora de encuentro</label>
-          <input
-            type="time"
-            value={horaEncuentro}
-            onChange={(e) => setHoraEncuentro(e.target.value)}
-            className="w-full rounded-xl border border-pato-honey bg-white/95 px-3 py-2 text-pato-ink text-sm"
-          />
-        </div>
-      </div>
-      <div>
-        <label className="block text-xs font-medium text-pato-muted mb-1">Lugar</label>
-        <input
-          type="text"
-          value={lugar}
-          onChange={(e) => setLugar(e.target.value)}
-          placeholder="Ej. Restaurante El Jardín"
-          className="w-full rounded-xl border border-pato-honey bg-white/95 px-3 py-2 text-pato-ink text-sm placeholder-pato-muted"
+        <Field
+          label="Fecha de la cita"
+          type="date"
+          value={date}
+          onChange={(e) => setDate(e.target.value)}
+        />
+        <Field
+          label="Hora de encuentro"
+          type="time"
+          value={horaEncuentro}
+          onChange={(e) => setHoraEncuentro(e.target.value)}
         />
       </div>
-      <div>
-        <label className="block text-xs font-medium text-pato-muted mb-1">Nota (opcional)</label>
-        <input
-          type="text"
-          value={note}
-          onChange={(e) => setNote(e.target.value)}
-          placeholder="Detalles o recuerdo"
-          className="w-full rounded-xl border border-pato-honey bg-white/95 px-3 py-2 text-pato-ink text-sm placeholder-pato-muted"
-        />
-      </div>
-      <button
-        type="submit"
-        className="w-full sm:w-auto px-4 py-2 rounded-xl bg-pato-sage/70 text-pato-ink text-sm font-medium"
-      >
+      <Field
+        label="Lugar"
+        type="text"
+        value={lugar}
+        onChange={(e) => setLugar(e.target.value)}
+        placeholder="Ej. Restaurante El Jardín"
+      />
+      <Field
+        label="Nota (opcional)"
+        type="text"
+        value={note}
+        onChange={(e) => setNote(e.target.value)}
+        placeholder="Detalles o recuerdo"
+      />
+      <ActionButton type="submit" className="w-full sm:w-auto">
         Agregar cita
-      </button>
+      </ActionButton>
     </form>
   )
 }
@@ -120,22 +121,22 @@ function CitaCard({ cita, onRemoved, index = 0 }) {
 
   return (
     <li
-      className="rounded-xl px-4 py-4 bg-pato-butter/80 border border-pato-honey/50 flex items-start justify-between gap-3 animate-slide-up hover:-translate-y-0.5 hover:shadow-md transition-all duration-200"
-      style={{ animationDelay: `${Math.min(index * 60, 400)}ms` }}
+      className="rounded-3xl px-5 py-4 flex items-start justify-between gap-3 animate-slide-up hover:-translate-y-0.5 transition-transform duration-200"
+      style={{ ...glassStyle, animationDelay: `${Math.min(index * 60, 400)}ms` }}
     >
       <div className="min-w-0">
-        <div className="font-medium text-pato-ink">{formatDate(cita.date)}</div>
+        <div className="font-body font-medium text-pato-charcoal">{formatDate(cita.date)}</div>
         {(cita.lugar || cita.horaEncuentro) && (
-          <div className="text-pato-muted text-sm mt-0.5">
+          <div className="font-body text-pato-smoke text-sm mt-0.5">
             {[cita.lugar, cita.horaEncuentro || null].filter(Boolean).join(' · ')}
           </div>
         )}
-        {cita.note && <p className="text-pato-muted text-sm mt-1">{cita.note}</p>}
+        {cita.note && <p className="font-body text-pato-smoke text-sm mt-1">{cita.note}</p>}
       </div>
       <button
         type="button"
         onClick={remove}
-        className="text-pato-muted text-xs hover:text-pato-coral hover:underline shrink-0"
+        className="font-body text-pato-smoke text-xs hover:text-pato-terra hover:underline shrink-0 min-h-[44px] px-1"
       >
         Quitar
       </button>

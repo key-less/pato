@@ -50,7 +50,10 @@ export function Layout({ children }) {
         className="flex-1 relative min-w-0 pl-14 sm:pl-16 z-10"
         style={{
           paddingTop: 'max(3.5rem, env(safe-area-inset-top, 0px))',
-          paddingBottom: 'max(5rem, env(safe-area-inset-bottom, 0px))',
+          // Solo el área segura del dispositivo. El espacio de respiro al final de
+          // cada pantalla lo pone la página: sumar 5rem aquí lo duplicaba y dejaba
+          // casi 200px vacíos al pie de todas las vistas.
+          paddingBottom: 'max(1rem, env(safe-area-inset-bottom, 0px))',
         }}
       >
         <div

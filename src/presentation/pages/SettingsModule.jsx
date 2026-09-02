@@ -73,7 +73,7 @@ export default function SettingsModule() {
   }
 
   return (
-    <div className="max-w-xl mx-auto pt-14 pb-28 px-4">
+    <div className="max-w-xl mx-auto pt-14 pb-16 px-4">
       <ModuleHeader
         icon={DuckSettings}
         eyebrow="Personaliza tu Pato"

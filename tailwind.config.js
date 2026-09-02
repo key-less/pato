@@ -21,6 +21,10 @@ export default {
           muted: '#7a6565',
           // New tokens for glass redesign
           ivory: '#fbf5ec',
+          // Borde/divisor con suficiente valor para leerse tanto sobre la crema
+          // clara como sobre el rosa del final del degradado. `rose` no lo lograba:
+          // es casi el mismo color que el fondo en ese tramo.
+          line: '#d9b3a8',
           shell: '#f1e3d7',
           terra: '#b87560',
           plum: '#8b5a6b',
@@ -40,9 +44,26 @@ export default {
         xs: '2px',
       },
       boxShadow: {
-        'glass': '0 8px 32px -8px rgba(184, 117, 96, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.55)',
-        'glass-lg': '0 24px 60px -20px rgba(184, 117, 96, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.6)',
-        'soft': '0 4px 20px -8px rgba(184, 117, 96, 0.15)',
+        // Escala de profundidad en tres niveles claramente distintos. Los valores
+        // anteriores eran casi idénticos entre sí, así que una tarjeta, un panel y un
+        // elemento elevado se veían igual y la jerarquía se perdía.
+        //
+        // Cada nivel combina una sombra de contacto (corta y más opaca, ancla el
+        // elemento al fondo) con una sombra ambiental (larga y difusa, da la altura).
+        // Con una sola sombra difusa, como estaba, los bordes flotan sin apoyarse.
+        'glass': [
+          '0 1px 2px -1px rgba(122, 74, 60, 0.16)',
+          '0 8px 24px -12px rgba(122, 74, 60, 0.22)',
+          'inset 0 1px 0 rgba(255, 255, 255, 0.75)',
+        ].join(', '),
+        'glass-lg': [
+          '0 2px 4px -2px rgba(122, 74, 60, 0.20)',
+          '0 20px 48px -20px rgba(122, 74, 60, 0.30)',
+          'inset 0 1px 0 rgba(255, 255, 255, 0.8)',
+        ].join(', '),
+        'soft': '0 1px 3px -1px rgba(122, 74, 60, 0.14), 0 4px 12px -6px rgba(122, 74, 60, 0.16)',
+        // Acciones principales: la sombra toma el tono del propio botón, no gris.
+        'action': '0 1px 2px -1px rgba(160, 84, 64, 0.35), 0 8px 20px -8px rgba(180, 100, 78, 0.45)',
       },
       animation: {
         'float': 'float 6s ease-in-out infinite',

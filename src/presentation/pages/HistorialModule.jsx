@@ -20,7 +20,7 @@ export default function HistorialModule() {
   useEffect(() => { load() }, [])
 
   return (
-    <div className="max-w-3xl mx-auto pt-14 pb-28 px-4">
+    <div className="max-w-3xl mx-auto pt-14 pb-16 px-4">
       <ModuleHeader
         icon={DuckHistory}
         eyebrow="Registro de actividad"

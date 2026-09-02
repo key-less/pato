@@ -6,6 +6,7 @@ import { container } from '../../infrastructure/di/container.js'
 import { getQuoteOfTheDay } from '../config/romanticQuotes.js'
 import { FloatingPhotos } from '../components/FloatingPhotos'
 import { FloatingVideos } from '../components/FloatingVideos'
+import { glassStyle } from '../components/GlassPanel.jsx'
 
 export default function LandingPage() {
   const { state, loading, update: updateAppState } = useAppState()
@@ -49,7 +50,7 @@ export default function LandingPage() {
   const hasAnyProfile = !!(p0?.nombre || p1?.nombre)
 
   return (
-    <div className="min-h-screen pt-20 pb-24 px-4">
+    <div className="pt-14 pb-16 px-4">
       <FloatingPhotos media={floatingMedia} />
       <FloatingVideos media={landingVideos} />
 
@@ -110,9 +111,9 @@ export default function LandingPage() {
 
         <section className="pt-6">
           <div className="flex items-center gap-4 mb-5">
-            <div className="flex-1 h-px bg-gradient-to-r from-transparent via-pato-rose/50 to-transparent" />
+            <div className="flex-1 h-px bg-gradient-to-r from-transparent to-pato-line/70" />
             <h2 className="font-display text-2xl font-medium text-pato-charcoal tracking-tight">Citas</h2>
-            <div className="flex-1 h-px bg-gradient-to-r from-transparent via-pato-rose/50 to-transparent" />
+            <div className="flex-1 h-px bg-gradient-to-l from-transparent to-pato-line/70" />
           </div>
           <p className="text-sm text-pato-muted font-body text-center mb-5">Las últimas citas registradas.</p>
           {citas.length === 0 ? (
@@ -146,13 +147,6 @@ export default function LandingPage() {
   )
 }
 
-const glassStyle = {
-  background: 'linear-gradient(135deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.35) 100%)',
-  backdropFilter: 'blur(20px)',
-  WebkitBackdropFilter: 'blur(20px)',
-  border: '1px solid rgba(255,255,255,0.6)',
-  boxShadow: '0 8px 32px -8px rgba(184, 117, 96, 0.15), inset 0 1px 0 rgba(255,255,255,0.5)',
-}
 
 function GlassCard({ children, className = '' }) {
   return (

@@ -86,7 +86,7 @@ export default function LettersModule() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto pt-14 pb-28 px-4">
+    <div className="max-w-2xl mx-auto pt-14 pb-16 px-4">
       <ModuleHeader
         icon={DuckLetters}
         eyebrow="Palabras escritas con cariño"

@@ -48,7 +48,7 @@ export default function PartnerProfileModule() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto pt-14 pb-28 px-4">
+    <div className="max-w-4xl mx-auto pt-14 pb-16 px-4">
       <ModuleHeader
         icon={DuckProfile}
         eyebrow="Quiénes somos"
