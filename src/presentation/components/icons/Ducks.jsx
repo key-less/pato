@@ -177,6 +177,33 @@ export function DuckLetters(props) {
   )
 }
 
+/**
+ * Icono del módulo de Citas.
+ *
+ * Antes compartía `DuckLetters` con el módulo de Cartas: dos entradas del menú con el
+ * mismo dibujo, así que el icono no ayudaba a distinguirlas. El marcador de lugar es lo
+ * que registra el módulo —dónde y a qué hora— y no choca con el calendario de Historial
+ * ni con el sobre de Cartas.
+ */
+export function DuckDates(props) {
+  return (
+    <DuckBody
+      {...props}
+      accent={
+        <g transform="translate(28 41)">
+          <path
+            d="M0 -8 c-3.6 0 -6.5 2.9 -6.5 6.5 c0 4.8 6.5 11.5 6.5 11.5 s6.5 -6.7 6.5 -11.5 c0 -3.6 -2.9 -6.5 -6.5 -6.5z"
+            fill="#d4897a"
+            stroke="#9d6c5e"
+            strokeWidth="0.6"
+          />
+          <circle cy="-1.5" r="2.6" fill="#fdf6ee" />
+        </g>
+      }
+    />
+  )
+}
+
 export function DuckSettings(props) {
   return (
     <DuckBody

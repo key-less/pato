@@ -3,6 +3,7 @@ import { container } from '../../infrastructure/di/container.js'
 import { DuckHistory } from '../components/icons/Ducks.jsx'
 import GlassPanel from '../components/GlassPanel.jsx'
 import ModuleHeader from '../components/ModuleHeader.jsx'
+import EmptyState from '../components/EmptyState.jsx'
 
 export default function HistorialModule() {
   const [events, setEvents] = useState([])
@@ -30,11 +31,10 @@ export default function HistorialModule() {
       />
 
       {events.length === 0 ? (
-        <GlassPanel className="px-5 py-10 text-center">
-          <p className="font-body italic text-pato-smoke text-sm">
-            Aún no hay actividad registrada. Las acciones que realicen en la app irán apareciendo aquí.
-          </p>
-        </GlassPanel>
+        <EmptyState
+          title="Aún no hay actividad registrada."
+          hint="Lo que hagáis en la app irá apareciendo aquí."
+        />
       ) : (
         <ul className="space-y-3">
           {events.map((evt, i) => (

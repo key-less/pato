@@ -5,6 +5,7 @@ import ModuleHeader from '../components/ModuleHeader.jsx'
 import { glassStyle } from '../components/GlassPanel.jsx'
 import ActionButton from '../components/ActionButton.jsx'
 import Field from '../components/Field.jsx'
+import EmptyState from '../components/EmptyState.jsx'
 
 export default function CitasModule() {
   const [citas, setCitas] = useState([])
@@ -27,17 +28,11 @@ export default function CitasModule() {
 
       <ul className="mt-6 space-y-3">
         {citas.length === 0 ? (
-          <li
-            className="rounded-3xl px-6 py-10 text-center"
-            style={{
-              // Estado vacío: borde punteado en lugar de superficie sólida. Comunica
-              // "aquí va a haber algo" en vez de parecer una tarjeta más ya rellenada.
-              border: '1px dashed rgba(217, 179, 168, 0.75)',
-              background: 'rgba(255,255,255,0.28)',
-            }}
-          >
-            <p className="font-display text-lg text-pato-charcoal/80 italic">Aún no hay citas registradas.</p>
-            <p className="font-body text-xs text-pato-smoke mt-1.5">La primera que guardéis aparecerá aquí.</p>
+          <li>
+            <EmptyState
+              title="Aún no hay citas registradas."
+              hint="La primera que guardéis aparecerá aquí."
+            />
           </li>
         ) : (
           citas.map((c, i) => (

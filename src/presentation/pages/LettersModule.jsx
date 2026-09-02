@@ -4,6 +4,7 @@ import { sendEmailViaApi, isEmailApiConfigured } from '../../infrastructure/api/
 import { DuckLetters } from '../components/icons/Ducks.jsx'
 import GlassPanel from '../components/GlassPanel.jsx'
 import ModuleHeader from '../components/ModuleHeader.jsx'
+import EmptyState from '../components/EmptyState.jsx'
 
 export default function LettersModule() {
   const [letters, setLetters] = useState([])
@@ -209,7 +210,10 @@ export default function LettersModule() {
           ))}
         </ul>
         {letters.length === 0 && (
-          <p className="text-pato-smoke font-body italic text-center py-8">Aún no hay cartas guardadas.</p>
+          <EmptyState
+            title="Aún no hay cartas guardadas."
+            hint="Escribe la primera arriba y quedará guardada aquí."
+          />
         )}
       </section>
     </div>

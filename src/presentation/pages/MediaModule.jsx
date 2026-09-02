@@ -4,6 +4,7 @@ import { useAppState } from '../hooks/useAppState'
 import { DuckPhotos } from '../components/icons/Ducks.jsx'
 import GlassPanel, { glassStyle } from '../components/GlassPanel.jsx'
 import ModuleHeader from '../components/ModuleHeader.jsx'
+import EmptyState from '../components/EmptyState.jsx'
 
 export default function MediaModule() {
   const { state } = useAppState()
@@ -108,9 +109,10 @@ export default function MediaModule() {
       </div>
 
       {media.length === 0 && (
-        <p className="text-pato-smoke font-body italic text-center py-12">
-          Aún no hay fotos ni videos. Cuando agregues algunos, podrás marcar los que aparezcan flotando en Inicio.
-        </p>
+        <EmptyState
+          title="Aún no hay fotos ni videos."
+          hint="Cuando agregues algunos podrás marcar los que aparezcan flotando en Inicio."
+        />
       )}
     </div>
   )

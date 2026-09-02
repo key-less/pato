@@ -4,6 +4,9 @@ import { fetchPlaylistByUrl } from '../../infrastructure/api/playlistApi.js'
 import { DuckPlaylists } from '../components/icons/Ducks.jsx'
 import GlassPanel, { glassStyle } from '../components/GlassPanel.jsx'
 import ModuleHeader from '../components/ModuleHeader.jsx'
+import EmptyState from '../components/EmptyState.jsx'
+import ActionButton from '../components/ActionButton.jsx'
+import Field from '../components/Field.jsx'
 
 export default function PlaylistsModule() {
   const [playlists, setPlaylists] = useState([])
@@ -63,21 +66,20 @@ export default function PlaylistsModule() {
         description="Pega un enlace de Spotify o YouTube Music. Construyamos juntos la música que nos acompaña."
       />
 
-      <form onSubmit={handleAdd} className="mb-8 flex flex-wrap gap-2">
-        <input
+      {/* El formulario va en un panel, como el de Citas: antes el input y el botón
+          flotaban sueltos sobre el degradado mientras el resto de la app agrupaba sus
+          controles en tarjetas. */}
+      <form onSubmit={handleAdd} className="mb-8 rounded-3xl p-6 space-y-4" style={glassStyle}>
+        <Field
+          label="Enlace de la playlist"
           type="url"
           value={url}
           onChange={(e) => setUrl(e.target.value)}
-          placeholder="https://open.spotify.com/playlist/… o YouTube Music"
-          className="flex-1 min-w-[200px] rounded-2xl border border-white/70 bg-white/85 px-4 py-3 text-pato-charcoal placeholder-pato-smoke font-body focus:outline-none focus:ring-2 focus:ring-pato-coral/40"
+          placeholder="https://open.spotify.com/playlist/…"
         />
-        <button
-          type="submit"
-          disabled={loading}
-          className="px-6 py-3 rounded-2xl bg-pato-coral text-white font-body font-medium disabled:opacity-60 hover:bg-pato-terra transition-colors"
-        >
+        <ActionButton type="submit" disabled={loading} className="w-full sm:w-auto">
           {loading ? 'Buscando…' : 'Agregar playlist'}
-        </button>
+        </ActionButton>
       </form>
 
       {error && (
@@ -113,7 +115,10 @@ export default function PlaylistsModule() {
       </div>
 
       {playlists.length === 0 && (
-        <p className="text-pato-smoke font-body italic text-center py-12">Aún no hay playlists. Agrega una con el enlace de arriba.</p>
+        <EmptyState
+          title="Aún no hay playlists."
+          hint="Pega un enlace de Spotify o YouTube Music arriba para empezar."
+        />
       )}
     </div>
   )

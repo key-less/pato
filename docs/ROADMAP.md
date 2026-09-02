@@ -239,6 +239,27 @@ proyecto en condiciones de afrontar la 3, que es la que cambia el producto de ve
 
 ---
 
+## Rediseño visual (fuera de las fases numeradas)
+
+Trabajo hecho a petición directa, no parte de las cinco fases. Dos pasadas:
+
+**Primera** — el rango de valor. La paleta ocupaba una banda de luminosidad estrecha y
+nada se separaba de nada. Escala de profundidad en tres niveles, superficies de vidrio
+con más blanco y borde propio, `pato-line` para reglas que aguanten sobre todo el
+degradado, `ActionButton` y `Field` compartidos, y el padding duplicado entre Layout y
+páginas (~190px muertos al pie de cada pantalla) reducido a 16px.
+
+**Segunda** — la consistencia del sistema. Seis módulos resolvían el estado vacío de seis
+formas distintas; ahora hay un `EmptyState` común. El formulario de Playlists flotaba
+suelto mientras el resto agrupaba sus controles en tarjetas. Y `citas` y `cartas`
+compartían icono en el menú (`DuckLetters` para ambos, heredado del merge de la V2), así
+que dos entradas se veían iguales: Citas tiene ahora el suyo.
+
+**Pendiente si se retoma:** jerarquía tipográfica entre módulos, y el `NowPlayingWidget`,
+que no se ha revisado.
+
+---
+
 ## Qué NO está en este roadmap y por qué
 
 - **Reescribir en Next.js o cambiar de framework.** No resuelve ninguno de los tres
