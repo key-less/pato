@@ -8,9 +8,11 @@ import { FloatingPhotos } from '../components/FloatingPhotos'
 import { FloatingVideos } from '../components/FloatingVideos'
 import Estanque from '../components/Estanque.jsx'
 import Panel, { estiloPapel } from '../components/Panel.jsx'
+import { useCompania } from '../hooks/useCompania.js'
 
 export default function LandingPage() {
   const { state, loading, update: updateAppState } = useAppState()
+  const { acompanado, saludo } = useCompania()
   const { parts: counterParts } = useElapsedCounter(state?.metSince ?? null)
   const [media, setMedia] = useState([])
   const [citas, setCitas] = useState([])
@@ -75,9 +77,15 @@ export default function LandingPage() {
               <Estanque
                 statusId={state.currentRelationshipStatusId}
                 statuses={state.relationshipStatuses}
+                saludo={saludo}
                 className="max-w-[16rem]"
               />
               <figcaption className="font-display italic text-xl text-pato-agua">{statusLabel}</figcaption>
+              {acompanado && (
+                <p className="font-body text-xs uppercase tracking-[0.2em] text-pato-coral mt-1" aria-live="polite">
+                  Los dos, aquí ahora
+                </p>
+              )}
             </figure>
           </Panel>
         )}

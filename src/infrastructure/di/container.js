@@ -77,4 +77,12 @@ export const container = {
 
   /** Sesion y emparejamiento. Null mientras la app corre solo en el navegador. */
   account: isSupabaseConfigured ? createSupabaseAccountRepository() : null,
+
+  /**
+   * La onda compartida: avisa cuando la otra persona tambien tiene la app abierta.
+   * Null en modo local, donde no hay nadie mas a quien sentir.
+   */
+  subscribePresence: repositories.presence
+    ? (listener) => repositories.presence.subscribe(listener)
+    : null,
 }

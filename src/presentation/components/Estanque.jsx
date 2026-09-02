@@ -65,9 +65,10 @@ function Onda({ cx, rx, ry, color, opacity = 1 }) {
  * @param {string} [props.statusId] - id del estado actual
  * @param {Array}  [props.statuses] - lista completa, para ubicar estados personalizados
  * @param {boolean} [props.solo] - un solo pato esperando (pantalla de emparejamiento)
+ * @param {number}  [props.saludo] - sube cuando la pareja aparece; dispara la onda compartida
  * @param {string} [props.label] - texto accesible
  */
-export default function Estanque({ statusId, statuses, solo = false, label, className = '' }) {
+export default function Estanque({ statusId, statuses, solo = false, saludo = 0, label, className = '' }) {
   const etapa = etapaPara(statusId, statuses)
   const centro = 100
 
@@ -115,6 +116,28 @@ export default function Estanque({ statusId, statuses, solo = false, label, clas
           <Pato x={izquierda} />
           <Pato x={derecha} mirandoIzquierda={etapa.mirandose} />
         </>
+      )}
+
+      {/* La onda compartida. La `key` la remonta, y por eso vuelve a reproducirse
+          cada vez que la otra persona aparece. */}
+      {saludo > 0 && (
+        <g key={saludo}>
+          {[0, 0.5].map((retraso, i) => (
+            <ellipse
+              key={i}
+              cx={centro}
+              cy={LINEA_AGUA}
+              rx="30"
+              ry="6"
+              fill="none"
+              stroke="#d4664f"
+              strokeWidth="1.5"
+              opacity="0"
+              className="motion-safe:animate-onda-saludo"
+              style={{ transformBox: 'fill-box', transformOrigin: 'center', animationDelay: `${retraso}s` }}
+            />
+          ))}
+        </g>
       )}
 
       <line x1="14" y1={LINEA_AGUA} x2="186" y2={LINEA_AGUA} stroke="#dcc8ba" strokeWidth="1" />

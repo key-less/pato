@@ -44,6 +44,10 @@ export function exportBackup(repositories) {
       mediaEntries.push(entry)
     }
 
+    // Una carta sellada por la otra persona llega como marcador sin contenido:
+    // no es dato que exportar, y restaurarla crearia una carta vacia en su lugar.
+    const cartas = letters.filter((letter) => !letter.selladaPorLaPareja)
+
     return {
       format: BACKUP_FORMAT,
       version: BACKUP_VERSION,
@@ -52,7 +56,7 @@ export function exportBackup(repositories) {
       data: {
         appState,
         citas,
-        letters,
+        letters: cartas,
         sentLetterLogs,
         partnerProfiles,
         playlists,

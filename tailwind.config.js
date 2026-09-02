@@ -57,6 +57,7 @@ export default {
         'shimmer': 'shimmer 12s ease-in-out infinite',
         'slide-up': 'slideUp 0.35s ease-out both',
         'onda': 'onda 2.8s ease-out infinite',
+        'onda-saludo': 'ondaSaludo 2.6s ease-out both',
       },
       keyframes: {
         float: {
@@ -79,6 +80,12 @@ export default {
         onda: {
           '0%':   { transform: 'scale(0.6)', opacity: '0.75' },
           '100%': { transform: 'scale(1.6)', opacity: '0' },
+        },
+        // La onda compartida: nace una vez cuando la otra persona aparece.
+        ondaSaludo: {
+          '0%':   { transform: 'scale(0.3)', opacity: '0' },
+          '12%':  { opacity: '0.9' },
+          '100%': { transform: 'scale(2.4)', opacity: '0' },
         },
       },
       padding: {

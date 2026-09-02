@@ -35,11 +35,21 @@
   y lo que hace que los cálidos se lean cálidos
 - Ondas en vez de spinners; el estado de la relación como dos patos en el agua
 
-**Funciones nuevas: diseñadas, sin construir.** Ver la dirección «Señales en el agua»
-(distancia sin mapa, toques con animación firmada, la onda compartida, cartas con
-fecha). Las dos últimas no dependen de iOS y se pueden hacer ya.
+**«Señales en el agua»: dos de las cuatro construidas.**
 
-62 tests con Vitest; `npm test`.
+- **Cartas con fecha.** Una carta puede quedar sellada hasta un día. El sellado se
+  impone en la base (`0004_cartas_con_fecha.sql`), no en la interfaz: la política de
+  lectura excluye la carta sellada que escribió la otra persona, así que no se puede
+  adelantar abriendo las herramientas del navegador. Lo que sí llega es que existe y
+  para cuándo, por `cartas_selladas()`, para no perder la espera.
+- **La onda compartida.** Cuando los dos tienen la app abierta a la vez, en las dos
+  pantallas nace la misma onda. Usa Presence de Realtime, que es efímero: no se
+  guarda una fila ni queda registro de cuándo estuvo conectado cada uno.
+
+Pendientes de la misma dirección: los toques con foto y animación firmada (necesitan
+push, Fase 2) y la distancia con su widget (Fase 3).
+
+77 tests con Vitest; `npm test`.
 
 ## ⚠️ Lo que NO está verificado
 
@@ -63,6 +73,11 @@ quien se queda. Si algo ahí falla, la Fase 1 no está lista.
 Tampoco están probados contra un proyecto real los adaptadores de
 `src/infrastructure/supabase/`: sus tests cubren el mapeo entre Postgres y el
 dominio, no las llamadas de red.
+
+De lo nuevo, queda sin verificar: las políticas de `0004_cartas_con_fecha.sql` (mismo
+motivo — no hay Postgres aquí) y la suscripción de Presence, que necesita el proyecto
+de Supabase y dos sesiones a la vez. Lo que sí está verificado es la parte visual de
+la onda y los tres estados de las cartas en el navegador.
 
 ## Failures & Root Causes
 
@@ -92,6 +107,17 @@ dibujaban a la vez y se superponían en un nudo. El propio plan decía «una sol
 para los dos» y el código no lo cumplía: ahora las propias se apagan conforme crece
 la común. Causa raíz: implementar la geometría sin releer lo que la dirección
 prometía.
+
+**Editar una carta le cambiaba la fecha de creación.** `saveLetter` pasaba
+`createdAt: undefined` al editar, y `createLetter` lo rellenaba con la de ahora: así
+que corregir una falta movía la carta al principio de la lista y perdía el día en que
+se escribió. Ahora el caso de uso conserva la original. Causa raíz: un `undefined`
+usado como «no lo cambies» contra una entidad que lo interpreta como «ponle uno».
+
+**La copia de seguridad iba a exportar cartas vacías.** Una carta sellada por la
+pareja llega como marcador sin contenido, y `exportBackup` lo habría guardado como
+una carta de verdad; al restaurar habrían aparecido cartas vacías. Se excluyen.
+Causa raíz: añadir un tipo de fila nueva sin repasar quién más lee esa colección.
 
 **Un reemplazo masivo dejó un nombre mintiendo.** Al renombrar `glassStyle` a
 `estiloPapel` en bloque, la definición local de `LandingPage` quedó llamándose papel
@@ -124,7 +150,9 @@ que se renombraba, no solo dónde se usaba.
 | Estados personalizados perdidos | Orden invertido en `updateAppState.js:11` | Test de regresión, rojo antes y verde después |
 | Fechas corridas un día | `new Date(\`${iso}T00:00\`)` en `MediaModule` | Verificado en navegador |
 | Nada compartido entre los dos | Esquema con `couple_id`, RLS con `using` **y** `with check`, Storage privado | **Sin verificar** — ver la advertencia de arriba |
-| El estado era una píldora de texto | `Estanque`: dos patos y la distancia entre ellos | 8 tests + geometría medida en navegador (8 px de holgura en el estado más cercano) |
+| El estado era una píldora de texto | `Estanque`: dos patos y la distancia entre ellos | 9 tests + geometría medida en navegador (8 px de holgura en el estado más cercano) |
+| Las cartas no podían esperar a una fecha | `unlocksAt` + políticas por comando + `cartas_selladas()` | 16 tests + los tres estados vistos en navegador; las políticas **sin verificar** |
+| No se notaba si el otro estaba ahí | Presence de Realtime, sin guardar nada | Onda verificada en navegador; la suscripción **sin verificar** |
 
 ### Decisiones de diseño que conviene recordar
 

@@ -72,6 +72,21 @@ describe('exportBackup', () => {
     expect(snapshot.data.media[0].thumbnailDataUrl).toBe('data:image/jpeg;base64,thumb-m1')
   })
 
+  it('no exporta las cartas selladas por la pareja', async () => {
+    // Llegan como marcador sin contenido; exportarlas crearia cartas vacias.
+    const repos = buildRepositories({
+      letter: collection([
+        { id: 'l1', subject: 'Hola', body: 'mia' },
+        { id: 'l2', subject: '', body: '', unlocksAt: '2027-02-14', selladaPorLaPareja: true },
+      ]),
+    })
+
+    const snapshot = await exportBackup(repos)()
+
+    expect(snapshot.data.letters).toHaveLength(1)
+    expect(snapshot.data.letters[0].id).toBe('l1')
+  })
+
   it('deja solo metadatos del album cuando no se piden los archivos', async () => {
     const snapshot = await exportBackup(buildRepositories())({ includeMedia: false })
 

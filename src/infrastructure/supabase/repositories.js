@@ -2,6 +2,8 @@ import { createSupabaseCollectionRepository } from './collectionRepository.js'
 import { createSupabaseAppStateRepository } from './appStateRepository.js'
 import { createSupabasePartnerProfileRepository } from './partnerProfileRepository.js'
 import { createSupabaseMediaRepository } from './mediaRepository.js'
+import { createSupabaseLetterRepository } from './letterRepository.js'
+import { createSupabasePresenceRepository } from './presenceRepository.js'
 
 /**
  * Los ocho puertos, implementados contra Supabase. Misma interfaz que los de
@@ -12,17 +14,13 @@ export function createSupabaseRepositories() {
     media: createSupabaseMediaRepository(),
     appState: createSupabaseAppStateRepository(),
     partnerProfile: createSupabasePartnerProfileRepository(),
+    letter: createSupabaseLetterRepository(),
+    presence: createSupabasePresenceRepository(),
 
     cita: createSupabaseCollectionRepository({
       table: 'citas',
       fields: ['date', 'note', 'lugar', 'horaEncuentro'],
       orderBy: { column: 'date', ascending: false },
-    }),
-
-    letter: createSupabaseCollectionRepository({
-      table: 'letters',
-      fields: ['subject', 'body', 'createdAt'],
-      orderBy: { column: 'created_at', ascending: false },
     }),
 
     sentLetterLog: createSupabaseCollectionRepository({
