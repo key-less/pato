@@ -65,6 +65,21 @@ Los tres primeros habrían roto producción:
 resultado (`npm run build`, `npm ci`, arrancar el servidor y probar los endpoints) es
 parte del merge, no un paso opcional posterior.
 
+### Error cometido en esta sesión (y corregido)
+
+Borré `wrangler.jsonc` por coherencia con la decisión de usar Vercel. El CI del PR lo
+rechazó: la **integración de Cloudflare Workers sigue conectada al repositorio** y
+ejecuta el check `Workers Builds: pato` en cada PR. Borrar el archivo no desconecta la
+integración — solo hace que su build falle al no encontrar configuración.
+
+Archivo restaurado, con la razón escrita dentro para que nadie lo vuelva a borrar sin
+saberlo. **Para retirar Cloudflare de verdad:** desconectar primero la integración en el
+dashboard de Cloudflare y después borrar el archivo. Requiere acceso al dashboard.
+
+**Lección:** el repositorio no es la única fuente de verdad del despliegue. Antes de
+borrar un archivo de configuración de plataforma, comprobar si esa plataforma sigue
+conectada y ejecutando checks.
+
 ---
 
 ## 3. Qué se corrigió en esta sesión
@@ -80,8 +95,8 @@ parte del merge, no un paso opcional posterior.
 - **Manejador de error de CORS** → 403 JSON en vez de 500.
 - **Rate limits a 120/min y 10/min**, alineados con la documentación y con el uso real.
 - **Lockfile del servidor regenerado** con `helmet`.
-- **Deuda de plataforma eliminada**: `wrangler.jsonc` borrado; cero referencias a
-  Netlify/Railway/Cloudflare en código y documentación principal.
+- **Deuda de plataforma eliminada**: cero referencias a Netlify/Railway en código y
+  documentación. `wrangler.jsonc` se conserva a propósito (ver abajo).
 - **Documentación honesta sobre `VITE_API_SECRET`** en ambos `.env.example` y en
   `CLAUDE.md`: filtra bots, no es autenticación.
 - **`docs/CHECKLIST_PRODUCCION.md`**: nueva sección de diagnóstico de CORS (403 vs 401).
@@ -110,6 +125,10 @@ parte del merge, no un paso opcional posterior.
 2. Si defines `API_SECRET` en Render, define el mismo valor como `VITE_API_SECRET` en
    Vercel y **vuelve a desplegar el frontend** (Vite lo incrusta en el build).
 3. Comprobar `https://tu-api.onrender.com/api/health` → `{"ok":true}`.
+4. **Decidir qué hacer con Cloudflare Workers.** Sigue conectado al repositorio y
+   ejecuta un check en cada PR, aunque el frontend se sirva desde Vercel. Si no lo usas,
+   desconéctalo en el dashboard de Cloudflare y borra `wrangler.jsonc`; mientras siga
+   conectado, el archivo debe quedarse o todos los PR saldrán en rojo.
 
 **Deuda técnica pendiente (por prioridad):**
 1. **Sin tests automatizados.** Todo se verifica a mano. El candidato natural es Vitest
