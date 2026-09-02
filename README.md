@@ -80,7 +80,7 @@ Ver `server/.env.example`. Resumen:
 
 ## Despliegue (Fase 5)
 
-Para subir la página a un dominio y usarla desde el móvil sin depender de tu IP: verificación previa del código, opciones de hosting (Vercel/Netlify + Railway/Render), variables de producción y ambiente de pruebas separado están en **[docs/DEPLOY.md](docs/DEPLOY.md)**.
+Para subir la página a un dominio y usarla desde el móvil sin depender de tu IP: verificación previa del código, opciones de hosting (Vercel para el frontend + Render para el backend), variables de producción y ambiente de pruebas separado están en **[docs/DEPLOY.md](docs/DEPLOY.md)**.
 
 ## Carpetas de contenido
 

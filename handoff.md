@@ -1,0 +1,138 @@
+# Handoff — Pato
+
+> Documento único de continuidad del proyecto. Se actualiza, no se duplica.
+
+**Última actualización:** 2026-09-02
+**Rama de trabajo:** `claude/continuacion-trabajo-anterior-8n98jy`
+
+---
+
+## 1. Estado actual del proyecto
+
+App de pareja (React 18 + Vite + Tailwind, Clean Architecture, `localStorage` como
+persistencia) con backend Express en `server/`.
+
+**Completado y verificado:**
+
+| Bloque | Estado |
+|---|---|
+| Clean Architecture (domain / application / infrastructure / presentation) | Estable |
+| Módulos: Citas, Cartas, Media, Playlists, Perfil, Ajustes, Historial | Funcionando |
+| Feed de actividad (`ActivityEvent` + 7 módulos instrumentados) | Completo y cableado en el DI |
+| Rediseño glassmorphism (Cormorant + Geist, patos SVG, GlassPanel) | Aplicado |
+| Endurecimiento del API (helmet, CORS, API key, rate limit, sanitización) | Aplicado y **probado end-to-end** |
+| Despliegue: Vercel (frontend) + Render (backend) | Configurado; deuda de plataforma ya limpiada |
+| `npm run build` | Pasa — 98 módulos, ~53 kB gzip de vendor |
+| `npm ci` en `server/` | Pasa (antes fallaba, ver abajo) |
+
+El plan V2 (`docs/superpowers/plans/2026-04-29-pato-v2.md`) está **implementado al
+completo** aunque sus casillas sigan sin marcar: los archivos, rutas, use cases y el
+registro en el contenedor DI existen y compilan.
+
+---
+
+## 2. En qué me equivoqué (defectos que dejó el merge anterior)
+
+El merge `f6defda` integró tres líneas de trabajo con seis resoluciones de conflicto
+manuales y **nadie verificó el resultado**. Compilaba, pero llevaba siete defectos.
+Los tres primeros habrían roto producción:
+
+1. **`server/package-lock.json` desincronizado.** El endurecimiento añadió `helmet` a
+   `package.json` pero no al lockfile. `npm ci` fallaba con
+   `Missing: helmet@8.3.0 from lock file` — **el backend no habría desplegado en Render**.
+   Reproducido y corregido.
+2. **CORS con un solo origen.** `FRONTEND_URL` se leía como string único, así que
+   cualquier deploy preview de Vercel (URL distinta por rama) quedaba bloqueado. Y si
+   la variable faltaba en Render, el valor por defecto era `localhost:5173`: producción
+   entera sin API.
+3. **Rechazo de CORS devolvía HTTP 500.** En los logs de Render un origen no permitido
+   parecía una caída del servidor, no una decisión de seguridad.
+4. **`sendEmailApi` y `playlistApi` tenían copias divergentes** de la resolución de
+   `API_BASE`: solo `playlistApi` normalizaba el protocolo. Con
+   `VITE_API_URL=api.dominio.com` (sin `https://`) las playlists funcionaban y las
+   cartas fallaban.
+5. **Rate limits documentados ≠ implementados.** `CLAUDE.md` decía 120/10 por minuto;
+   el código tenía 30/5. Con el widget "Ahora suena" sondeando cada 15 s por servicio y
+   dos personas tras la misma IP pública, 30/min se agotaba solo.
+6. **Task 12 a medias.** Se borraron `netlify.toml` y `railway.toml`, pero quedaron
+   referencias a Netlify/Railway en `server/index.js`, `playlistApi.js`, ambos
+   `.env.example`, `CLAUDE.md` y `README.md`. Y `wrangler.jsonc` (Cloudflare Pages)
+   seguía en el repo contradiciendo la decisión de usar Vercel.
+7. **`VITE_API_SECRET` documentado como si fuera autenticación.** Vite lo incrusta en
+   el bundle: es público. Los `.env.example` no lo advertían.
+
+**Lección aplicada:** después de un merge con conflictos resueltos a mano, verificar el
+resultado (`npm run build`, `npm ci`, arrancar el servidor y probar los endpoints) es
+parte del merge, no un paso opcional posterior.
+
+---
+
+## 3. Qué se corrigió en esta sesión
+
+- **`src/infrastructure/api/apiConfig.js` (nuevo)** — fuente única de `API_BASE` y de
+  las cabeceras. `playlistApi` y `sendEmailApi` ahora importan de aquí y no pueden
+  divergir. Normaliza el protocolo y las barras finales.
+- **CORS multi-origen** — `FRONTEND_URL` acepta lista separada por comas, normaliza
+  barras finales, deja pasar peticiones sin `Origin` (healthcheck de Render, curl,
+  callbacks de OAuth) y registra en log el origen rechazado con la lista permitida.
+- **`primaryFrontendUrl`** — los tres redirects de OAuth usan el primer origen de la
+  lista; con la variable cruda habrían construido una URL inválida al pasar a lista.
+- **Manejador de error de CORS** → 403 JSON en vez de 500.
+- **Rate limits a 120/min y 10/min**, alineados con la documentación y con el uso real.
+- **Lockfile del servidor regenerado** con `helmet`.
+- **Deuda de plataforma eliminada**: `wrangler.jsonc` borrado; cero referencias a
+  Netlify/Railway/Cloudflare en código y documentación principal.
+- **Documentación honesta sobre `VITE_API_SECRET`** en ambos `.env.example` y en
+  `CLAUDE.md`: filtra bots, no es autenticación.
+- **`docs/CHECKLIST_PRODUCCION.md`**: nueva sección de diagnóstico de CORS (403 vs 401).
+
+**Verificación ejecutada** (servidor real en un puerto de pruebas):
+
+| Caso | Resultado |
+|---|---|
+| Healthcheck sin `Origin` | 200 |
+| Origen permitido | 200 + `Access-Control-Allow-Origin` correcto |
+| Preview con barra final en la variable | 200 (normalizado) |
+| Origen no permitido | 403 `Origen no permitido.` |
+| `/api/*` sin `x-api-key` | 401 |
+| `/api/*` con `x-api-key` correcta | 200 |
+| Callback de OAuth (exento de API key) | 302 |
+| Ruta `/api/*` inexistente | 404 JSON |
+| `npm run build` / `npm ci` en `server/` | Ambos limpios |
+
+---
+
+## 4. Próximos pasos
+
+**Antes de desplegar (bloqueante):**
+1. En Render, poner `FRONTEND_URL` con el dominio de Vercel; si usas previews, añadirlos
+   separados por coma. Redeploy.
+2. Si defines `API_SECRET` en Render, define el mismo valor como `VITE_API_SECRET` en
+   Vercel y **vuelve a desplegar el frontend** (Vite lo incrusta en el build).
+3. Comprobar `https://tu-api.onrender.com/api/health` → `{"ok":true}`.
+
+**Deuda técnica pendiente (por prioridad):**
+1. **Sin tests automatizados.** Todo se verifica a mano. El candidato natural es Vitest
+   sobre los use cases y los repositorios de `localStorage`: son funciones puras con
+   dependencias inyectadas, así que se prueban sin navegador.
+2. **Tokens de OAuth en memoria del proceso.** Cada reinicio de Render desconecta
+   Spotify y YouTube, y el plan gratuito duerme el servicio. Persistirlos (Supabase ya
+   está reservado en la arquitectura) o asumir la reconexión manual.
+3. **Media como data URLs en `localStorage`.** Límite práctico ~5 MB por dominio: con
+   pocos vídeos la app dejará de guardar sin aviso claro. Falta detectar
+   `QuotaExceededError` y mostrar un mensaje útil; a medio plazo, mover a Supabase Storage.
+4. **Marcar las casillas del plan V2** o archivar el documento como completado, para que
+   no parezca trabajo pendiente en la próxima sesión.
+5. `caniuse-lite` desactualizado (7 meses) — `npx update-browserslist-db@latest`.
+
+---
+
+## 5. Notas de arquitectura para quien siga
+
+- Las páginas importan **solo** desde `container` (`src/infrastructure/di/container.js`),
+  nunca de repositorios ni use cases directos. Mantener esa regla.
+- Cada acción relevante emite un `ActivityEvent` vía `container.addActivityEvent`. Si se
+  añade un módulo nuevo con acciones, instrumentarlo también o el feed quedará incompleto.
+- El backend es **sin estado** salvo por los tokens de OAuth en memoria.
+- Toda petición al API pasa por `apiConfig.js`. Si hace falta un cliente nuevo, importar
+  de ahí en lugar de reimplementar la resolución de URL.

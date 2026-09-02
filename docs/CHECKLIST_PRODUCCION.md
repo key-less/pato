@@ -15,7 +15,7 @@ En Render → tu proyecto → **servicio del backend** → **Variables**. Añade
 
 | Variable | Valor |
 |---------|--------|
-| `FRONTEND_URL` | URL de tu frontend en producción (ej. `https://pato.vercel.app` en Vercel) |
+| `FRONTEND_URL` | URL(es) de tu frontend, **separadas por coma** (ej. `https://pato.vercel.app`). Si usas deploy previews de Vercel, añádelas aquí también o CORS las bloqueará. La **primera** de la lista es a la que se redirige tras el OAuth. |
 | `SPOTIFY_REDIRECT_URI` | `https://tu-api.onrender.com/api/spotify/callback` |
 | `YOUTUBE_REDIRECT_URI` | `https://tu-api.onrender.com/api/youtube/callback` |
 
@@ -125,11 +125,33 @@ Con esto la app está preparada para producción estable y para continuar con fa
 
 ---
 
+## Si la app carga pero ninguna petición al API funciona (CORS)
+
+Síntoma: la página se ve bien, pero playlists, cartas y "Ahora suena" fallan, y en la
+consola del navegador (F12) aparece `blocked by CORS policy`.
+
+1. **`FRONTEND_URL` en Render debe contener el origen exacto desde el que abres la app**,
+   incluyendo `https://` y sin barra final. Acepta varias separadas por coma:
+   ```text
+   FRONTEND_URL=https://pato.vercel.app,https://pato-git-dev-tuusuario.vercel.app
+   ```
+   Cada deploy preview de Vercel tiene su propia URL: si la usas, añádela.
+2. **En los logs de Render** busca la línea `[Pato] CORS bloqueado para origen: ...`.
+   Te dice el origen que llegó y cuáles están permitidos: copia el primero a `FRONTEND_URL`.
+3. Una respuesta **403 `Origen no permitido`** confirma que es CORS, no una caída del servidor.
+4. Tras cambiar la variable, **Redeploy** del backend en Render.
+
+Si en vez de eso ves **401 `No autorizado`**, el problema es la API key: `API_SECRET`
+en Render y `VITE_API_SECRET` en Vercel deben tener el mismo valor (y el frontend hay
+que volver a desplegarlo tras cambiarla, porque Vite la incrusta en el build).
+
+---
+
 ## Resumen rápido
 
 | Dónde | Qué hacer |
 |-------|-----------|
-| **Render Variables** | Poner las 10 variables: `FRONTEND_URL`, `SPOTIFY_REDIRECT_URI`, `YOUTUBE_REDIRECT_URI`, `GMAIL_USER`, `GMAIL_APP_PASSWORD`, `SPOTIFY_CLIENT_ID`, `SPOTIFY_CLIENT_SECRET`, `YOUTUBE_CLIENT_ID`, `YOUTUBE_CLIENT_SECRET`, `YOUTUBE_API_KEY`. |
+| **Render Variables** | Poner las 10 variables: `FRONTEND_URL`, `SPOTIFY_REDIRECT_URI`, `YOUTUBE_REDIRECT_URI`, `GMAIL_USER`, `GMAIL_APP_PASSWORD`, `SPOTIFY_CLIENT_ID`, `SPOTIFY_CLIENT_SECRET`, `YOUTUBE_CLIENT_ID`, `YOUTUBE_CLIENT_SECRET`, `YOUTUBE_API_KEY`. Opcionales: `API_SECRET`, `ALLOWED_EMAIL_RECIPIENTS`. |
 | **Spotify Dashboard** | Añadir redirect URI de producción. |
 | **Google Cloud** | Añadir URI de redirección de producción en el cliente OAuth. |
 | **Frontend (Vercel)** | Tener `VITE_API_URL` = URL del API y redeploy si la cambiaste. En Render, `FRONTEND_URL` = URL del frontend en Vercel. |

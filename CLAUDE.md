@@ -46,7 +46,7 @@ server/index.js     — Single Express file: email, Spotify OAuth, YouTube OAuth
 
 | Route | Purpose |
 |---|---|
-| `GET /api/health` | Health check (Railway/Render) |
+| `GET /api/health` | Health check (Render) |
 | `POST /api/send-email` | Send letter via Gmail (Nodemailer) |
 | `GET /api/playlist/fetch?url=` | Fetch Spotify/YouTube playlist metadata |
 | `GET /api/spotify/auth?profile=0\|1` | Start Spotify OAuth per profile |
@@ -57,14 +57,28 @@ server/index.js     — Single Express file: email, Spotify OAuth, YouTube OAuth
 | `GET /api/youtube/me` | Check YouTube connection |
 | `GET /api/now-playing/youtube` | YouTube now playing (always null — no public API) |
 
-Rate limits: 120 req/min general, 10 req/min on `/api/send-email`.
+Rate limits: 120 req/min general, 10 req/min on `/api/send-email` (per IP).
+
+**Security middleware** (`server/index.js`, applied before the routes):
+- `helmet()` for standard security headers.
+- CORS: `FRONTEND_URL` accepts a **comma-separated list** of allowed origins (stable
+  domain plus Vercel preview URLs). Requests with no `Origin` header pass through
+  (Render health check, curl, OAuth callbacks). A rejected origin returns 403, not 500.
+  `allowedOrigins[0]` is the `primaryFrontendUrl` used for OAuth redirects.
+- `x-api-key` must match `API_SECRET` on every `/api/*` route except the four OAuth
+  paths. With `API_SECRET` empty the check is skipped (local dev).
+  Note: the frontend's `VITE_API_SECRET` is baked into the JS bundle and is therefore
+  public — it deters scanners, it is not authentication.
+- `ALLOWED_EMAIL_RECIPIENTS` restricts `/api/send-email` destinations.
 
 ## API URL resolution
 
-`src/infrastructure/api/playlistApi.js` auto-resolves the backend URL:
-1. `VITE_API_URL` env var (set at **build time** by Vite — must redeploy to change)
-2. If opened from a non-localhost IP (e.g. phone on LAN), uses `<that IP>:3001`
-3. Otherwise `http://localhost:3001`
+`src/infrastructure/api/apiConfig.js` is the single source of truth for the backend
+URL and headers — `playlistApi.js` and `sendEmailApi.js` both import from it, so they
+cannot drift apart. It resolves:
+1. `VITE_API_URL` env var (set at **build time** by Vite — must redeploy to change).
+   A value with no protocol gets `https://` prepended.
+2. Otherwise `<current hostname>:3001` — covers both localhost and a phone on the LAN.
 
 ## Environment variables
 
