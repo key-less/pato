@@ -1,36 +1,36 @@
-const KEY = 'pato_activity_events'
+import { readJson, writeJson } from './localStorageDriver.js'
+
+const STORAGE_KEY = 'pato_activity_events'
 
 export function createLocalStorageActivityEventRepository() {
   let cache = null
 
-  const load = () => {
-    if (cache !== null) return cache
-    try {
-      cache = JSON.parse(localStorage.getItem(KEY) || '[]')
-    } catch {
-      cache = []
-    }
+  function load() {
+    if (cache === null) cache = readJson(STORAGE_KEY, [])
     return cache
   }
 
-  const persist = (items) => {
+  function persist(items) {
+    writeJson(STORAGE_KEY, items)
     cache = items
-    localStorage.setItem(KEY, JSON.stringify(items))
   }
 
-  const getAll = async () => load()
+  return {
+    async getAll() {
+      return [...load()]
+    },
+    async save(event) {
+      const items = load()
+      const index = items.findIndex((e) => e.id === event.id)
+      persist(index >= 0 ? items.map((e, i) => (i === index ? event : e)) : [...items, event])
+    },
+    async remove(id) {
+      persist(load().filter((e) => e.id !== id))
+    },
 
-  const save = async (event) => {
-    const all = load()
-    const idx = all.findIndex((e) => e.id === event.id)
-    if (idx >= 0) all[idx] = event
-    else all.push(event)
-    persist(all)
+    /** Reemplaza la coleccion entera. Solo lo usa la restauracion de copia de seguridad. */
+    async replaceAll(items) {
+      persist([...items])
+    },
   }
-
-  const remove = async (id) => {
-    persist(load().filter((e) => e.id !== id))
-  }
-
-  return { getAll, save, remove }
 }

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import { Sidebar } from './Sidebar'
 import { NowPlayingWidget } from './NowPlayingWidget'
+import { StorageAlert } from './StorageAlert'
 import { container } from '../../infrastructure/di/container.js'
 
 export function Layout({ children }) {
@@ -82,6 +83,7 @@ export function Layout({ children }) {
         </div>
         <NowPlayingWidget />
         {children}
+        <StorageAlert />
       </main>
     </div>
   )

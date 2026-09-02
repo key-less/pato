@@ -26,6 +26,10 @@ export default {
           plum: '#8b5a6b',
           charcoal: '#2d2424',
           smoke: '#6a5a5a',
+          // Direccion «Aguas tranquilas»: la unica nota fria de la paleta.
+          // Ancla de texto y profundidad; es lo que hace que los calidos se lean calidos.
+          agua: '#1f3a3d',
+          junco: '#8a7a72',
         },
       },
       fontFamily: {
@@ -49,6 +53,7 @@ export default {
         'fade-in': 'fadeIn 0.8s ease-out forwards',
         'shimmer': 'shimmer 12s ease-in-out infinite',
         'slide-up': 'slideUp 0.35s ease-out both',
+        'onda': 'onda 2.8s ease-out infinite',
       },
       keyframes: {
         float: {
@@ -66,6 +71,11 @@ export default {
         slideUp: {
           from: { opacity: '0', transform: 'translateY(10px)' },
           to: { opacity: '1', transform: 'translateY(0)' },
+        },
+        // Ondas en el agua: sustituyen a los spinners.
+        onda: {
+          '0%':   { transform: 'scale(0.6)', opacity: '0.75' },
+          '100%': { transform: 'scale(1.6)', opacity: '0' },
         },
       },
       padding: {

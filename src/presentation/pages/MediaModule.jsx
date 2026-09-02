@@ -1,14 +1,20 @@
 import { useState, useEffect, useRef } from 'react'
 import { container } from '../../infrastructure/di/container.js'
 import { useAppState } from '../hooks/useAppState'
+import { useMediaUrl } from '../hooks/useMediaUrl'
+import { createImageThumbnail } from '../../infrastructure/media/imageProcessing.js'
 import { DuckPhotos } from '../components/icons/Ducks.jsx'
 import GlassPanel, { glassStyle } from '../components/GlassPanel.jsx'
 import ModuleHeader from '../components/ModuleHeader.jsx'
+
+const QUOTA_MESSAGE = 'No queda espacio en este dispositivo. Exporta una copia desde Configuración y libera algo antes de seguir subiendo.'
+const UPLOAD_MESSAGE = 'No se pudieron guardar todos los archivos. Los que sí entraron ya aparecen abajo.'
 
 export default function MediaModule() {
   const { state } = useAppState()
   const [media, setMedia] = useState([])
   const [uploading, setUploading] = useState(false)
+  const [uploadError, setUploadError] = useState(null)
   const fileInputRef = useRef(null)
 
   const loadMedia = () => { container.getMediaList().then(setMedia) }
@@ -20,49 +26,58 @@ export default function MediaModule() {
     const files = e.target.files
     if (!files?.length) return
     setUploading(true)
+    setUploadError(null)
     try {
       for (const file of Array.from(files)) {
         const isVideo = file.type.startsWith('video/')
         const type = isVideo ? 'video' : 'photo'
-        const src = await readFileAsDataURL(file)
         await container.addMedia({
           type,
-          src,
+          blob: file,
+          thumbnailBlob: isVideo ? null : await createImageThumbnail(file),
           date: new Date().toISOString().slice(0, 10),
           relationshipStatusId: state?.currentRelationshipStatusId ?? null,
         })
         await container.addActivityEvent({
           type: 'media_added',
-          description: `Agregó ${type === 'video' ? 'un video' : 'una foto'} al álbum`,
+          description: `Agregó ${isVideo ? 'un video' : 'una foto'} al álbum`,
         })
       }
-      loadMedia()
+    } catch (error) {
+      setUploadError(error.name === 'StorageQuotaError' ? QUOTA_MESSAGE : UPLOAD_MESSAGE)
     } finally {
       setUploading(false)
       e.target.value = ''
+      loadMedia()
     }
   }
 
-  const handleUpdate = async (id, updates) => {
-    await container.updateMedia(id, updates)
-    loadMedia()
+  // Recargar siempre: si la escritura falló, la vista vuelve a lo que hay en disco
+  // en vez de quedarse mostrando un cambio que no se guardó.
+  const persist = async (action) => {
+    try {
+      await action()
+    } catch {
+      // StorageAlert ya avisa al usuario del fallo.
+    } finally {
+      loadMedia()
+    }
   }
 
-  const handleDelete = async (id) => {
-    if (window.confirm('¿Eliminar este archivo del álbum?')) {
+  const handleUpdate = (id, updates) => persist(() => container.updateMedia(id, updates))
+
+  const handleDelete = (id) => {
+    if (!window.confirm('¿Eliminar este archivo del álbum?')) return
+    return persist(async () => {
       await container.deleteMedia(id)
       await container.addActivityEvent({
         type: 'media_removed',
         description: 'Eliminó un archivo del álbum',
       })
-      loadMedia()
-    }
+    })
   }
 
-  const toggleShowOnLanding = async (id, current) => {
-    await container.updateMedia(id, { showOnLanding: !current })
-    loadMedia()
-  }
+  const toggleShowOnLanding = (id, current) => persist(() => container.updateMedia(id, { showOnLanding: !current }))
 
   return (
     <div className="max-w-4xl mx-auto pt-14 pb-28 px-4">
@@ -74,7 +89,7 @@ export default function MediaModule() {
         description="Recuerdos compartidos. Marca los que quieras ver flotando en la página principal."
       />
 
-      <div className="mb-10 flex justify-center">
+      <div className="mb-10 flex flex-col items-center gap-4">
         <input
           ref={fileInputRef}
           type="file"
@@ -92,6 +107,11 @@ export default function MediaModule() {
         >
           {uploading ? 'Subiendo…' : '+ Agregar fotos o videos'}
         </button>
+        {uploadError && (
+          <p role="alert" className="font-body text-sm text-pato-terra text-center max-w-md">
+            {uploadError}
+          </p>
+        )}
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
@@ -120,6 +140,7 @@ function MediaCard({ item, statuses, onUpdate, onDelete, onToggleShowOnLanding }
   const [editing, setEditing] = useState(false)
   const [date, setDate] = useState(item.date ?? '')
   const [statusId, setStatusId] = useState(item.relationshipStatusId ?? '')
+  const url = useMediaUrl(item, { original: item.type === 'video' })
 
   const save = () => {
     onUpdate(item.id, { date: date || null, relationshipStatusId: statusId || null })
@@ -129,11 +150,11 @@ function MediaCard({ item, statuses, onUpdate, onDelete, onToggleShowOnLanding }
   return (
     <GlassPanel className="overflow-hidden">
       <div className="aspect-square relative bg-pato-shell/40">
-        {item.type === 'photo' ? (
-          <img src={item.src} alt="" className="w-full h-full object-cover" />
+        {url && (item.type === 'photo' ? (
+          <img src={url} alt={item.caption || ''} loading="lazy" className="w-full h-full object-cover" />
         ) : (
-          <video src={item.src} controls className="w-full h-full object-cover" />
-        )}
+          <video src={url} controls preload="metadata" className="w-full h-full object-cover" />
+        ))}
         <button
           type="button"
           onClick={() => onDelete(item.id)}
@@ -201,18 +222,10 @@ function TrashIcon() {
 }
 
 function formatDate(iso) {
+  // Sin la hora, 'YYYY-MM-DD' se parsea como UTC y la fecha se corre un dia.
   try {
-    return new Date(iso).toLocaleDateString('es', { day: 'numeric', month: 'short', year: 'numeric' })
+    return new Date(`${iso}T00:00`).toLocaleDateString('es', { day: 'numeric', month: 'short', year: 'numeric' })
   } catch {
     return iso
   }
-}
-
-function readFileAsDataURL(file) {
-  return new Promise((resolve, reject) => {
-    const r = new FileReader()
-    r.onload = () => resolve(r.result)
-    r.onerror = reject
-    r.readAsDataURL(file)
-  })
 }

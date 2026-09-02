@@ -6,6 +6,8 @@ import { container } from '../../infrastructure/di/container.js'
 import { getQuoteOfTheDay } from '../config/romanticQuotes.js'
 import { FloatingPhotos } from '../components/FloatingPhotos'
 import { FloatingVideos } from '../components/FloatingVideos'
+import Estanque from '../components/Estanque.jsx'
+import Panel from '../components/Panel.jsx'
 
 export default function LandingPage() {
   const { state, loading, update: updateAppState } = useAppState()
@@ -67,22 +69,17 @@ export default function LandingPage() {
         </div>
 
         {statusLabel && (
-          <div className="flex justify-center">
-            <div
-              className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full text-pato-charcoal text-sm"
-              style={{
-                background: 'rgba(255,255,255,0.55)',
-                backdropFilter: 'blur(16px)',
-                WebkitBackdropFilter: 'blur(16px)',
-                border: '1px solid rgba(255,255,255,0.7)',
-                boxShadow: '0 4px 18px -8px rgba(184,117,96,0.18)',
-              }}
-            >
-              <span className="w-2 h-2 rounded-full bg-pato-coral animate-pulse" />
-              <span className="text-pato-smoke font-body">Estado:</span>
-              <span className="font-medium font-body">{statusLabel}</span>
-            </div>
-          </div>
+          <Panel className="px-6 py-7">
+            <figure className="flex flex-col items-center gap-2 m-0">
+              <p className="font-body text-[10px] uppercase tracking-[0.25em] text-pato-junco mb-1">Dónde estamos</p>
+              <Estanque
+                statusId={state.currentRelationshipStatusId}
+                statuses={state.relationshipStatuses}
+                className="max-w-[16rem]"
+              />
+              <figcaption className="font-display italic text-xl text-pato-agua">{statusLabel}</figcaption>
+            </figure>
+          </Panel>
         )}
 
         <GlassCard>

@@ -8,7 +8,7 @@ export function updateAppState(appStateRepository) {
     const next = {
       ...current,
       ...partial,
-      relationshipStatuses: current?.relationshipStatuses ?? partial.relationshipStatuses ?? [],
+      relationshipStatuses: partial.relationshipStatuses ?? current?.relationshipStatuses ?? [],
     }
     await appStateRepository.save(next)
     return next

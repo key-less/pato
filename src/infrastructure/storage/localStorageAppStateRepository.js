@@ -1,25 +1,14 @@
+import { readJson, writeJson } from './localStorageDriver.js'
+
 const STORAGE_KEY = 'pato-app-state'
 
 export function createLocalStorageAppStateRepository() {
-  function load() {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY)
-      return raw ? JSON.parse(raw) : null
-    } catch {
-      return null
-    }
-  }
-
-  function save(state) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
-  }
-
   return {
     async get() {
-      return load()
+      return readJson(STORAGE_KEY, null)
     },
     async save(state) {
-      save(state)
+      writeJson(STORAGE_KEY, state)
     },
   }
 }

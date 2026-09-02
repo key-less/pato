@@ -1,30 +1,34 @@
+import { readJson, writeJson } from './localStorageDriver.js'
+
 const STORAGE_KEY = 'pato-sent-letters'
 
 export function createLocalStorageSentLetterLogRepository() {
+  let cache = null
+
   function load() {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY)
-      return raw ? JSON.parse(raw) : []
-    } catch {
-      return []
-    }
+    if (cache === null) cache = readJson(STORAGE_KEY, [])
+    return cache
   }
 
-  function save(items) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(items))
+  function persist(items) {
+    writeJson(STORAGE_KEY, items)
+    cache = items
   }
 
   return {
     async getAll() {
-      return load().sort((a, b) => new Date(b.sentAt) - new Date(a.sentAt))
+      return [...load()].sort((a, b) => new Date(b.sentAt) - new Date(a.sentAt))
     },
     async save(log) {
-      const items = load()
-      items.push(log)
-      save(items)
+      persist([...load(), log])
     },
     async remove(id) {
-      save(load().filter((l) => l.id !== id))
+      persist(load().filter((l) => l.id !== id))
+    },
+
+    /** Reemplaza la coleccion entera. Solo lo usa la restauracion de copia de seguridad. */
+    async replaceAll(items) {
+      persist([...items])
     },
   }
 }

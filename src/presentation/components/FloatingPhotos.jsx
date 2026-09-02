@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useMediaUrl } from '../hooks/useMediaUrl'
 
 const POSITIONS = [
   { top: '10%', left: '5%', size: 150, delay: 0 },
@@ -57,14 +58,16 @@ export function FloatingPhotos({ media }) {
               animationDelay: `${i * 150}ms`,
             }}
           >
-            <img
-              src={m.src}
-              alt=""
-              className="w-full h-full object-cover"
-            />
+            <FloatingPhoto item={m} />
           </div>
         )
       })}
     </div>
   )
+}
+
+function FloatingPhoto({ item }) {
+  const url = useMediaUrl(item)
+  if (!url) return null
+  return <img src={url} alt="" loading="lazy" className="w-full h-full object-cover" />
 }

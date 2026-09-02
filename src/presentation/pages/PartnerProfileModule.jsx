@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { container } from '../../infrastructure/di/container.js'
 import { API_BASE } from '../../infrastructure/api/playlistApi.js'
+import { createDownscaledDataUrl } from '../../infrastructure/media/imageProcessing.js'
 import { DuckProfile } from '../components/icons/Ducks.jsx'
 import GlassPanel from '../components/GlassPanel.jsx'
 import ModuleHeader from '../components/ModuleHeader.jsx'
@@ -97,15 +98,6 @@ export default function PartnerProfileModule() {
   )
 }
 
-function readFileAsDataURL(file) {
-  return new Promise((resolve, reject) => {
-    const r = new FileReader()
-    r.onload = () => resolve(r.result)
-    r.onerror = reject
-    r.readAsDataURL(file)
-  })
-}
-
 const EMPTY_FORM = {
   nombre: '',
   apellido: '',
@@ -121,6 +113,7 @@ const EMPTY_FORM = {
 
 function ProfileCard({ title, index, profile, onSave, onReset, apiBase }) {
   const [form, setForm] = useState(() => ({ ...EMPTY_FORM }))
+  const [photoError, setPhotoError] = useState(null)
   useEffect(() => {
     if (profile) setForm((prev) => ({ ...prev, ...profile }))
     else setForm({ ...EMPTY_FORM })
@@ -131,11 +124,12 @@ function ProfileCard({ title, index, profile, onSave, onReset, apiBase }) {
   const handlePhotoChange = async (e) => {
     const file = e.target.files?.[0]
     if (!file || !file.type.startsWith('image/')) return
+    setPhotoError(null)
+    // Reducida antes de guardar: una foto de movil sin reducir llena el cupo de localStorage.
     try {
-      const dataUrl = await readFileAsDataURL(file)
-      update('profilePhotoUrl', dataUrl)
+      update('profilePhotoUrl', await createDownscaledDataUrl(file))
     } catch {
-      // ignore
+      setPhotoError('No se pudo procesar esa imagen. Prueba con otra.')
     }
     e.target.value = ''
   }
@@ -173,6 +167,9 @@ function ProfileCard({ title, index, profile, onSave, onReset, apiBase }) {
               onChange={handlePhotoChange}
             />
           </label>
+        )}
+        {photoError && (
+          <p role="alert" className="font-body text-xs text-pato-terra text-center">{photoError}</p>
         )}
       </div>
 

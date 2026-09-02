@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import { useAppState } from '../hooks/useAppState'
 import { DuckSettings } from '../components/icons/Ducks.jsx'
 import GlassPanel from '../components/GlassPanel.jsx'
+import { BackupPanel } from '../components/BackupPanel.jsx'
+import { AccountPanel } from '../components/AccountPanel.jsx'
 import ModuleHeader from '../components/ModuleHeader.jsx'
 import { DEFAULT_STATUSES } from '../../domain/entities/RelationshipStatus.js'
 import { container } from '../../infrastructure/di/container.js'
@@ -151,6 +153,10 @@ export default function SettingsModule() {
         >
           {saved ? '✓ Guardado' : 'Guardar cambios'}
         </button>
+
+        <AccountPanel />
+
+        <BackupPanel />
       </div>
     </div>
   )

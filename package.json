@@ -8,9 +8,12 @@
     "dev:server": "npm run dev --prefix server",
     "dev:all": "concurrently -n f,s -c cyan,magenta \"npm run dev\" \"npm run dev:server\"",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.112.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.28.0"
@@ -21,8 +24,11 @@
     "@vitejs/plugin-react": "^4.3.3",
     "autoprefixer": "^10.4.20",
     "concurrently": "^9.1.2",
+    "fake-indexeddb": "^6.2.5",
+    "jsdom": "^29.1.1",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.15",
-    "vite": "^7.3.1"
+    "vite": "^7.3.1",
+    "vitest": "^4.1.11"
   }
 }

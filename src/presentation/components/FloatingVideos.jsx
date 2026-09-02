@@ -1,4 +1,5 @@
-import { useState, useRef } from 'react'
+import { useRef } from 'react'
+import { useMediaUrl } from '../hooks/useMediaUrl'
 
 const POSITIONS = [
   { top: '18%', left: '12%', size: 160, delay: 200 },
@@ -35,7 +36,7 @@ export function FloatingVideos({ media }) {
               animationDelay: `${i * 120}ms`,
             }}
           >
-            <FloatingVideoItem src={m.src} poster={m.thumbnail} />
+            <FloatingVideoItem item={m} />
           </div>
         )
       })}
@@ -43,8 +44,9 @@ export function FloatingVideos({ media }) {
   )
 }
 
-function FloatingVideoItem({ src, poster }) {
+function FloatingVideoItem({ item }) {
   const ref = useRef(null)
+  const src = useMediaUrl(item, { original: true })
 
   const handleClick = () => {
     const el = ref.current
@@ -55,11 +57,13 @@ function FloatingVideoItem({ src, poster }) {
     }
   }
 
+  if (!src) return null
+
   return (
     <video
       ref={ref}
       src={src}
-      poster={poster}
+      poster={item.thumbnail ?? undefined}
       playsInline
       muted
       autoPlay

@@ -1,13 +1,14 @@
 /**
- * Contenedor de dependencias: instancia repositorios y casos de uso.
+ * Contenedor de dependencias: elige la persistencia y cablea los casos de uso.
+ *
+ * Con Supabase configurado, los datos son de la pareja y viajan entre los dos
+ * telefonos. Sin configurar, la app sigue funcionando contra el navegador como en
+ * la Fase 0. Es el unico archivo que sabe cual de las dos cosas esta pasando.
  */
-import { createLocalStorageMediaRepository } from '../storage/localStorageMediaRepository.js'
-import { createLocalStorageAppStateRepository } from '../storage/localStorageAppStateRepository.js'
-import { createLocalStorageLetterRepository } from '../storage/localStorageLetterRepository.js'
-import { createLocalStorageCitaRepository } from '../storage/localStorageCitaRepository.js'
-import { createLocalStorageSentLetterLogRepository } from '../storage/localStorageSentLetterLogRepository.js'
-import { createLocalStoragePartnerProfileRepository } from '../storage/localStoragePartnerProfileRepository.js'
-import { createLocalStoragePlaylistRepository } from '../storage/localStoragePlaylistRepository.js'
+import { isSupabaseConfigured } from '../supabase/client.js'
+import { createLocalRepositories } from '../storage/localRepositories.js'
+import { createSupabaseRepositories } from '../supabase/repositories.js'
+import { createSupabaseAccountRepository } from '../supabase/accountRepository.js'
 import { getAppState } from '../../application/useCases/getAppState.js'
 import { updateAppState } from '../../application/useCases/updateAppState.js'
 import { getMediaList } from '../../application/useCases/getMediaList.js'
@@ -30,44 +31,50 @@ import { clearPartnerProfile } from '../../application/useCases/clearPartnerProf
 import { getPlaylists } from '../../application/useCases/getPlaylists.js'
 import { addPlaylist } from '../../application/useCases/addPlaylist.js'
 import { removePlaylist } from '../../application/useCases/removePlaylist.js'
-import { createLocalStorageActivityEventRepository } from '../storage/localStorageActivityEventRepository.js'
 import { addActivityEvent } from '../../application/useCases/addActivityEvent.js'
 import { getActivityEvents } from '../../application/useCases/getActivityEvents.js'
 import { removeActivityEvent } from '../../application/useCases/removeActivityEvent.js'
+import { exportBackup } from '../../application/useCases/exportBackup.js'
+import { importBackup } from '../../application/useCases/importBackup.js'
 
-const mediaRepo = createLocalStorageMediaRepository()
-const appStateRepo = createLocalStorageAppStateRepository()
-const letterRepo = createLocalStorageLetterRepository()
-const citaRepo = createLocalStorageCitaRepository()
-const sentLetterLogRepo = createLocalStorageSentLetterLogRepository()
-const partnerProfileRepo = createLocalStoragePartnerProfileRepository()
-const playlistRepo = createLocalStoragePlaylistRepository()
-const activityEventRepo = createLocalStorageActivityEventRepository()
+const repositories = isSupabaseConfigured ? createSupabaseRepositories() : createLocalRepositories()
 
 export const container = {
-  getAppState: getAppState(appStateRepo),
-  updateAppState: updateAppState(appStateRepo),
-  getMediaList: getMediaList(mediaRepo),
-  addMedia: addMedia(mediaRepo),
-  updateMedia: updateMedia(mediaRepo),
-  deleteMedia: deleteMedia(mediaRepo),
-  getLetters: getLetters(letterRepo),
-  saveLetter: saveLetter(letterRepo),
-  deleteLetter: deleteLetter(letterRepo),
+  mode: isSupabaseConfigured ? 'supabase' : 'local',
+
+  getAppState: getAppState(repositories.appState),
+  updateAppState: updateAppState(repositories.appState),
+  getMediaList: getMediaList(repositories.media),
+  addMedia: addMedia(repositories.media),
+  updateMedia: updateMedia(repositories.media),
+  deleteMedia: deleteMedia(repositories.media),
+  getLetters: getLetters(repositories.letter),
+  saveLetter: saveLetter(repositories.letter),
+  deleteLetter: deleteLetter(repositories.letter),
   buildMailtoUrl,
-  getCitas: getCitas(citaRepo),
-  addCita: addCita(citaRepo),
-  removeCita: removeCita(citaRepo),
-  getSentLetterLogs: getSentLetterLogs(sentLetterLogRepo),
-  logSentLetter: logSentLetter(sentLetterLogRepo),
-  removeSentLetterLog: removeSentLetterLog(sentLetterLogRepo),
-  getPartnerProfiles: getPartnerProfiles(partnerProfileRepo),
-  savePartnerProfile: savePartnerProfile(partnerProfileRepo),
-  clearPartnerProfile: clearPartnerProfile(partnerProfileRepo),
-  getPlaylists: getPlaylists(playlistRepo),
-  addPlaylist: addPlaylist(playlistRepo),
-  removePlaylist: removePlaylist(playlistRepo),
-  addActivityEvent: addActivityEvent(activityEventRepo),
-  getActivityEvents: getActivityEvents(activityEventRepo),
-  removeActivityEvent: removeActivityEvent(activityEventRepo),
+  getCitas: getCitas(repositories.cita),
+  addCita: addCita(repositories.cita),
+  removeCita: removeCita(repositories.cita),
+  getSentLetterLogs: getSentLetterLogs(repositories.sentLetterLog),
+  logSentLetter: logSentLetter(repositories.sentLetterLog),
+  removeSentLetterLog: removeSentLetterLog(repositories.sentLetterLog),
+  getPartnerProfiles: getPartnerProfiles(repositories.partnerProfile),
+  savePartnerProfile: savePartnerProfile(repositories.partnerProfile),
+  clearPartnerProfile: clearPartnerProfile(repositories.partnerProfile),
+  getPlaylists: getPlaylists(repositories.playlist),
+  addPlaylist: addPlaylist(repositories.playlist),
+  removePlaylist: removePlaylist(repositories.playlist),
+  addActivityEvent: addActivityEvent(repositories.activityEvent),
+  getActivityEvents: getActivityEvents(repositories.activityEvent),
+  removeActivityEvent: removeActivityEvent(repositories.activityEvent),
+  exportBackup: exportBackup(repositories),
+  importBackup: importBackup(repositories),
+
+  /** URL del archivo original de un medio, cargada a demanda. */
+  getMediaFileUrl: (id) => repositories.media.getFileUrl(id),
+  /** Peso total del album, para avisar antes de exportar. */
+  getMediaBytes: () => repositories.media.estimateBytes(),
+
+  /** Sesion y emparejamiento. Null mientras la app corre solo en el navegador. */
+  account: isSupabaseConfigured ? createSupabaseAccountRepository() : null,
 }

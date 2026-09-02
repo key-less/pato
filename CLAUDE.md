@@ -18,6 +18,10 @@ cd server && npm run dev            # http://localhost:3001
 # Both together (concurrently)
 npm run dev:all
 
+# Tests
+npm test                            # vitest run
+npm run test:watch
+
 # Production build
 npm run build                       # outputs dist/
 
@@ -31,16 +35,29 @@ VITE_API_URL=http://localhost:3001 npm run dev
 Clean Architecture with four layers:
 
 ```
-src/domain/         — Entities (AppState, Cita, Letter, Media, PartnerProfile, Playlist, SentLetterLog) + repository interfaces
-src/application/    — Use cases (one file per operation: addMedia, saveLetter, addCita, etc.)
-src/infrastructure/ — localStorage repository implementations + API clients (playlistApi.js, sendEmailApi.js) + DI container
-src/presentation/   — React pages, components, hooks (App.jsx, Layout, Sidebar, pages/, hooks/)
+src/domain/         — Entities (AppState, Cita, Letter, Media, PartnerProfile, Playlist, SentLetterLog) + repository interfaces + errors
+src/application/    — Use cases (one file per operation: addMedia, saveLetter, addCita, exportBackup, etc.)
+src/infrastructure/ — Two interchangeable persistence backends + API clients + DI container
+                      storage/   local: localStorage + IndexedDB (álbum)
+                      supabase/  remoto: Postgres con RLS + Storage
+src/presentation/   — React pages, components, hooks (App.jsx, AuthGate, Layout, Sidebar, pages/, hooks/)
 server/index.js     — Single Express file: email, Spotify OAuth, YouTube OAuth, playlist fetch, now playing
+supabase/           — migrations/ (esquema, RLS, emparejamiento) + tests/ (aislamiento entre parejas)
+tests/              — Vitest (npm test)
 ```
 
 **Dependency injection:** `src/infrastructure/di/container.js` wires every repository to every use case and exports a single `container` object. Pages import from `container`, never from repos or use cases directly.
 
-**Persistence:** Everything is in `localStorage` — no database. Media is stored as data URLs (images/video). The backend is stateless (OAuth tokens are in-process memory, lost on restart).
+**Persistence:** el contenedor elige backend según haya o no `VITE_SUPABASE_URL`.
+
+- **Local (por defecto):** `localStorage` para todo menos el álbum; el álbum vive en IndexedDB con los binarios como `ArrayBuffer` en un store aparte de los metadatos. Migra solo desde el formato antiguo de data URLs.
+- **Supabase:** Postgres con RLS por `couple_id` y los archivos en un bucket privado con signed URLs.
+
+Las ocho interfaces de repositorio son idénticas en ambos modos: cambiar de uno a otro toca `container.js` y nada más.
+
+**Escrituras:** toda escritura puede fallar y ninguna falla en silencio. `localStorageDriver` distingue cupo agotado de otros errores, lanza, y emite por `storageAlerts`; `StorageAlert` (montado en `Layout`) lo muestra aunque la pantalla que lo disparó no lo capture.
+
+**Seguridad:** el modelo de amenaza, las políticas RLS y los requisitos de App Store están en [docs/SEGURIDAD.md](docs/SEGURIDAD.md). Leerlo antes de tocar el esquema.
 
 ## Backend API routes
 
@@ -68,7 +85,9 @@ Rate limits: 120 req/min general, 10 req/min on `/api/send-email`.
 
 ## Environment variables
 
-**Frontend (`.env`):** `VITE_API_URL` — backend public URL for production builds.
+**Frontend (`.env`):**
+- `VITE_API_URL` — backend public URL for production builds
+- `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY` — sin ellas la app corre en modo local. La anon key es pública por diseño; la `service_role` key **nunca** va en el frontend.
 
 **Backend (`server/.env`):**
 - `GMAIL_USER`, `GMAIL_APP_PASSWORD` — Gmail App Password (not the account password)
