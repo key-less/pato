@@ -162,8 +162,18 @@ export function NowPlayingWidget() {
   if (!expanded) {
     return (
       <div
-        className="fixed z-20 flex flex-col gap-1 rounded-l-lg overflow-hidden border border-pato-honey/60 border-r-0 bg-pato-butter/95 p-1.5 shadow-md"
-        style={{ top: 'max(1rem, env(safe-area-inset-top, 0px))', right: 0 }}
+        className="fixed z-20 flex flex-col gap-1 rounded-l-2xl overflow-hidden p-1.5"
+        style={{
+          top: 'max(1rem, env(safe-area-inset-top, 0px))',
+          right: 0,
+          // La unica superficie de vidrio de la app: es lo unico que flota de verdad.
+          background: 'linear-gradient(135deg, rgba(255,255,255,0.72) 0%, rgba(255,255,255,0.48) 100%)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          border: '1px solid rgba(255,255,255,0.7)',
+          borderRight: 0,
+          boxShadow: '0 8px 32px -10px rgba(31,58,61,0.28), inset 0 1px 0 rgba(255,255,255,0.6)',
+        }}
       >
         {visibleSections.includes('spotify') && (
           <button
@@ -203,7 +213,7 @@ export function NowPlayingWidget() {
           <button
             type="button"
             onClick={() => setActiveSection('spotify')}
-            className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-sm font-medium transition-colors ${effectiveActive === 'spotify' ? 'bg-pato-sage/40 text-pato-ink' : 'text-pato-muted hover:bg-pato-honey/30'}`}
+            className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-sm font-medium transition-colors ${effectiveActive === 'spotify' ? 'bg-pato-sage/40 text-pato-ink' : 'text-pato-junco hover:bg-pato-honey/30'}`}
             style={effectiveActive === 'spotify' ? { color: APPS.spotify.color } : {}}
             title="Spotify"
           >
@@ -215,7 +225,7 @@ export function NowPlayingWidget() {
           <button
             type="button"
             onClick={() => setActiveSection('youtube')}
-            className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-sm font-medium transition-colors ${effectiveActive === 'youtube' ? 'bg-pato-sage/40 text-pato-ink' : 'text-pato-muted hover:bg-pato-honey/30'}`}
+            className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-sm font-medium transition-colors ${effectiveActive === 'youtube' ? 'bg-pato-sage/40 text-pato-ink' : 'text-pato-junco hover:bg-pato-honey/30'}`}
             style={effectiveActive === 'youtube' ? { color: APPS.youtube.color } : {}}
             title="YouTube Music"
           >
@@ -275,7 +285,7 @@ function NowPlayingSection({ appKey, app, loading, profiles, partnerProfiles, au
             {app.title}
           </p>
         </div>
-        <p className="text-sm text-pato-muted">Cargando…</p>
+        <p className="text-sm text-pato-junco">Cargando…</p>
       </div>
     )
   }
@@ -314,7 +324,7 @@ function NowPlayingSection({ appKey, app, loading, profiles, partnerProfiles, au
                 <div className="min-w-0 flex-1">
                   <p className="text-xs font-medium text-pato-ink truncate">{displayName}</p>
                   <p className="text-xs font-medium text-pato-ink truncate">{track.name}</p>
-                  <p className="text-xs text-pato-muted truncate">{track.artist}</p>
+                  <p className="text-xs text-pato-junco truncate">{track.artist}</p>
                   {track.imageUrl && (
                     <img src={track.imageUrl} alt="" className="mt-1 w-10 h-10 rounded object-cover" />
                   )}
@@ -365,7 +375,7 @@ function NowPlayingSection({ appKey, app, loading, profiles, partnerProfiles, au
               )}
               <div className="min-w-0">
                 <p className="text-xs font-medium text-pato-ink">{displayName}</p>
-                <p className="text-xs text-pato-muted">
+                <p className="text-xs text-pato-junco">
                   {app.notAvailableMessage ?? 'Nada reproduciendo'}
                 </p>
               </div>

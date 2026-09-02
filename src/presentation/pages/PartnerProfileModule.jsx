@@ -3,7 +3,7 @@ import { container } from '../../infrastructure/di/container.js'
 import { API_BASE } from '../../infrastructure/api/playlistApi.js'
 import { createDownscaledDataUrl } from '../../infrastructure/media/imageProcessing.js'
 import { DuckProfile } from '../components/icons/Ducks.jsx'
-import GlassPanel from '../components/GlassPanel.jsx'
+import Panel from '../components/Panel.jsx'
 import ModuleHeader from '../components/ModuleHeader.jsx'
 
 const LABELS = {
@@ -59,9 +59,9 @@ export default function PartnerProfileModule() {
       />
 
       {saved && (
-        <GlassPanel className="mb-6 px-4 py-2 text-center">
-          <p className="font-body text-sm text-pato-charcoal">✓ Guardado correctamente.</p>
-        </GlassPanel>
+        <Panel className="mb-6 px-4 py-2 text-center">
+          <p className="font-body text-sm text-pato-agua">✓ Guardado correctamente.</p>
+        </Panel>
       )}
 
       <div className="grid md:grid-cols-2 gap-6">
@@ -86,7 +86,7 @@ export default function PartnerProfileModule() {
       <section className="mt-16">
         <div className="flex items-center gap-4 mb-6">
           <div className="flex-1 h-px bg-gradient-to-r from-transparent via-pato-rose/50 to-transparent" />
-          <h2 className="font-display text-2xl text-pato-charcoal tracking-tight"><span className="italic font-light">Resumen</span> de perfiles</h2>
+          <h2 className="font-display text-2xl text-pato-agua tracking-tight"><span className="italic font-light">Resumen</span> de perfiles</h2>
           <div className="flex-1 h-px bg-gradient-to-r from-transparent via-pato-rose/50 to-transparent" />
         </div>
         <div className="grid md:grid-cols-2 gap-6">
@@ -135,8 +135,8 @@ function ProfileCard({ title, index, profile, onSave, onReset, apiBase }) {
   }
 
   return (
-    <GlassPanel className="p-6">
-      <h3 className="font-display text-2xl text-pato-charcoal mb-5 text-center"><span className="italic font-light">{title}</span></h3>
+    <Panel className="p-6">
+      <h3 className="font-display text-2xl text-pato-agua mb-5 text-center"><span className="italic font-light">{title}</span></h3>
 
       <div className="mb-5 flex flex-col items-center gap-2">
         {(form.profilePhotoUrl || profile?.profilePhotoUrl) ? (
@@ -158,8 +158,8 @@ function ProfileCard({ title, index, profile, onSave, onReset, apiBase }) {
           </div>
         ) : (
           <label className="flex flex-col items-center gap-2 cursor-pointer">
-            <span className="w-20 h-20 rounded-full border-2 border-dashed border-white/70 bg-white/40 flex items-center justify-center text-pato-smoke text-2xl">+</span>
-            <span className="font-body text-xs text-pato-smoke">Añadir foto</span>
+            <span className="w-20 h-20 rounded-full border-2 border-dashed border-white/70 bg-white/40 flex items-center justify-center text-pato-junco text-2xl">+</span>
+            <span className="font-body text-xs text-pato-junco">Añadir foto</span>
             <input
               type="file"
               accept="image/*"
@@ -176,13 +176,13 @@ function ProfileCard({ title, index, profile, onSave, onReset, apiBase }) {
       <div className="space-y-3">
         {FIELDS.map((key) => (
           <div key={key}>
-            <label className="block font-body text-xs font-medium text-pato-smoke mb-1">{LABELS[key]}</label>
+            <label className="block font-body text-xs font-medium text-pato-junco mb-1">{LABELS[key]}</label>
             {key === 'loQueMasLeEncantaDelOtro' || key === 'queLosHaceUnicos' ? (
               <textarea
                 value={form[key] ?? ''}
                 onChange={(e) => update(key, e.target.value)}
                 rows={2}
-                className="w-full rounded-xl border border-white/70 bg-white/85 px-3 py-2 text-sm font-body text-pato-charcoal placeholder-pato-smoke resize-y focus:outline-none focus:ring-2 focus:ring-pato-coral/40"
+                className="w-full rounded-xl border border-white/70 bg-white/85 px-3 py-2 text-sm font-body text-pato-agua placeholder-pato-smoke resize-y focus:outline-none focus:ring-2 focus:ring-pato-coral/40"
                 placeholder={LABELS[key]}
               />
             ) : (
@@ -190,7 +190,7 @@ function ProfileCard({ title, index, profile, onSave, onReset, apiBase }) {
                 type={key === 'fechaNacimiento' ? 'date' : 'text'}
                 value={form[key] ?? ''}
                 onChange={(e) => update(key, e.target.value)}
-                className="w-full rounded-xl border border-white/70 bg-white/85 px-3 py-2 text-sm font-body text-pato-charcoal placeholder-pato-smoke focus:outline-none focus:ring-2 focus:ring-pato-coral/40"
+                className="w-full rounded-xl border border-white/70 bg-white/85 px-3 py-2 text-sm font-body text-pato-agua placeholder-pato-smoke focus:outline-none focus:ring-2 focus:ring-pato-coral/40"
                 placeholder={LABELS[key]}
               />
             )}
@@ -200,7 +200,7 @@ function ProfileCard({ title, index, profile, onSave, onReset, apiBase }) {
 
       {apiBase && (
         <div className="mt-5 pt-4 border-t border-white/40">
-          <p className="font-body text-xs font-medium text-pato-smoke mb-2">Vincular música (Ahora suena)</p>
+          <p className="font-body text-xs font-medium text-pato-junco mb-2">Vincular música (Ahora suena)</p>
           <div className="flex flex-wrap gap-2">
             <a
               href={`${apiBase}/api/spotify/auth?profile=${index}`}
@@ -229,22 +229,22 @@ function ProfileCard({ title, index, profile, onSave, onReset, apiBase }) {
         <button
           type="button"
           onClick={() => onReset?.()}
-          className="w-full py-2 rounded-xl bg-white/60 text-pato-smoke font-body text-sm hover:bg-white hover:text-pato-charcoal transition-colors"
+          className="w-full py-2 rounded-xl bg-white/60 text-pato-junco font-body text-sm hover:bg-white hover:text-pato-agua transition-colors"
         >
           Restablecer datos
         </button>
       </div>
-    </GlassPanel>
+    </Panel>
   )
 }
 
 function ProfileSummary({ title, profile, onClear }) {
   if (!profile || !profile.nombre) {
     return (
-      <GlassPanel className="p-5">
-        <h4 className="font-display text-lg text-pato-charcoal mb-2"><span className="italic font-light">{title}</span></h4>
-        <p className="font-body italic text-sm text-pato-smoke">Sin datos aún.</p>
-      </GlassPanel>
+      <Panel className="p-5">
+        <h4 className="font-display text-lg text-pato-agua mb-2"><span className="italic font-light">{title}</span></h4>
+        <p className="font-body italic text-sm text-pato-junco">Sin datos aún.</p>
+      </Panel>
     )
   }
 
@@ -260,14 +260,14 @@ function ProfileSummary({ title, profile, onClear }) {
   ].filter(([, v]) => v)
 
   return (
-    <GlassPanel className="p-5">
+    <Panel className="p-5">
       <div className="flex items-start justify-between gap-2 mb-3">
-        <h4 className="font-display text-lg text-pato-charcoal"><span className="italic font-light">{title}</span></h4>
+        <h4 className="font-display text-lg text-pato-agua"><span className="italic font-light">{title}</span></h4>
         {onClear && (
           <button
             type="button"
             onClick={onClear}
-            className="shrink-0 px-3 py-1.5 rounded-lg bg-white/60 text-pato-smoke font-body text-xs font-medium hover:bg-white hover:text-pato-coral transition-colors"
+            className="shrink-0 px-3 py-1.5 rounded-lg bg-white/60 text-pato-junco font-body text-xs font-medium hover:bg-white hover:text-pato-coral transition-colors"
             title="Quitar datos de este perfil"
           >
             Quitar
@@ -286,13 +286,13 @@ function ProfileSummary({ title, profile, onClear }) {
           <dl className="space-y-2 text-sm">
             {items.map(([label, value]) => (
               <div key={label}>
-                <dt className="font-body text-xs text-pato-smoke">{label}</dt>
-                <dd className="font-body text-pato-charcoal">{value}</dd>
+                <dt className="font-body text-xs text-pato-junco">{label}</dt>
+                <dd className="font-body text-pato-agua">{value}</dd>
               </div>
             ))}
           </dl>
         </div>
       </div>
-    </GlassPanel>
+    </Panel>
   )
 }

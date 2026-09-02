@@ -20,7 +20,7 @@ export default function CitasModule() {
 
       <ul className="mt-6 space-y-3">
         {citas.length === 0 ? (
-          <li className="rounded-xl px-4 py-5 bg-pato-butter/60 border border-pato-honey/40 text-pato-muted text-sm text-center">
+          <li className="rounded-xl px-4 py-5 bg-pato-butter/60 border border-pato-honey/40 text-pato-junco text-sm text-center">
             Aún no hay citas registradas.
           </li>
         ) : (
@@ -58,7 +58,7 @@ function CitaForm({ onAdded }) {
     <form onSubmit={handleSubmit} className="rounded-xl p-4 bg-pato-butter/80 border border-pato-honey/50 space-y-3">
       <div className="grid sm:grid-cols-2 gap-3">
         <div>
-          <label className="block text-xs font-medium text-pato-muted mb-1">Fecha de la cita</label>
+          <label className="block text-xs font-medium text-pato-junco mb-1">Fecha de la cita</label>
           <input
             type="date"
             value={date}
@@ -67,7 +67,7 @@ function CitaForm({ onAdded }) {
           />
         </div>
         <div>
-          <label className="block text-xs font-medium text-pato-muted mb-1">Hora de encuentro</label>
+          <label className="block text-xs font-medium text-pato-junco mb-1">Hora de encuentro</label>
           <input
             type="time"
             value={horaEncuentro}
@@ -77,7 +77,7 @@ function CitaForm({ onAdded }) {
         </div>
       </div>
       <div>
-        <label className="block text-xs font-medium text-pato-muted mb-1">Lugar</label>
+        <label className="block text-xs font-medium text-pato-junco mb-1">Lugar</label>
         <input
           type="text"
           value={lugar}
@@ -87,7 +87,7 @@ function CitaForm({ onAdded }) {
         />
       </div>
       <div>
-        <label className="block text-xs font-medium text-pato-muted mb-1">Nota (opcional)</label>
+        <label className="block text-xs font-medium text-pato-junco mb-1">Nota (opcional)</label>
         <input
           type="text"
           value={note}
@@ -126,16 +126,16 @@ function CitaCard({ cita, onRemoved, index = 0 }) {
       <div className="min-w-0">
         <div className="font-medium text-pato-ink">{formatDate(cita.date)}</div>
         {(cita.lugar || cita.horaEncuentro) && (
-          <div className="text-pato-muted text-sm mt-0.5">
+          <div className="text-pato-junco text-sm mt-0.5">
             {[cita.lugar, cita.horaEncuentro || null].filter(Boolean).join(' · ')}
           </div>
         )}
-        {cita.note && <p className="text-pato-muted text-sm mt-1">{cita.note}</p>}
+        {cita.note && <p className="text-pato-junco text-sm mt-1">{cita.note}</p>}
       </div>
       <button
         type="button"
         onClick={remove}
-        className="text-pato-muted text-xs hover:text-pato-coral hover:underline shrink-0"
+        className="text-pato-junco text-xs hover:text-pato-coral hover:underline shrink-0"
       >
         Quitar
       </button>

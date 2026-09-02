@@ -28,6 +28,18 @@ describe('etapaPara', () => {
     expect(etapaPara('custom_mejor_amigues', statuses)).toEqual(etapaPara('somos_pareja'))
   })
 
+  it('la onda comun y las propias se reparten la escena', () => {
+    // Al final queda una sola onda: las propias se apagan conforme crece la comun.
+    for (const id of ['conociendose', 'poniendose_serio', 'ya_casi', 'somos_pareja', 'casados']) {
+      const { ondaComun } = etapaPara(id)
+      expect(ondaComun + (1 - ondaComun)).toBe(1)
+      expect(ondaComun).toBeGreaterThanOrEqual(0)
+      expect(ondaComun).toBeLessThanOrEqual(1)
+    }
+    expect(1 - etapaPara('casados').ondaComun).toBe(0)
+    expect(1 - etapaPara('conociendose').ondaComun).toBe(1)
+  })
+
   it('los picos nunca se atraviesan cuando los patos se miran', () => {
     // Un pato ocupa de x-26 a x+27. Al mirarse, los picos apuntan al centro:
     // con separacion s, la punta de cada pico queda a s-27 del centro.

@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { container } from '../../infrastructure/di/container.js'
 import { formatBytes } from '../utils/formatBytes.js'
-import GlassPanel from './GlassPanel.jsx'
+import Panel from './Panel.jsx'
 
 const CONFIRM_RESTORE =
   'Restaurar reemplaza TODO el contenido actual de Pato: fotos, citas, cartas y perfiles. Esto no se puede deshacer. ¿Continuar?'
@@ -67,9 +67,9 @@ export function BackupPanel() {
   }
 
   return (
-    <GlassPanel className="p-6">
-      <h2 className="font-display text-xl text-pato-charcoal mb-2">Copia de seguridad</h2>
-      <p className="font-body text-sm text-pato-smoke mb-5">
+    <Panel className="p-6">
+      <h2 className="font-display text-xl text-pato-agua mb-2">Copia de seguridad</h2>
+      <p className="font-body text-sm text-pato-junco mb-5">
         Todo vive en este navegador. Si borras los datos del navegador o cambias de teléfono, se pierde.
         Exporta una copia de vez en cuando y guárdala en otro sitio.
       </p>
@@ -81,10 +81,10 @@ export function BackupPanel() {
           onChange={(e) => setIncludeMedia(e.target.checked)}
           className="mt-1 rounded border-white/70 accent-pato-coral"
         />
-        <span className="font-body text-sm text-pato-charcoal">
+        <span className="font-body text-sm text-pato-agua">
           Incluir fotos y videos
           {mediaBytes !== null && (
-            <span className="block text-xs text-pato-smoke mt-0.5">
+            <span className="block text-xs text-pato-junco mt-0.5">
               El álbum pesa {formatBytes(mediaBytes)}. Incluido en la copia ocupa cerca de {formatBytes(Math.round(mediaBytes * 1.37))}.
             </span>
           )}
@@ -104,7 +104,7 @@ export function BackupPanel() {
           type="button"
           onClick={() => fileInputRef.current?.click()}
           disabled={busy !== null}
-          className="flex-1 py-3 rounded-2xl bg-white/70 text-pato-charcoal font-body font-medium hover:bg-white disabled:opacity-60 transition-colors"
+          className="flex-1 py-3 rounded-2xl bg-white/70 text-pato-agua font-body font-medium hover:bg-white disabled:opacity-60 transition-colors"
         >
           {busy === 'import' ? 'Restaurando…' : 'Restaurar copia'}
         </button>
@@ -120,11 +120,11 @@ export function BackupPanel() {
       {message && (
         <p
           role="alert"
-          className={`font-body text-sm mt-4 ${message.tone === 'error' ? 'text-pato-terra' : 'text-pato-charcoal'}`}
+          className={`font-body text-sm mt-4 ${message.tone === 'error' ? 'text-pato-terra' : 'text-pato-agua'}`}
         >
           {message.text}
         </p>
       )}
-    </GlassPanel>
+    </Panel>
   )
 }

@@ -4,7 +4,7 @@ import { useAppState } from '../hooks/useAppState'
 import { useMediaUrl } from '../hooks/useMediaUrl'
 import { createImageThumbnail } from '../../infrastructure/media/imageProcessing.js'
 import { DuckPhotos } from '../components/icons/Ducks.jsx'
-import GlassPanel, { glassStyle } from '../components/GlassPanel.jsx'
+import Panel, { estiloPapel } from '../components/Panel.jsx'
 import ModuleHeader from '../components/ModuleHeader.jsx'
 
 const QUOTA_MESSAGE = 'No queda espacio en este dispositivo. Exporta una copia desde Configuración y libera algo antes de seguir subiendo.'
@@ -102,8 +102,8 @@ export default function MediaModule() {
           type="button"
           onClick={() => fileInputRef.current?.click()}
           disabled={uploading}
-          className="px-6 py-3 rounded-2xl font-body font-medium text-pato-charcoal disabled:opacity-60 transition-transform hover:scale-[1.02]"
-          style={glassStyle}
+          className="px-6 py-3 rounded-2xl font-body font-medium text-pato-agua disabled:opacity-60 transition-transform hover:scale-[1.02]"
+          style={estiloPapel}
         >
           {uploading ? 'Subiendo…' : '+ Agregar fotos o videos'}
         </button>
@@ -128,7 +128,7 @@ export default function MediaModule() {
       </div>
 
       {media.length === 0 && (
-        <p className="text-pato-smoke font-body italic text-center py-12">
+        <p className="text-pato-junco font-body italic text-center py-12">
           Aún no hay fotos ni videos. Cuando agregues algunos, podrás marcar los que aparezcan flotando en Inicio.
         </p>
       )}
@@ -148,7 +148,7 @@ function MediaCard({ item, statuses, onUpdate, onDelete, onToggleShowOnLanding }
   }
 
   return (
-    <GlassPanel className="overflow-hidden">
+    <Panel className="overflow-hidden">
       <div className="aspect-square relative bg-pato-shell/40">
         {url && (item.type === 'photo' ? (
           <img src={url} alt={item.caption || ''} loading="lazy" className="w-full h-full object-cover" />
@@ -165,7 +165,7 @@ function MediaCard({ item, statuses, onUpdate, onDelete, onToggleShowOnLanding }
         </button>
       </div>
       <div className="p-3 space-y-2">
-        <label className="flex items-center gap-2 font-body text-xs text-pato-smoke cursor-pointer">
+        <label className="flex items-center gap-2 font-body text-xs text-pato-junco cursor-pointer">
           <input
             type="checkbox"
             checked={!!item.showOnLanding}
@@ -176,18 +176,18 @@ function MediaCard({ item, statuses, onUpdate, onDelete, onToggleShowOnLanding }
         </label>
         {editing ? (
           <>
-            <label className="block font-body text-xs font-medium text-pato-charcoal mb-1">Fecha</label>
+            <label className="block font-body text-xs font-medium text-pato-agua mb-1">Fecha</label>
             <input
               type="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
-              className="w-full rounded-lg border border-white/70 bg-white/80 px-2 py-1.5 text-sm text-pato-charcoal mb-2"
+              className="w-full rounded-lg border border-white/70 bg-white/80 px-2 py-1.5 text-sm text-pato-agua mb-2"
             />
-            <label className="block font-body text-xs font-medium text-pato-charcoal mb-1">Estado en ese momento</label>
+            <label className="block font-body text-xs font-medium text-pato-agua mb-1">Estado en ese momento</label>
             <select
               value={statusId}
               onChange={(e) => setStatusId(e.target.value)}
-              className="w-full rounded-lg border border-white/70 bg-white/80 px-2 py-1.5 text-sm text-pato-charcoal mb-2"
+              className="w-full rounded-lg border border-white/70 bg-white/80 px-2 py-1.5 text-sm text-pato-agua mb-2"
             >
               <option value="">—</option>
               {statuses.map((s) => (
@@ -196,20 +196,20 @@ function MediaCard({ item, statuses, onUpdate, onDelete, onToggleShowOnLanding }
             </select>
             <div className="flex gap-2">
               <button type="button" onClick={save} className="flex-1 py-1.5 rounded-lg bg-pato-coral text-white text-sm font-medium hover:bg-pato-terra transition-colors">Guardar</button>
-              <button type="button" onClick={() => setEditing(false)} className="py-1.5 px-3 rounded-lg bg-white/60 text-pato-charcoal text-sm">Cancelar</button>
+              <button type="button" onClick={() => setEditing(false)} className="py-1.5 px-3 rounded-lg bg-white/60 text-pato-agua text-sm">Cancelar</button>
             </div>
           </>
         ) : (
           <button
             type="button"
             onClick={() => setEditing(true)}
-            className="w-full text-left font-body text-sm text-pato-smoke hover:text-pato-charcoal transition-colors"
+            className="w-full text-left font-body text-sm text-pato-junco hover:text-pato-agua transition-colors"
           >
             {item.date ? formatDate(item.date) : 'Sin fecha'} · {statuses.find(s => s.id === item.relationshipStatusId)?.label ?? 'Sin estado'}
           </button>
         )}
       </div>
-    </GlassPanel>
+    </Panel>
   )
 }
 

@@ -20,7 +20,7 @@ export class ErrorBoundary extends Component {
       return (
         <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-pato-butter text-pato-ink">
           <p className="text-lg font-medium mb-2">Algo salió mal</p>
-          <p className="text-sm text-pato-muted mb-4 text-center max-w-md">
+          <p className="text-sm text-pato-junco mb-4 text-center max-w-md">
             Recarga la página para intentar de nuevo. Si el problema sigue, prueba más tarde.
           </p>
           <button

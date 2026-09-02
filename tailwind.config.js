@@ -33,8 +33,11 @@ export default {
         },
       },
       fontFamily: {
-        display: ['"Cormorant Garamond"', '"Playfair Display"', 'serif'],
-        body: ['"Geist"', '"DM Sans"', 'sans-serif'],
+        // Dos familias, cuatro trabajos. Fraunces para lo que emociona (contador,
+        // titulos, fechas, citas); Karla para lo que se usa (botones, formularios,
+        // texto corrido). Antes habia cuatro haciendo estos mismos dos trabajos.
+        display: ['Fraunces', 'Georgia', 'Times New Roman', 'serif'],
+        body: ['Karla', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
       },
       backgroundImage: {
         'glass-romantic': 'linear-gradient(135deg, #fbf5ec 0%, #f3e0d4 40%, #f0c8c4 100%)',

@@ -19,7 +19,7 @@ const ETAPAS = {
   poniendose_serio: { separacion: 52, ondaComun: 0 },
   ya_casi:          { separacion: 42, ondaComun: 0.35 },
   somos_pareja:     { separacion: 34, ondaComun: 0.7, mirandose: true },
-  casados:          { separacion: 30, ondaComun: 1, mirandose: true },
+  casados:          { separacion: 32, ondaComun: 1, mirandose: true },
 }
 
 const ORDEN = ['conociendose', 'poniendose_serio', 'ya_casi', 'somos_pareja', 'casados']
@@ -73,6 +73,7 @@ export default function Estanque({ statusId, statuses, solo = false, label, clas
 
   const izquierda = centro - etapa.separacion
   const derecha = centro + etapa.separacion
+  const propia = 1 - etapa.ondaComun
 
   const descripcion = label ?? (solo
     ? 'Un pato solo en el agua, esperando'
@@ -93,13 +94,22 @@ export default function Estanque({ statusId, statuses, solo = false, label, clas
         </>
       ) : (
         <>
-          <Onda cx={izquierda + 4} rx={38} ry={7.5} color="#c2a898" opacity="0.65" />
-          <Onda cx={izquierda + 4} rx={23} ry={4.8} color="#c2a898" opacity="0.95" />
-          <Onda cx={derecha - 4} rx={38} ry={7.5} color="#c2a898" opacity="0.65" />
-          <Onda cx={derecha - 4} rx={23} ry={4.8} color="#c2a898" opacity="0.95" />
+          {/* Las ondas propias se apagan conforme nace la comun: al final, una sola
+              onda para los dos. Sin esto, las tres se superponen en un enredo. */}
+          {propia > 0.01 && (
+            <>
+              <Onda cx={izquierda + 4} rx={38} ry={7.5} color="#c2a898" opacity={propia * 0.65} />
+              <Onda cx={izquierda + 4} rx={23} ry={4.8} color="#c2a898" opacity={propia * 0.95} />
+              <Onda cx={derecha - 4} rx={38} ry={7.5} color="#c2a898" opacity={propia * 0.65} />
+              <Onda cx={derecha - 4} rx={23} ry={4.8} color="#c2a898" opacity={propia * 0.95} />
+            </>
+          )}
 
           {etapa.ondaComun > 0 && (
-            <Onda cx={centro} rx={26 + etapa.ondaComun * 30} ry={5 + etapa.ondaComun * 4} color="#d4664f" opacity={etapa.ondaComun * 0.75} />
+            <>
+              <Onda cx={centro} rx={26 + etapa.ondaComun * 34} ry={5 + etapa.ondaComun * 5} color="#d4664f" opacity={etapa.ondaComun * 0.55} />
+              <Onda cx={centro} rx={16 + etapa.ondaComun * 20} ry={3.5 + etapa.ondaComun * 3} color="#d4664f" opacity={etapa.ondaComun * 0.85} />
+            </>
           )}
 
           <Pato x={izquierda} />
@@ -107,7 +117,7 @@ export default function Estanque({ statusId, statuses, solo = false, label, clas
         </>
       )}
 
-      <line x1="0" y1={LINEA_AGUA} x2="200" y2={LINEA_AGUA} stroke="#cbb4a4" strokeWidth="1" />
+      <line x1="14" y1={LINEA_AGUA} x2="186" y2={LINEA_AGUA} stroke="#dcc8ba" strokeWidth="1" />
     </svg>
   )
 }

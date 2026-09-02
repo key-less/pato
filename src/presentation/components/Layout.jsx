@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom'
 import { Sidebar } from './Sidebar'
 import { NowPlayingWidget } from './NowPlayingWidget'
 import { StorageAlert } from './StorageAlert'
+import { estiloPapel } from './Panel.jsx'
 import { container } from '../../infrastructure/di/container.js'
 
 export function Layout({ children }) {
@@ -61,14 +62,8 @@ export function Layout({ children }) {
           <button
             type="button"
             onClick={() => setSidebarOpen(true)}
-            className="p-3 min-w-[44px] min-h-[44px] rounded-2xl text-pato-charcoal hover:scale-105 active:scale-95 transition-all touch-manipulation"
-            style={{
-              background: 'rgba(255, 255, 255, 0.65)',
-              backdropFilter: 'blur(16px)',
-              WebkitBackdropFilter: 'blur(16px)',
-              border: '1px solid rgba(255, 255, 255, 0.7)',
-              boxShadow: '0 8px 24px -8px rgba(184, 117, 96, 0.18), inset 0 1px 0 rgba(255,255,255,0.6)',
-            }}
+            className="p-3 min-w-[44px] min-h-[44px] rounded-2xl text-pato-agua hover:scale-105 active:scale-95 transition-all touch-manipulation"
+            style={estiloPapel}
             aria-label="Abrir menú"
           >
             <MenuIcon />

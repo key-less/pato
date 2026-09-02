@@ -26,11 +26,9 @@ export function Sidebar({ open, onClose, currentPath }) {
       <aside
         className="fixed left-0 top-0 bottom-0 w-72 z-50 flex flex-col animate-fade-in"
         style={{
-          background: 'linear-gradient(180deg, rgba(255,255,255,0.86) 0%, rgba(251,245,236,0.92) 100%)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          borderRight: '1px solid rgba(255,255,255,0.7)',
-          boxShadow: '24px 0 60px -20px rgba(184, 117, 96, 0.15)',
+          background: '#fffbf4',
+          borderRight: '1px solid #eadfce',
+          boxShadow: '24px 0 60px -20px rgba(31, 58, 61, 0.22)',
         }}
         aria-label="Menú principal"
       >
@@ -45,12 +43,12 @@ export function Sidebar({ open, onClose, currentPath }) {
             >
               <DuckLogo size={32} />
             </div>
-            <span className="font-display text-2xl font-medium text-pato-charcoal tracking-tight">Pato</span>
+            <span className="font-display text-2xl font-medium text-pato-agua tracking-tight">Pato</span>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="w-9 h-9 rounded-full flex items-center justify-center text-pato-smoke hover:bg-white/60 hover:text-pato-charcoal transition-colors"
+            className="w-9 h-9 rounded-full flex items-center justify-center text-pato-junco hover:bg-white/60 hover:text-pato-agua transition-colors"
             aria-label="Cerrar menú"
           >
             <CloseIcon />
@@ -67,8 +65,8 @@ export function Sidebar({ open, onClose, currentPath }) {
                 onClick={onClose}
                 className={`group flex items-center gap-3.5 px-3 py-2.5 rounded-2xl transition-all ${
                   isActive
-                    ? 'bg-white/70 shadow-soft text-pato-charcoal font-medium'
-                    : 'text-pato-smoke hover:bg-white/45 hover:text-pato-charcoal'
+                    ? 'bg-white/70 shadow-soft text-pato-agua font-medium'
+                    : 'text-pato-junco hover:bg-white/45 hover:text-pato-agua'
                 }`}
               >
                 <span
@@ -86,7 +84,7 @@ export function Sidebar({ open, onClose, currentPath }) {
           })}
         </nav>
         <div className="px-6 py-5 text-center">
-          <p className="font-display italic text-xs text-pato-muted tracking-wide">Hecho con cariño</p>
+          <p className="font-display italic text-xs text-pato-junco tracking-wide">Hecho con cariño</p>
         </div>
       </aside>
     </>

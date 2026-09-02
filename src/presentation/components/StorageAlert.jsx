@@ -25,21 +25,19 @@ export function StorageAlert() {
       className="fixed left-1/2 -translate-x-1/2 z-50 w-[min(30rem,calc(100vw-2rem))] rounded-2xl px-5 py-4 flex items-start gap-3"
       style={{
         bottom: 'max(1rem, env(safe-area-inset-bottom))',
-        background: 'rgba(255, 247, 245, 0.94)',
-        backdropFilter: 'blur(16px)',
-        WebkitBackdropFilter: 'blur(16px)',
-        border: '1px solid rgba(207, 90, 68, 0.4)',
-        boxShadow: '0 12px 40px -12px rgba(184, 117, 96, 0.45)',
+        background: '#fffbf4',
+        border: '1px solid rgba(207, 90, 68, 0.45)',
+        boxShadow: '0 12px 40px -12px rgba(31, 58, 61, 0.35)',
       }}
     >
       <span aria-hidden className="mt-0.5 w-2 h-2 rounded-full bg-pato-coral flex-shrink-0" />
-      <p className="flex-1 font-body text-sm text-pato-charcoal leading-relaxed">
+      <p className="flex-1 font-body text-sm text-pato-agua leading-relaxed">
         {failure.name === 'StorageQuotaError' ? QUOTA_MESSAGE : GENERIC_MESSAGE}
       </p>
       <button
         type="button"
         onClick={() => setFailure(null)}
-        className="flex-shrink-0 w-7 h-7 flex items-center justify-center rounded-full text-pato-smoke hover:text-pato-charcoal hover:bg-white/70 transition-colors focus:outline-none focus:ring-2 focus:ring-pato-coral/40"
+        className="flex-shrink-0 w-7 h-7 flex items-center justify-center rounded-full text-pato-junco hover:text-pato-agua hover:bg-white/70 transition-colors focus:outline-none focus:ring-2 focus:ring-pato-coral/40"
         aria-label="Cerrar aviso"
       >
         <span aria-hidden className="text-base leading-none">×</span>

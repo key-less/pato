@@ -1,6 +1,6 @@
 # Project Handoff — Pato
 
-Última actualización: 2026-09-01
+Última actualización: 2026-09-02
 
 ## Current State
 
@@ -24,14 +24,22 @@
 - Sesión (Apple / magic link), creación de pareja, invitación y borrado de cuenta
 - El contenedor elige backend según haya o no `VITE_SUPABASE_URL`
 
-**Rediseño «Aguas tranquilas»: dirección cerrada, aplicada en parte.**
-Aplicado: tokens `pato-agua` y `pato-junco`, superficie de papel (`Panel`), ondas en
-vez de spinners, y el estado de la relación como dos patos en el agua (`Estanque`),
-tanto en la portada como en las pantallas nuevas.
-Pendiente: cambio de cuatro familias tipográficas a dos, y convertir el resto de
-superficies de vidrio a papel.
+**Rediseño «Aguas tranquilas»: aplicado.**
 
-61 tests con Vitest; `npm test`.
+- Tipografía de cuatro familias a dos: Fraunces (lo que emociona) y Karla (lo que se usa)
+- `GlassPanel` eliminado; `Panel` (papel mate) es la superficie de toda la app
+- Vidrio esmerilado solo en `NowPlayingWidget`, que es lo único que flota de verdad
+  sobre el contenido. El scrim del sidebar conserva su desenfoque: es un solo
+  elemento y ahí el desenfoque hace su trabajo
+- El ancla de texto pasa a `pato-agua` (#1f3a3d): la única nota fría de la paleta,
+  y lo que hace que los cálidos se lean cálidos
+- Ondas en vez de spinners; el estado de la relación como dos patos en el agua
+
+**Funciones nuevas: diseñadas, sin construir.** Ver la dirección «Señales en el agua»
+(distancia sin mapa, toques con animación firmada, la onda compartida, cartas con
+fecha). Las dos últimas no dependen de iOS y se pueden hacer ya.
+
+62 tests con Vitest; `npm test`.
 
 ## ⚠️ Lo que NO está verificado
 
@@ -79,6 +87,17 @@ uno solo.
 elegir las distancias por sensación sin medir el ancho del dibujo. Hay dos tests que
 ahora fijan la restricción.
 
+**Las ondas se enredaban en «Estamos casados».** Las dos propias y la común se
+dibujaban a la vez y se superponían en un nudo. El propio plan decía «una sola onda
+para los dos» y el código no lo cumplía: ahora las propias se apagan conforme crece
+la común. Causa raíz: implementar la geometría sin releer lo que la dirección
+prometía.
+
+**Un reemplazo masivo dejó un nombre mintiendo.** Al renombrar `glassStyle` a
+`estiloPapel` en bloque, la definición local de `LandingPage` quedó llamándose papel
+con valores de vidrio. Causa raíz: renombrar sin revisar dónde estaba *definido* lo
+que se renombraba, no solo dónde se usaba.
+
 ## Improvements Identified
 
 - **Tokens de Spotify globales del servidor** (`server/index.js:314`, `:508`): se
@@ -87,8 +106,6 @@ ahora fijan la restricción.
   cuando el JWT de Supabase sea la autenticación real
 - **Cero TypeScript** pese a que el estándar del workspace pide strict mode
 - **Sin ESLint ni Prettier**
-- `backdrop-filter: blur(20px)` sigue en la mayoría de superficies; el rediseño lo
-  quita, pero solo está hecho en las pantallas nuevas
 - El sidebar no bloquea el scroll de fondo, no atrapa el foco ni cierra con Escape
 - `datesCount` en `AppState` está muerto; la portada usa `citas.length`
 - `fechaNacimiento` del perfil se guarda y no alimenta ningún recordatorio

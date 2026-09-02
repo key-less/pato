@@ -20,12 +20,12 @@ export default function ModuleHeader({ icon: Icon, eyebrow, italic, title, descr
           {eyebrow}
         </p>
       )}
-      <h1 className="font-display text-4xl md:text-5xl font-medium text-pato-charcoal leading-[1.05]">
+      <h1 className="font-display text-4xl md:text-5xl font-medium text-pato-agua leading-[1.05]">
         {italic && <span className="italic font-light">{italic} </span>}
         {title}
       </h1>
       {description && (
-        <p className="font-body text-sm text-pato-smoke max-w-md mx-auto pt-1">
+        <p className="font-body text-sm text-pato-junco max-w-md mx-auto pt-1">
           {description}
         </p>
       )}

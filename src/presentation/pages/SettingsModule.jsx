@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useAppState } from '../hooks/useAppState'
 import { DuckSettings } from '../components/icons/Ducks.jsx'
-import GlassPanel from '../components/GlassPanel.jsx'
+import Panel from '../components/Panel.jsx'
 import { BackupPanel } from '../components/BackupPanel.jsx'
 import { AccountPanel } from '../components/AccountPanel.jsx'
 import ModuleHeader from '../components/ModuleHeader.jsx'
@@ -84,42 +84,42 @@ export default function SettingsModule() {
       />
 
       <div className="space-y-6">
-        <GlassPanel className="p-6">
-          <h2 className="font-display text-xl text-pato-charcoal mb-4">Fecha en que se conocieron</h2>
+        <Panel className="p-6">
+          <h2 className="font-display text-xl text-pato-agua mb-4">Fecha en que se conocieron</h2>
           <input
             type="date"
             value={metSince}
             onChange={(e) => setMetSince(e.target.value)}
-            className="w-full rounded-2xl border border-white/70 bg-white/85 px-4 py-3 font-body text-pato-charcoal focus:outline-none focus:ring-2 focus:ring-pato-coral/40"
+            className="w-full rounded-2xl border border-white/70 bg-white/85 px-4 py-3 font-body text-pato-agua focus:outline-none focus:ring-2 focus:ring-pato-coral/40"
           />
-        </GlassPanel>
+        </Panel>
 
-        <GlassPanel className="p-6">
-          <h2 className="font-display text-xl text-pato-charcoal mb-4">Estado actual de la relación</h2>
+        <Panel className="p-6">
+          <h2 className="font-display text-xl text-pato-agua mb-4">Estado actual de la relación</h2>
           <select
             value={currentStatusId}
             onChange={(e) => setCurrentStatusId(e.target.value)}
-            className="w-full rounded-2xl border border-white/70 bg-white/85 px-4 py-3 font-body text-pato-charcoal focus:outline-none focus:ring-2 focus:ring-pato-coral/40"
+            className="w-full rounded-2xl border border-white/70 bg-white/85 px-4 py-3 font-body text-pato-agua focus:outline-none focus:ring-2 focus:ring-pato-coral/40"
           >
             <option value="">— Seleccionar —</option>
             {statuses.map((s) => (
               <option key={s.id} value={s.id}>{s.label}</option>
             ))}
           </select>
-        </GlassPanel>
+        </Panel>
 
-        <GlassPanel className="p-6">
-          <h2 className="font-display text-xl text-pato-charcoal mb-2">Estados personalizados</h2>
-          <p className="font-body text-sm text-pato-smoke mb-4">Puedes agregar más estados además de los predefinidos.</p>
+        <Panel className="p-6">
+          <h2 className="font-display text-xl text-pato-agua mb-2">Estados personalizados</h2>
+          <p className="font-body text-sm text-pato-junco mb-4">Puedes agregar más estados además de los predefinidos.</p>
           <ul className="space-y-1 mb-4">
             {statuses.map((s) => (
               <li key={s.id} className="flex items-center justify-between gap-2 py-2 border-b border-white/40 last:border-0">
-                <span className="font-body text-pato-charcoal">{s.label}</span>
+                <span className="font-body text-pato-agua">{s.label}</span>
                 {!DEFAULT_STATUSES.some((d) => d.id === s.id) && (
                   <button
                     type="button"
                     onClick={() => removeStatus(s.id)}
-                    className="font-body text-sm text-pato-smoke hover:text-pato-coral transition-colors"
+                    className="font-body text-sm text-pato-junco hover:text-pato-coral transition-colors"
                   >
                     Quitar
                   </button>
@@ -134,17 +134,17 @@ export default function SettingsModule() {
               onChange={(e) => setNewStatusLabel(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && addStatus()}
               placeholder="Ej: Mejor amigues"
-              className="flex-1 rounded-2xl border border-white/70 bg-white/85 px-4 py-2 font-body text-pato-charcoal placeholder-pato-smoke focus:outline-none focus:ring-2 focus:ring-pato-coral/40"
+              className="flex-1 rounded-2xl border border-white/70 bg-white/85 px-4 py-2 font-body text-pato-agua placeholder-pato-smoke focus:outline-none focus:ring-2 focus:ring-pato-coral/40"
             />
             <button
               type="button"
               onClick={addStatus}
-              className="px-4 py-2 rounded-2xl bg-white/70 text-pato-charcoal font-body font-medium hover:bg-white transition-colors"
+              className="px-4 py-2 rounded-2xl bg-white/70 text-pato-agua font-body font-medium hover:bg-white transition-colors"
             >
               Agregar
             </button>
           </div>
-        </GlassPanel>
+        </Panel>
 
         <button
           type="button"
