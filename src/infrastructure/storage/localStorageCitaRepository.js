@@ -1,3 +1,4 @@
+import { createCitaRepository } from '../../domain/repositories/CitaRepository.js'
 const STORAGE_KEY = 'pato-citas'
 
 export function createLocalStorageCitaRepository() {
@@ -19,7 +20,7 @@ export function createLocalStorageCitaRepository() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(items))
   }
 
-  return {
+  return createCitaRepository({
     async getAll() {
       return load()
     },
@@ -33,5 +34,5 @@ export function createLocalStorageCitaRepository() {
     async remove(id) {
       persist(load().filter((c) => c.id !== id))
     },
-  }
+  })
 }

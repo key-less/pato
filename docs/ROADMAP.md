@@ -63,6 +63,11 @@ porque no hay nada que obligue a que cumplan la misma forma.
 
 ## Fase 1 — Red de seguridad: tests automatizados
 
+> **COMPLETADA (2026-09-02).** 125 tests en verde, CI en GitHub Actions, y los contratos
+> de repositorio rediseñados para validar de verdad. Encontró y corrigió **tres bugs
+> reales** que nadie había detectado — detallados al final de esta sección.
+
+
 **Por qué va primera:** las fases 2 y 3 reescriben la capa de persistencia entera. Sin
 tests, cada refactor se hace a ciegas y la única verificación es abrir el navegador y
 probar a mano. Es la fase que hace que las siguientes sean seguras en lugar de temerarias.
@@ -83,7 +88,40 @@ persistencia esté estable; hacerlos ahora significa reescribirlos en la fase 3.
 **Terminada cuando:** `npm test` pasa en CI, cubre los use cases y los repositorios, y
 un PR con un fallo introducido a propósito sale en rojo.
 
-**Cambios de comportamiento:** ninguno. Solo se añade código de prueba.
+### Lo que se entregó
+
+- **125 tests** en `tests/`, repartidos en dominio, aplicación e infraestructura.
+- **Rediseño de los contratos de repositorio** (era el problema 3). `defineRepository`
+  sustituye a las funciones identidad: ahora cada contrato valida su implementación al
+  construirse y nombra los métodos que faltan. Se escribieron los cinco contratos
+  ausentes, y las ocho implementaciones de `localStorage` pasan por ellos.
+- **Test del contenedor DI** que exige la lista completa de casos de uso y falla tanto si
+  falta uno como si sobra sin declarar.
+- **CI en GitHub Actions**: tests y build del frontend, y para el backend `npm ci`
+  (que detecta un lockfile desincronizado) más un arranque real del servidor contra
+  `/api/health`.
+- Suite verificada con orden aleatorio (`--sequence.shuffle`) para descartar dependencias
+  entre tests.
+
+### Tres bugs encontrados y corregidos
+
+La fase se planteó sin cambios de comportamiento, pero los tests destaparon tres defectos
+reales. Codificarlos como "correctos" habría sido peor que no tener tests, así que se
+corrigieron:
+
+1. **Los estados personalizados de la relación no se guardaban.** `updateAppState`
+   componía `relationshipStatuses: current ?? partial ?? []`, de modo que la clave
+   explícita pisaba lo que llegaba en `partial`. Como `getAppState` siembra los estados
+   por defecto en el primer arranque, `current` siempre tenía valor: escribir un estado
+   nuevo en Configuración y pulsar guardar **no hacía nada**. Ahora manda `partial`.
+2. **`getCitas` reordenaba lo almacenado.** Hacía `list.sort(...)` sobre el array que
+   devuelve el repositorio, y `sort` muta. Con la caché en memoria añadida en `07bf533`,
+   leer las citas reordenaba el almacén durante toda la sesión. Ahora copia antes.
+3. **`getPlaylists` tenía el mismo defecto**, por el mismo motivo y con la misma
+   corrección. `getActivityEvents` ya lo hacía bien (`[...events].sort(...)`), lo que
+   confirma que era un descuido y no una decisión.
+
+**Cambios de comportamiento:** los tres arreglos anteriores. Ninguno más.
 
 ---
 

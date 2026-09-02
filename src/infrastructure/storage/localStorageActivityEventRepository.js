@@ -1,3 +1,4 @@
+import { createActivityEventRepository } from '../../domain/repositories/ActivityEventRepository.js'
 const KEY = 'pato_activity_events'
 
 export function createLocalStorageActivityEventRepository() {
@@ -32,5 +33,5 @@ export function createLocalStorageActivityEventRepository() {
     persist(load().filter((e) => e.id !== id))
   }
 
-  return { getAll, save, remove }
+  return createActivityEventRepository({ getAll, save, remove })
 }

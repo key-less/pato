@@ -24,6 +24,11 @@ cd server && npm run dev            # http://localhost:3001
 # Both together (concurrently)
 npm run dev:all
 
+# Tests (Vitest + happy-dom)
+npm test                            # run once
+npm run test:watch                  # watch mode
+npm run test:coverage               # with coverage
+
 # Production build
 npm run build                       # outputs dist/
 
@@ -45,6 +50,18 @@ server/index.js     — Single Express file: email, Spotify OAuth, YouTube OAuth
 ```
 
 **Dependency injection:** `src/infrastructure/di/container.js` wires every repository to every use case and exports a single `container` object. Pages import from `container`, never from repos or use cases directly.
+
+**Repository contracts:** `src/domain/repositories/` defines one contract per entity, all
+built with `defineRepository(name, requiredMethods)`. Each contract validates its
+implementation **at construction time** and throws naming the missing methods — so a
+repository that does not satisfy its port fails immediately at startup, not later inside
+a page. Every `localStorage` implementation is wrapped in its contract. Add a new entity
+and it needs a contract too; the container test enforces the wiring.
+
+**Tests:** `tests/` mirrors `src/` (domain / application / infrastructure). Use cases are
+tested against fake repositories built through the same contracts, so a contract change
+that implementations do not follow breaks the tests. `src/presentation` is deliberately
+untested for now — see `docs/ROADMAP.md` phase 5.
 
 **Persistence:** Everything is in `localStorage` — no database. Media is stored as data URLs (images/video). The backend is stateless (OAuth tokens are in-process memory, lost on restart).
 

@@ -2,7 +2,7 @@
 
 > Documento único de continuidad del proyecto. Se actualiza, no se duplica.
 
-**Última actualización:** 2026-09-02
+**Última actualización:** 2026-09-02 (Fase 1 completada)
 **Rama de trabajo:** `claude/continuacion-trabajo-anterior-8n98jy`
 
 ---
@@ -135,7 +135,7 @@ escrito en **[docs/ROADMAP.md](docs/ROADMAP.md)**. Resumen:
 
 | Fase | Qué resuelve |
 |---|---|
-| 1 — Tests automatizados | Habilita con seguridad todo lo demás |
+| ~~1 — Tests automatizados~~ | **COMPLETADA** — 125 tests, CI, 3 bugs corregidos |
 | 2 — Límite de almacenamiento | Un fallo silencioso que rompe **hoy** |
 | 3 — Supabase | Que la pareja comparta datos de verdad (la fase que cambia el producto) |
 | 4 — Tokens OAuth persistidos | Spotify deja de desconectarse en cada reinicio |
@@ -151,9 +151,31 @@ detallados en el roadmap):
 2. **El almacenamiento rompe sin avisar.** `localStorageMediaRepository.save()` no tiene
    `try/catch`; al agotar los ~5 MB de cuota, `setItem` lanza `QuotaExceededError` sin
    que nadie lo capture. Los datos parecen guardarse y no se guardan.
-3. **Faltan contratos de repositorio.** `src/domain/repositories/` solo define tres de
-   ocho. Hoy no molesta; con una segunda implementación (Supabase) es donde ambas se
-   desincronizarán, porque nada obliga a que cumplan la misma forma.
+3. ~~**Faltan contratos de repositorio.**~~ **RESUELTO en la Fase 1.** Los ocho contratos
+   existen y validan de verdad: `defineRepository` comprueba la implementación al
+   construirla y nombra los métodos que faltan. Las ocho implementaciones de
+   `localStorage` pasan por su contrato, igual que los repositorios falsos de los tests.
+
+### Fase 1 — lo hecho (2026-09-02)
+
+125 tests con Vitest + happy-dom, CI en GitHub Actions (frontend: tests y build; backend:
+`npm ci` y arranque real contra `/api/health`), y el rediseño de los contratos de
+repositorio. Suite verificada con orden aleatorio.
+
+**Encontró tres bugs reales que nadie había visto**, todos corregidos:
+
+1. **Los estados personalizados de la relación no se guardaban nunca.** En
+   `updateAppState`, la clave explícita `relationshipStatuses: current ?? partial ?? []`
+   pisaba el valor de `partial`. Escribir un estado nuevo en Configuración y guardar no
+   hacía nada. Es una funcionalidad documentada en el README que llevaba rota sin que
+   nadie lo notara.
+2. **`getCitas` reordenaba el almacén al leerlo** (`sort` muta y el repositorio devuelve
+   su array interno). Con la caché en memoria, el efecto duraba toda la sesión.
+3. **`getPlaylists`, idéntico.**
+
+**Nota metodológica:** la fase estaba planteada sin cambios de comportamiento, pero
+escribir tests que dieran por buenos esos tres defectos habría sido peor que no
+escribirlos. Se corrigieron y quedan documentados aquí y en el roadmap.
 
 **Menor:** `caniuse-lite` desactualizado (7 meses) — `npx update-browserslist-db@latest`.
 

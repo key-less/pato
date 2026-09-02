@@ -1,3 +1,4 @@
+import { createMediaRepository } from '../../domain/repositories/MediaRepository.js'
 const STORAGE_KEY = 'pato-media'
 
 export function createLocalStorageMediaRepository() {
@@ -14,7 +15,7 @@ export function createLocalStorageMediaRepository() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(items))
   }
 
-  return {
+  return createMediaRepository({
     async getAll() {
       return load()
     },
@@ -29,5 +30,5 @@ export function createLocalStorageMediaRepository() {
       const items = load().filter((m) => m.id !== id)
       save(items)
     },
-  }
+  })
 }

@@ -8,7 +8,10 @@
     "dev:server": "npm run dev --prefix server",
     "dev:all": "concurrently -n f,s -c cyan,magenta \"npm run dev\" \"npm run dev:server\"",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
     "react": "^18.3.1",
@@ -21,8 +24,10 @@
     "@vitejs/plugin-react": "^4.3.3",
     "autoprefixer": "^10.4.20",
     "concurrently": "^9.1.2",
+    "happy-dom": "^15.11.7",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.15",
-    "vite": "^7.3.1"
+    "vite": "^7.3.1",
+    "vitest": "^3.2.7"
   }
 }

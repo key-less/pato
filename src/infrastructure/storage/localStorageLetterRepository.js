@@ -1,3 +1,4 @@
+import { createLetterRepository } from '../../domain/repositories/LetterRepository.js'
 const STORAGE_KEY = 'pato-letters'
 
 export function createLocalStorageLetterRepository() {
@@ -14,7 +15,7 @@ export function createLocalStorageLetterRepository() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(items))
   }
 
-  return {
+  return createLetterRepository({
     async getAll() {
       return load()
     },
@@ -29,5 +30,5 @@ export function createLocalStorageLetterRepository() {
       const items = load().filter((l) => l.id !== id)
       save(items)
     },
-  }
+  })
 }

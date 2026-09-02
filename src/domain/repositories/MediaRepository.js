@@ -1,18 +1,13 @@
-/**
- * Puerto (interfaz) para persistencia de medios.
- * La infraestructura implementa este contrato.
- */
+import { defineRepository } from './defineRepository.js'
 
 /**
+ * Puerto para la persistencia de medios (fotos y vídeos).
+ *
  * @typedef { import('../entities/Media.js').createMedia } Media
+ *
+ * Contrato:
+ * - `getAll(): Promise<Media[]>`
+ * - `save(media: Media): Promise<void>` — inserta o actualiza por `id`
+ * - `remove(id: string): Promise<void>`
  */
-
-/**
- * @param {Object} deps
- * @param {() => Promise<Media[]>} deps.getAll
- * @param {(media: Media) => Promise<void>} deps.save
- * @param {(id: string) => Promise<void>} deps.remove
- */
-export function createMediaRepository(deps) {
-  return deps
-}
+export const createMediaRepository = defineRepository('MediaRepository', ['getAll', 'save', 'remove'])

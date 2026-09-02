@@ -1,3 +1,4 @@
+import { createPlaylistRepository } from '../../domain/repositories/PlaylistRepository.js'
 const STORAGE_KEY = 'pato-playlists'
 
 export function createLocalStoragePlaylistRepository() {
@@ -19,7 +20,7 @@ export function createLocalStoragePlaylistRepository() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(items))
   }
 
-  return {
+  return createPlaylistRepository({
     async getAll() {
       return load()
     },
@@ -33,5 +34,5 @@ export function createLocalStoragePlaylistRepository() {
     async remove(id) {
       persist(load().filter((p) => p.id !== id))
     },
-  }
+  })
 }

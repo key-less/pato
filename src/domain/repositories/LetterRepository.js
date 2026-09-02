@@ -1,13 +1,11 @@
-/**
- * Puerto para cartas (solo en memoria o persistir borradores).
- */
+import { defineRepository } from './defineRepository.js'
 
 /**
- * @param {Object} deps
- * @param {() => Promise<import('../entities/Letter.js')[]>} deps.getAll
- * @param {(letter: import('../entities/Letter.js')) => Promise<void>} deps.save
- * @param {(id: string) => Promise<void>} deps.remove
+ * Puerto para las cartas (borradores).
+ *
+ * Contrato:
+ * - `getAll(): Promise<Letter[]>`
+ * - `save(letter: Letter): Promise<void>` — inserta o actualiza por `id`
+ * - `remove(id: string): Promise<void>`
  */
-export function createLetterRepository(deps) {
-  return deps
-}
+export const createLetterRepository = defineRepository('LetterRepository', ['getAll', 'save', 'remove'])

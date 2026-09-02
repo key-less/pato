@@ -1,0 +1,60 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  frontend:
+    name: Frontend — tests y build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+
+  backend:
+    name: Backend — instalación
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: server/package-lock.json
+
+      # `npm ci` falla si package.json y package-lock.json se desincronizan. Es
+      # exactamente lo que ocurrió al añadir helmet sin actualizar el lockfile: el
+      # backend no habría desplegado en Render y nada lo detectó antes.
+      - run: npm ci
+        working-directory: server
+
+      # Arranca el servidor de verdad y comprueba que responde. Un fallo de importación
+      # o una variable obligatoria que falte se ve aquí, no en producción.
+      - name: Arrancar el servidor y comprobar /api/health
+        working-directory: server
+        run: |
+          PORT=3999 node index.js &
+          SERVER_PID=$!
+          for i in $(seq 1 20); do
+            if curl -sf http://127.0.0.1:3999/api/health > /dev/null; then
+              echo "El servidor respondió al healthcheck."
+              kill $SERVER_PID
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "El servidor no respondió en 20 segundos."
+          kill $SERVER_PID 2>/dev/null
+          exit 1
