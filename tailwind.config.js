@@ -8,24 +8,29 @@ export default {
     extend: {
       colors: {
         pato: {
-          // Existing palette (preserved for backward compat)
+          // --- Sistema actual (rediseño en cristal) ---
+          ivory: '#fbf5ec',      // superficie base
+          shell: '#f1e3d7',      // superficie secundaria
+          rose: '#f2c4c4',       // acento decorativo (separadores, orbes)
+          coral: '#d4897a',      // acción primaria
+          terra: '#b87560',      // acción primaria en hover, acento de texto
+          plum: '#8b5a6b',       // acento secundario
+          charcoal: '#2d2424',   // texto principal
+          smoke: '#6a5a5a',      // texto secundario
+          // --- Obsoletos ---
+          // Quedan definidos para no romper nada que aún los importe, pero no
+          // deben usarse en código nuevo: pertenecen a la paleta opaca previa
+          // al rediseño. Equivalencias: ink -> charcoal, muted -> smoke,
+          // cream/butter/honey/peach -> superficies de cristal (.glass*),
+          // blush -> rose, sage -> terra.
           cream: '#fdf8f0',
           butter: '#fef3d9',
           honey: '#f5e6c8',
           peach: '#f8d7c4',
-          rose: '#f2c4c4',
           blush: '#e8b4b4',
-          coral: '#d4897a',
           sage: '#c4d4c4',
           ink: '#5c4a4a',
           muted: '#7a6565',
-          // New tokens for glass redesign
-          ivory: '#fbf5ec',
-          shell: '#f1e3d7',
-          terra: '#b87560',
-          plum: '#8b5a6b',
-          charcoal: '#2d2424',
-          smoke: '#6a5a5a',
         },
       },
       fontFamily: {

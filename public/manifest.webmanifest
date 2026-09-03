@@ -1,0 +1,26 @@
+{
+  "name": "Pato — Nuestros recuerdos",
+  "short_name": "Pato",
+  "description": "Nuestros recuerdos, citas, cartas y canciones en un solo lugar.",
+  "id": "/",
+  "start_url": "/?source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "portrait",
+  "background_color": "#fbf5ec",
+  "theme_color": "#fbf5ec",
+  "lang": "es",
+  "dir": "ltr",
+  "categories": ["lifestyle", "photo"],
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Citas", "short_name": "Citas", "url": "/citas", "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Fotos y videos", "short_name": "Fotos", "url": "/fotos", "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Cartas", "short_name": "Cartas", "url": "/cartas", "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }] }
+  ]
+}

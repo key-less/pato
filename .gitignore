@@ -24,3 +24,7 @@ public/photos_videos/
 .vscode/
 *.log
 .DS_Store
+
+# Cache de Python (scripts/)
+__pycache__/
+*.pyc

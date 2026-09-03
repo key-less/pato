@@ -86,7 +86,7 @@ export function Sidebar({ open, onClose, currentPath }) {
           })}
         </nav>
         <div className="px-6 py-5 text-center">
-          <p className="font-display italic text-xs text-pato-muted tracking-wide">Hecho con cariño</p>
+          <p className="font-display italic text-xs text-pato-smoke tracking-wide">Hecho con cariño</p>
         </div>
       </aside>
     </>
