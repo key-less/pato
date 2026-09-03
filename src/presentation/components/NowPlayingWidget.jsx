@@ -62,6 +62,23 @@ function isServiceRelevant(profiles) {
   return profiles.some((p) => p.connected || (p.track && p.track.name))
 }
 
+/**
+ * El único vidrio que queda en la app.
+ *
+ * «Aguas tranquilas» reserva el esmerilado para lo que de verdad flota sobre el
+ * contenido, y este widget es exactamente eso: está fijo encima de la página que se
+ * desplaza detrás. En las tarjetas el mismo efecto no significaba nada —cuando todo
+ * flota, nada flota— y además hundía el scroll dentro del WebView.
+ */
+const floatingGlass = {
+  background: 'linear-gradient(150deg, rgba(255,252,248,0.86) 0%, rgba(255,252,248,0.72) 100%)',
+  backdropFilter: 'blur(18px) saturate(120%)',
+  WebkitBackdropFilter: 'blur(18px) saturate(120%)',
+  border: '1px solid rgba(255,255,255,0.7)',
+  borderRight: 'none',
+  boxShadow: '0 2px 6px -2px rgba(31,58,61,0.16), 0 16px 40px -20px rgba(31,58,61,0.30)',
+}
+
 export function NowPlayingWidget() {
   const [spotifyProfiles, setSpotifyProfiles] = useState([])
   const [youtubeProfiles, setYoutubeProfiles] = useState([])
@@ -162,7 +179,8 @@ export function NowPlayingWidget() {
   if (!expanded) {
     return (
       <div
-        className="fixed z-20 flex flex-col gap-1 rounded-l-lg overflow-hidden border border-pato-honey/60 border-r-0 bg-pato-butter/95 p-1.5 shadow-md"
+        className="fixed z-20 flex flex-col gap-1 rounded-l-2xl overflow-hidden p-1.5"
+        style={floatingGlass}
         style={{ top: 'max(1rem, env(safe-area-inset-top, 0px))', right: 0 }}
       >
         {visibleSections.includes('spotify') && (
@@ -195,15 +213,16 @@ export function NowPlayingWidget() {
 
   return (
     <div
-      className="fixed z-20 flex flex-col w-52 sm:w-56 max-w-[calc(100vw-6rem)] rounded-l-xl overflow-hidden border border-pato-honey/60 border-r-0 shadow-lg bg-pato-butter/95"
+      className="fixed z-20 flex flex-col w-52 sm:w-56 max-w-[calc(100vw-6rem)] rounded-l-2xl overflow-hidden"
+      style={floatingGlass}
       style={{ top: 'max(1rem, env(safe-area-inset-top, 0px))', right: 0 }}
     >
-      <div className="flex items-center gap-0 border-b border-pato-honey/40 p-1 bg-white/30">
+      <div className="flex items-center gap-0 border-b border-pato-agua/10 p-1 bg-white/40">
         {visibleSections.includes('spotify') && (
           <button
             type="button"
             onClick={() => setActiveSection('spotify')}
-            className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-sm font-medium transition-colors ${effectiveActive === 'spotify' ? 'bg-pato-sage/40 text-pato-ink' : 'text-pato-muted hover:bg-pato-honey/30'}`}
+            className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-sm font-medium transition-colors ${effectiveActive === 'spotify' ? 'bg-pato-coral/15 text-pato-charcoal' : 'text-pato-muted hover:bg-pato-honey/30'}`}
             style={effectiveActive === 'spotify' ? { color: APPS.spotify.color } : {}}
             title="Spotify"
           >
@@ -215,7 +234,7 @@ export function NowPlayingWidget() {
           <button
             type="button"
             onClick={() => setActiveSection('youtube')}
-            className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-sm font-medium transition-colors ${effectiveActive === 'youtube' ? 'bg-pato-sage/40 text-pato-ink' : 'text-pato-muted hover:bg-pato-honey/30'}`}
+            className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-sm font-medium transition-colors ${effectiveActive === 'youtube' ? 'bg-pato-coral/15 text-pato-charcoal' : 'text-pato-muted hover:bg-pato-honey/30'}`}
             style={effectiveActive === 'youtube' ? { color: APPS.youtube.color } : {}}
             title="YouTube Music"
           >
@@ -331,7 +350,7 @@ function NowPlayingSection({ appKey, app, loading, profiles, partnerProfiles, au
                 )}
                 <div className="min-w-0">
                   <p className="text-xs font-medium text-pato-ink">{displayName}</p>
-                  <p className="text-xs text-pato-sage">Cuenta conectada</p>
+                  <p className="text-xs text-pato-agua-clara">Cuenta conectada</p>
                 </div>
               </div>
             )

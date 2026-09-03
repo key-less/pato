@@ -2,8 +2,9 @@ import { useState, useEffect, useRef } from 'react'
 import { container } from '../../infrastructure/di/container.js'
 import { useAppState } from '../hooks/useAppState'
 import { DuckPhotos } from '../components/icons/Ducks.jsx'
-import GlassPanel, { glassStyle } from '../components/GlassPanel.jsx'
+import Panel, { paperStyle } from '../components/Panel.jsx'
 import ModuleHeader from '../components/ModuleHeader.jsx'
+import EmptyState from '../components/EmptyState.jsx'
 
 export default function MediaModule() {
   const { state } = useAppState()
@@ -65,7 +66,7 @@ export default function MediaModule() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto pt-14 pb-28 px-4">
+    <div className="max-w-4xl mx-auto pt-14 pb-16 px-4">
       <ModuleHeader
         icon={DuckPhotos}
         eyebrow="Nuestro álbum"
@@ -88,7 +89,7 @@ export default function MediaModule() {
           onClick={() => fileInputRef.current?.click()}
           disabled={uploading}
           className="px-6 py-3 rounded-2xl font-body font-medium text-pato-charcoal disabled:opacity-60 transition-transform hover:scale-[1.02]"
-          style={glassStyle}
+          style={paperStyle}
         >
           {uploading ? 'Subiendo…' : '+ Agregar fotos o videos'}
         </button>
@@ -108,9 +109,10 @@ export default function MediaModule() {
       </div>
 
       {media.length === 0 && (
-        <p className="text-pato-smoke font-body italic text-center py-12">
-          Aún no hay fotos ni videos. Cuando agregues algunos, podrás marcar los que aparezcan flotando en Inicio.
-        </p>
+        <EmptyState
+          title="Aún no hay fotos ni videos."
+          hint="Cuando agregues algunos podrás marcar los que aparezcan flotando en Inicio."
+        />
       )}
     </div>
   )
@@ -127,7 +129,7 @@ function MediaCard({ item, statuses, onUpdate, onDelete, onToggleShowOnLanding }
   }
 
   return (
-    <GlassPanel className="overflow-hidden">
+    <Panel className="overflow-hidden">
       <div className="aspect-square relative bg-pato-shell/40">
         {item.type === 'photo' ? (
           <img src={item.src} alt="" className="w-full h-full object-cover" />
@@ -188,7 +190,7 @@ function MediaCard({ item, statuses, onUpdate, onDelete, onToggleShowOnLanding }
           </button>
         )}
       </div>
-    </GlassPanel>
+    </Panel>
   )
 }
 

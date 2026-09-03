@@ -5,6 +5,7 @@ import {
   DuckProfile,
   DuckPlaylists,
   DuckLetters,
+  DuckDates,
   DuckSettings,
   DuckHistory,
 } from '../components/icons/Ducks.jsx'
@@ -12,7 +13,7 @@ import {
 /** Iconos por módulo (se usan como componentes React en Sidebar) */
 export const MODULE_ICONS = {
   inicio: DuckHome,
-  citas: DuckLetters,
+  citas: DuckDates,
   fotos: DuckPhotos,
   perfil: DuckProfile,
   playlists: DuckPlaylists,

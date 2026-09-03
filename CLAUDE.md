@@ -6,6 +6,27 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Pato** — a couples web app with shared memories, a relationship counter, dates log, photo/video gallery, letters, partner profiles, playlists, and a "now playing" widget (Spotify + YouTube Music). Pastel design (cream, honey, peach, coral), optimized for mobile.
 
+## Roadmap and design direction
+
+`docs/ROADMAP.md` follows the phases (0–4) and the design direction set out in the
+project's artifacts — «Ruta de Pato a iOS», «Aguas tranquilas» and «Señales en el agua».
+Do not invent a competing phase numbering; an earlier version of the roadmap did, and it
+produced two meanings for "Fase 1".
+
+The V2 plan under `docs/superpowers/plans/` is **complete** — do not treat its unchecked
+boxes as pending work; its header records what was verified.
+
+**Surfaces:** matte paper (`Panel.jsx`), not frosted glass. `backdrop-filter` is reserved
+for `NowPlayingWidget`, the one element that genuinely floats over scrolling content, plus
+the sidebar scrim. Repeating it on every card meant nothing read as floating, and it
+halves scroll fps inside the WKWebView the app is heading for.
+
+**Type:** two families. Fraunces (`font-display`) for what carries feeling — counter,
+titles, dates, quotes. Karla (`font-body`) for what gets used.
+
+**Colour:** `pato-agua` #1F3A3D is the cold anchor and the text colour. The warm palette
+had nothing to be warm against, and pure black on cream is harsh.
+
 ## Commands
 
 ```bash
@@ -17,6 +38,11 @@ cd server && npm run dev            # http://localhost:3001
 
 # Both together (concurrently)
 npm run dev:all
+
+# Tests (Vitest + happy-dom)
+npm test                            # run once
+npm run test:watch                  # watch mode
+npm run test:coverage               # with coverage
 
 # Production build
 npm run build                       # outputs dist/
@@ -40,13 +66,25 @@ server/index.js     — Single Express file: email, Spotify OAuth, YouTube OAuth
 
 **Dependency injection:** `src/infrastructure/di/container.js` wires every repository to every use case and exports a single `container` object. Pages import from `container`, never from repos or use cases directly.
 
+**Repository contracts:** `src/domain/repositories/` defines one contract per entity, all
+built with `defineRepository(name, requiredMethods)`. Each contract validates its
+implementation **at construction time** and throws naming the missing methods — so a
+repository that does not satisfy its port fails immediately at startup, not later inside
+a page. Every `localStorage` implementation is wrapped in its contract. Add a new entity
+and it needs a contract too; the container test enforces the wiring.
+
+**Tests:** `tests/` mirrors `src/` (domain / application / infrastructure). Use cases are
+tested against fake repositories built through the same contracts, so a contract change
+that implementations do not follow breaks the tests. `src/presentation` is deliberately
+untested for now — see `docs/ROADMAP.md` phase 5.
+
 **Persistence:** Everything is in `localStorage` — no database. Media is stored as data URLs (images/video). The backend is stateless (OAuth tokens are in-process memory, lost on restart).
 
 ## Backend API routes
 
 | Route | Purpose |
 |---|---|
-| `GET /api/health` | Health check (Railway/Render) |
+| `GET /api/health` | Health check (Render) |
 | `POST /api/send-email` | Send letter via Gmail (Nodemailer) |
 | `GET /api/playlist/fetch?url=` | Fetch Spotify/YouTube playlist metadata |
 | `GET /api/spotify/auth?profile=0\|1` | Start Spotify OAuth per profile |
@@ -57,14 +95,28 @@ server/index.js     — Single Express file: email, Spotify OAuth, YouTube OAuth
 | `GET /api/youtube/me` | Check YouTube connection |
 | `GET /api/now-playing/youtube` | YouTube now playing (always null — no public API) |
 
-Rate limits: 120 req/min general, 10 req/min on `/api/send-email`.
+Rate limits: 120 req/min general, 10 req/min on `/api/send-email` (per IP).
+
+**Security middleware** (`server/index.js`, applied before the routes):
+- `helmet()` for standard security headers.
+- CORS: `FRONTEND_URL` accepts a **comma-separated list** of allowed origins (stable
+  domain plus Vercel preview URLs). Requests with no `Origin` header pass through
+  (Render health check, curl, OAuth callbacks). A rejected origin returns 403, not 500.
+  `allowedOrigins[0]` is the `primaryFrontendUrl` used for OAuth redirects.
+- `x-api-key` must match `API_SECRET` on every `/api/*` route except the four OAuth
+  paths. With `API_SECRET` empty the check is skipped (local dev).
+  Note: the frontend's `VITE_API_SECRET` is baked into the JS bundle and is therefore
+  public — it deters scanners, it is not authentication.
+- `ALLOWED_EMAIL_RECIPIENTS` restricts `/api/send-email` destinations.
 
 ## API URL resolution
 
-`src/infrastructure/api/playlistApi.js` auto-resolves the backend URL:
-1. `VITE_API_URL` env var (set at **build time** by Vite — must redeploy to change)
-2. If opened from a non-localhost IP (e.g. phone on LAN), uses `<that IP>:3001`
-3. Otherwise `http://localhost:3001`
+`src/infrastructure/api/apiConfig.js` is the single source of truth for the backend
+URL and headers — `playlistApi.js` and `sendEmailApi.js` both import from it, so they
+cannot drift apart. It resolves:
+1. `VITE_API_URL` env var (set at **build time** by Vite — must redeploy to change).
+   A value with no protocol gets `https://` prepended.
+2. Otherwise `<current hostname>:3001` — covers both localhost and a phone on the LAN.
 
 ## Environment variables
 

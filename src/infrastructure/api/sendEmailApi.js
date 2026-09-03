@@ -1,25 +1,4 @@
-/**
- * URL del backend. Misma lógica que playlistApi: VITE_API_URL tiene prioridad; si no, IP/host:3001.
- */
-const API_BASE = (() => {
-  if (typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_URL) {
-    return String(import.meta.env.VITE_API_URL).replace(/\/$/, '')
-  }
-  if (typeof window !== 'undefined') {
-    const host = window.location.hostname
-    const isLocal = host === 'localhost' || host === '127.0.0.1'
-    if (!isLocal) {
-      return `${window.location.protocol}//${host}:3001`
-    }
-    return `${window.location.protocol}//${host}:3001`
-  }
-  return ''
-})()
-
-function apiHeaders() {
-  const secret = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_SECRET) || ''
-  return secret ? { 'x-api-key': secret } : {}
-}
+import { API_BASE, apiHeaders, isApiConfigured } from './apiConfig.js'
 
 export async function sendEmailViaApi({ to, subject, text }) {
   if (!API_BASE) {
@@ -29,7 +8,7 @@ export async function sendEmailViaApi({ to, subject, text }) {
   try {
     const res = await fetch(`${API_BASE}/api/send-email`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', ...apiHeaders() },
+      headers: apiHeaders({ 'Content-Type': 'application/json' }),
       body: JSON.stringify({ to: to.trim(), subject: subject || '', text: text || '' }),
     })
     const data = await res.json().catch(() => ({}))
@@ -43,5 +22,5 @@ export async function sendEmailViaApi({ to, subject, text }) {
 }
 
 export function isEmailApiConfigured() {
-  return Boolean(API_BASE)
+  return isApiConfigured()
 }

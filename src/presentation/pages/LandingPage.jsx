@@ -6,6 +6,7 @@ import { container } from '../../infrastructure/di/container.js'
 import { getQuoteOfTheDay } from '../config/romanticQuotes.js'
 import { FloatingPhotos } from '../components/FloatingPhotos'
 import { FloatingVideos } from '../components/FloatingVideos'
+import { paperStyle } from '../components/Panel.jsx'
 
 export default function LandingPage() {
   const { state, loading, update: updateAppState } = useAppState()
@@ -49,7 +50,7 @@ export default function LandingPage() {
   const hasAnyProfile = !!(p0?.nombre || p1?.nombre)
 
   return (
-    <div className="min-h-screen pt-20 pb-24 px-4">
+    <div className="pt-14 pb-16 px-4">
       <FloatingPhotos media={floatingMedia} />
       <FloatingVideos media={landingVideos} />
 
@@ -71,11 +72,7 @@ export default function LandingPage() {
             <div
               className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full text-pato-charcoal text-sm"
               style={{
-                background: 'rgba(255,255,255,0.55)',
-                backdropFilter: 'blur(16px)',
-                WebkitBackdropFilter: 'blur(16px)',
-                border: '1px solid rgba(255,255,255,0.7)',
-                boxShadow: '0 4px 18px -8px rgba(184,117,96,0.18)',
+                ...paperStyle,
               }}
             >
               <span className="w-2 h-2 rounded-full bg-pato-coral animate-pulse" />
@@ -110,9 +107,9 @@ export default function LandingPage() {
 
         <section className="pt-6">
           <div className="flex items-center gap-4 mb-5">
-            <div className="flex-1 h-px bg-gradient-to-r from-transparent via-pato-rose/50 to-transparent" />
+            <div className="flex-1 h-px bg-gradient-to-r from-transparent to-pato-line/70" />
             <h2 className="font-display text-2xl font-medium text-pato-charcoal tracking-tight">Citas</h2>
-            <div className="flex-1 h-px bg-gradient-to-r from-transparent via-pato-rose/50 to-transparent" />
+            <div className="flex-1 h-px bg-gradient-to-l from-transparent to-pato-line/70" />
           </div>
           <p className="text-sm text-pato-muted font-body text-center mb-5">Las últimas citas registradas.</p>
           {citas.length === 0 ? (
@@ -120,7 +117,7 @@ export default function LandingPage() {
           ) : (
             <ul className="space-y-3 mb-5">
               {citas.map((c) => (
-                <li key={c.id} className="rounded-2xl px-5 py-4 text-pato-charcoal text-sm" style={glassStyle}>
+                <li key={c.id} className="rounded-2xl px-5 py-4 text-pato-charcoal text-sm" style={paperStyle}>
                   <div className="font-medium font-body">{formatDate(c.date)}</div>
                   {(c.lugar || c.horaEncuentro) && (
                     <div className="text-pato-muted text-xs mt-1 font-body">
@@ -146,17 +143,10 @@ export default function LandingPage() {
   )
 }
 
-const glassStyle = {
-  background: 'linear-gradient(135deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.35) 100%)',
-  backdropFilter: 'blur(20px)',
-  WebkitBackdropFilter: 'blur(20px)',
-  border: '1px solid rgba(255,255,255,0.6)',
-  boxShadow: '0 8px 32px -8px rgba(184, 117, 96, 0.15), inset 0 1px 0 rgba(255,255,255,0.5)',
-}
 
 function GlassCard({ children, className = '' }) {
   return (
-    <div className={`rounded-3xl px-7 py-6 ${className}`} style={glassStyle}>
+    <div className={`rounded-3xl px-7 py-6 ${className}`} style={paperStyle}>
       {children}
     </div>
   )
@@ -216,7 +206,7 @@ function CoupleSummary({ profiles, onHide }) {
   if (!hasAny) return null
 
   return (
-    <section className="relative rounded-3xl px-7 py-6" style={glassStyle}>
+    <section className="relative rounded-3xl px-7 py-6" style={paperStyle}>
       <button
         type="button"
         onClick={onHide}

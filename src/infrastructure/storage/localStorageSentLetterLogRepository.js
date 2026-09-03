@@ -1,3 +1,4 @@
+import { createSentLetterLogRepository } from '../../domain/repositories/SentLetterLogRepository.js'
 const STORAGE_KEY = 'pato-sent-letters'
 
 export function createLocalStorageSentLetterLogRepository() {
@@ -14,7 +15,7 @@ export function createLocalStorageSentLetterLogRepository() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(items))
   }
 
-  return {
+  return createSentLetterLogRepository({
     async getAll() {
       return load().sort((a, b) => new Date(b.sentAt) - new Date(a.sentAt))
     },
@@ -26,5 +27,5 @@ export function createLocalStorageSentLetterLogRepository() {
     async remove(id) {
       save(load().filter((l) => l.id !== id))
     },
-  }
+  })
 }

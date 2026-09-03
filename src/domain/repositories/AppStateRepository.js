@@ -1,12 +1,13 @@
-/**
- * Puerto para el estado de la app (metSince, datesCount, status).
- */
+import { defineRepository } from './defineRepository.js'
 
 /**
- * @param {Object} deps
- * @param {() => Promise<import('../entities/AppState.js')>} deps.get
- * @param {(state: import('../entities/AppState.js')) => Promise<void>} deps.save
+ * Puerto para el estado de la app (metSince, datesCount, estado de la relación).
+ *
+ * Es el único contrato con `get` en lugar de `getAll`: guarda un solo objeto, no una
+ * colección.
+ *
+ * Contrato:
+ * - `get(): Promise<AppState | null>`
+ * - `save(state: AppState): Promise<void>`
  */
-export function createAppStateRepository(deps) {
-  return deps
-}
+export const createAppStateRepository = defineRepository('AppStateRepository', ['get', 'save'])

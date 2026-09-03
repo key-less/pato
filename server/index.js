@@ -8,7 +8,7 @@ import { spawn } from 'child_process'
 import { fileURLToPath } from 'url'
 import path from 'path'
 
-// Logs y captura de errores para ver en Railway por qué falla el arranque
+// Logs y captura de errores para ver en Render por qué falla el arranque
 const PORT = process.env.PORT || 3001
 console.log('[Pato] Iniciando... PORT=', PORT, 'NODE_ENV=', process.env.NODE_ENV)
 
@@ -31,14 +31,46 @@ function fetchWithTimeout(url, options = {}, ms = FETCH_TIMEOUT_MS) {
   return fetch(url, { ...options, signal: ctrl.signal }).finally(() => clearTimeout(t))
 }
 
-// En Railway/Render el tráfico llega por HTTPS mediante proxy; sin esto req.protocol sería 'http'
+// En Render el tráfico llega por HTTPS mediante proxy; sin esto req.protocol sería 'http'
 // y Spotify rechazaría el redirect_uri (debe coincidir con https en el Dashboard).
 app.set('trust proxy', 1)
 app.use(helmet())
 
-// CORS: solo permite el origen del frontend configurado
-const allowedOrigin = (process.env.FRONTEND_URL || 'http://localhost:5173').trim().replace(/\/$/, '')
-app.use(cors({ origin: allowedOrigin, credentials: true }))
+// CORS: FRONTEND_URL acepta una lista separada por comas, porque en producción hay
+// más de un origen legítimo (el dominio estable de Vercel y las URLs de preview por rama).
+// Con un solo origen fijo, cada deploy de preview quedaba bloqueado por CORS.
+const allowedOrigins = (process.env.FRONTEND_URL || 'http://localhost:5173')
+  .split(',')
+  .map((o) => o.trim().replace(/\/+$/, ''))
+  .filter(Boolean)
+
+app.use(cors({
+  origin(origin, callback) {
+    // Sin cabecera Origin: peticiones que no vienen del navegador (healthcheck de
+    // Render, curl, los callbacks de OAuth). No son peticiones cross-origin.
+    if (!origin) return callback(null, true)
+    const normalized = origin.replace(/\/+$/, '')
+    if (allowedOrigins.includes(normalized)) return callback(null, true)
+    console.warn('[Pato] CORS bloqueado para origen:', origin, '| permitidos:', allowedOrigins.join(', '))
+    const err = new Error('Origen no permitido por CORS')
+    err.status = 403
+    return callback(err)
+  },
+  credentials: true,
+}))
+
+// El rechazo de CORS llega aquí como error. Sin este manejador Express respondía 500,
+// que en los logs de Render parece una caída del servidor en vez de un origen rechazado.
+app.use((err, _req, res, next) => {
+  if (err && err.status === 403) {
+    return res.status(403).json({ ok: false, error: 'Origen no permitido.' })
+  }
+  return next(err)
+})
+
+// Origen principal del frontend: el primero de la lista. Los redirects de OAuth
+// necesitan una URL única, no la lista completa, así que siempre usan este valor.
+const primaryFrontendUrl = allowedOrigins[0] || 'http://localhost:5173'
 
 app.use(express.json({ limit: '1mb' }))
 
@@ -47,9 +79,11 @@ app.get('/', (_req, res) => res.json({ ok: true, service: 'pato-api' }))
 app.get('/api/health', (_req, res) => res.json({ ok: true, service: 'pato-api' }))
 
 // Rate limiting: evita abuso (correos masivos, peticiones excesivas al API)
+// 120/min: el widget "Ahora suena" sondea cada 15 s por servicio y varias personas
+// pueden compartir la misma IP pública (misma WiFi), así que 30/min se agotaba solo.
 const apiLimiter = rateLimit({
   windowMs: 60 * 1000,
-  max: 30,
+  max: 120,
   message: { ok: false, error: 'Demasiadas peticiones. Espera un momento.' },
   standardHeaders: true,
   legacyHeaders: false,
@@ -59,7 +93,7 @@ app.use('/api/', apiLimiter)
 // Límite más estricto para envío de correo
 const emailLimiter = rateLimit({
   windowMs: 60 * 1000,
-  max: 5,
+  max: 10,
   message: { ok: false, error: 'Límite de envíos por minuto. Espera un poco.' },
 })
 app.use('/api/send-email', emailLimiter)
@@ -82,12 +116,12 @@ app.use('/api', (req, res, next) => {
   next()
 })
 
-// Arrancar el servidor YA para que el healthcheck de Railway reciba respuesta (el resto de rutas se añade después)
+// Arrancar el servidor YA para que el healthcheck de Render reciba respuesta (el resto de rutas se añade después)
 const HOST = process.env.HOST || '0.0.0.0'
 app.listen(PORT, HOST, () => {
   console.log(`[Pato] API escuchando en http://${HOST}:${PORT} (listo para peticiones)`)
   logIntegrations()
-  if (HOST === '0.0.0.0') console.log('  (Accesible en la red; Railway usa PORT=', PORT, ')')
+  if (HOST === '0.0.0.0') console.log('  (Accesible en la red; Render asigna PORT=', PORT, ')')
 }).on('error', (err) => {
   console.error('[Pato] Error al hacer listen:', err.message)
   process.exit(1)
@@ -236,8 +270,8 @@ app.get('/api/playlist/fetch', async (req, res) => {
       if (!id) return res.status(400).json({ ok: false, error: 'URL de Spotify no válida.' })
       const token = await getSpotifyToken()
       if (!token) {
-        console.warn('Playlist fetch: Spotify token no obtenido. Revisa SPOTIFY_CLIENT_ID y SPOTIFY_CLIENT_SECRET en Railway.')
-        return res.status(503).json({ ok: false, error: 'Spotify no configurado en el servidor. Revisa SPOTIFY_CLIENT_ID y SPOTIFY_CLIENT_SECRET en Railway.' })
+        console.warn('Playlist fetch: Spotify token no obtenido. Revisa SPOTIFY_CLIENT_ID y SPOTIFY_CLIENT_SECRET en Render.')
+        return res.status(503).json({ ok: false, error: 'Spotify no configurado en el servidor. Revisa SPOTIFY_CLIENT_ID y SPOTIFY_CLIENT_SECRET en Render.' })
       }
       const spRes = await fetchWithTimeout(`https://api.spotify.com/v1/playlists/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -318,7 +352,7 @@ function getSpotifyOAuthConfig(req) {
   const clientId = (process.env.SPOTIFY_CLIENT_ID || '').trim()
   const clientSecret = (process.env.SPOTIFY_CLIENT_SECRET || '').trim()
   const explicitRedirect = (process.env.SPOTIFY_REDIRECT_URI || '').trim()
-  const explicitFrontend = (process.env.FRONTEND_URL || '').trim()
+  const explicitFrontend = process.env.FRONTEND_URL ? primaryFrontendUrl : ''
   let redirectUri
   let frontendUrl
   const hostHeader = req && req.get && req.get('Host')
@@ -517,11 +551,11 @@ function getYoutubeOAuthConfig(req) {
   if (hostHeader && !isLocalHost) {
     const protocol = (req.protocol || 'http') + '://'
     redirectUri = (protocol + hostHeader + '/api/youtube/callback').replace(/localhost/i, '127.0.0.1')
-    frontendUrl = process.env.FRONTEND_URL || (protocol + hostHeader.split(':')[0] + ':5173')
+    frontendUrl = process.env.FRONTEND_URL ? primaryFrontendUrl : (protocol + hostHeader.split(':')[0] + ':5173')
   } else {
     redirectUri = (process.env.YOUTUBE_REDIRECT_URI || '').trim() || `http://127.0.0.1:${PORT}/api/youtube/callback`
     redirectUri = redirectUri.replace(/(https?:\/\/)localhost(\/|:|\?|$)/i, '$1127.0.0.1$2')
-    frontendUrl = (process.env.FRONTEND_URL || '').trim() || 'http://localhost:5173'
+    frontendUrl = process.env.FRONTEND_URL ? primaryFrontendUrl : 'http://localhost:5173'
   }
   return { clientId, clientSecret, redirectUri, frontendUrl }
 }

@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
 import { container } from '../../infrastructure/di/container.js'
 import { DuckHistory } from '../components/icons/Ducks.jsx'
-import GlassPanel from '../components/GlassPanel.jsx'
+import Panel from '../components/Panel.jsx'
 import ModuleHeader from '../components/ModuleHeader.jsx'
+import EmptyState from '../components/EmptyState.jsx'
 
 export default function HistorialModule() {
   const [events, setEvents] = useState([])
@@ -20,7 +21,7 @@ export default function HistorialModule() {
   useEffect(() => { load() }, [])
 
   return (
-    <div className="max-w-3xl mx-auto pt-14 pb-28 px-4">
+    <div className="max-w-3xl mx-auto pt-14 pb-16 px-4">
       <ModuleHeader
         icon={DuckHistory}
         eyebrow="Registro de actividad"
@@ -30,11 +31,10 @@ export default function HistorialModule() {
       />
 
       {events.length === 0 ? (
-        <GlassPanel className="px-5 py-10 text-center">
-          <p className="font-body italic text-pato-smoke text-sm">
-            Aún no hay actividad registrada. Las acciones que realicen en la app irán apareciendo aquí.
-          </p>
-        </GlassPanel>
+        <EmptyState
+          title="Aún no hay actividad registrada."
+          hint="Lo que hagáis en la app irá apareciendo aquí."
+        />
       ) : (
         <ul className="space-y-3">
           {events.map((evt, i) => (
@@ -69,7 +69,7 @@ function ActivityEventCard({ event, profiles, onRemoved, index = 0 }) {
       className="animate-slide-up"
       style={{ animationDelay: `${Math.min(index * 50, 400)}ms` }}
     >
-      <GlassPanel className="px-4 py-3 flex items-start gap-3 hover:-translate-y-0.5 hover:shadow-glass transition-all duration-200">
+      <Panel className="px-4 py-3 flex items-start gap-3 hover:-translate-y-0.5 hover:shadow-glass transition-all duration-200">
         <div className="shrink-0 w-9 h-9 rounded-full overflow-hidden border border-white/60 bg-pato-shell flex items-center justify-center">
           {photoUrl ? (
             <img src={photoUrl} alt="" className="w-full h-full object-cover" />
@@ -90,7 +90,7 @@ function ActivityEventCard({ event, profiles, onRemoved, index = 0 }) {
         >
           Quitar
         </button>
-      </GlassPanel>
+      </Panel>
     </li>
   )
 }

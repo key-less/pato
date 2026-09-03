@@ -1,3 +1,4 @@
+import { createPartnerProfileRepository } from '../../domain/repositories/PartnerProfileRepository.js'
 const STORAGE_KEY = 'pato-partner-profiles'
 
 export function createLocalStoragePartnerProfileRepository() {
@@ -22,7 +23,7 @@ export function createLocalStoragePartnerProfileRepository() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(list))
   }
 
-  return {
+  return createPartnerProfileRepository({
     async getAll() {
       return load()
     },
@@ -31,5 +32,5 @@ export function createLocalStoragePartnerProfileRepository() {
       list[index] = profile
       persist(list)
     },
-  }
+  })
 }

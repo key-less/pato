@@ -1,30 +1,6 @@
-/**
- * URL del backend.
- * - En build de producción: usar siempre VITE_API_URL (ej. https://api.tudominio.com).
- * - En local (localhost/127.0.0.1): VITE_API_URL o http://localhost:3001.
- * - Abriendo desde IP (móvil en LAN): si no hay VITE_API_URL, usa esa IP:3001 para OAuth.
- */
-export const API_BASE = (() => {
-  if (typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_URL) {
-    let url = String(import.meta.env.VITE_API_URL).trim().replace(/\/$/, '')
-    if (url && !/^https?:\/\//i.test(url)) url = 'https://' + url
-    return url
-  }
-  if (typeof window !== 'undefined') {
-    const host = window.location.hostname
-    const isLocal = host === 'localhost' || host === '127.0.0.1'
-    if (!isLocal) {
-      return `${window.location.protocol}//${host}:3001`
-    }
-    return `${window.location.protocol}//${host}:3001`
-  }
-  return ''
-})()
+import { API_BASE, apiHeaders } from './apiConfig.js'
 
-function apiHeaders() {
-  const secret = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_SECRET) || ''
-  return secret ? { 'x-api-key': secret } : {}
-}
+export { API_BASE }
 
 export async function fetchPlaylistByUrl(url) {
   if (!API_BASE) return { ok: false, error: 'Servidor no configurado. En producción configura VITE_API_URL.' }
@@ -38,9 +14,11 @@ export async function fetchPlaylistByUrl(url) {
     }
     return data
   } catch (err) {
+    // Si la app se sirve desde un dominio público pero API_BASE apunta a ese mismo
+    // host, es que falta VITE_API_URL en el build: el backend vive en otro servicio.
     const isProd = typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1'
     const hint = isProd && API_BASE && API_BASE.includes(window.location.hostname)
-      ? ' En producción, configura VITE_API_URL en Netlify apuntando a tu API (Railway).'
+      ? ' En producción, configura VITE_API_URL en Vercel apuntando a tu API en Render.'
       : ''
     return { ok: false, error: (err.message || 'No se pudo conectar con el servidor.') + hint }
   }

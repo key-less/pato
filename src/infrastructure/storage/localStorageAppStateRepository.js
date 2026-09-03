@@ -1,3 +1,4 @@
+import { createAppStateRepository } from '../../domain/repositories/AppStateRepository.js'
 const STORAGE_KEY = 'pato-app-state'
 
 export function createLocalStorageAppStateRepository() {
@@ -14,12 +15,12 @@ export function createLocalStorageAppStateRepository() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
   }
 
-  return {
+  return createAppStateRepository({
     async get() {
       return load()
     },
     async save(state) {
       save(state)
     },
-  }
+  })
 }
