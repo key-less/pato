@@ -39,7 +39,7 @@ export default function LandingPage() {
 
   if (loading || state === null) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-[50dvh] flex items-center justify-center">
         <div className="animate-pulse font-body text-pato-coral">Cargando…</div>
       </div>
     )
@@ -49,7 +49,7 @@ export default function LandingPage() {
   const hasAnyProfile = !!(p0?.nombre || p1?.nombre)
 
   return (
-    <div className="min-h-screen pt-20 pb-24 px-4">
+    <div className="pt-20 pb-6 px-4">
       <FloatingPhotos media={floatingMedia} />
       <FloatingVideos media={landingVideos} />
 

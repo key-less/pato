@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom'
 import { Sidebar } from './Sidebar'
 import { TabBar } from './TabBar'
 import { NowPlayingWidget } from './NowPlayingWidget'
+import { InstallHint } from './InstallHint'
 import { useHaptics } from '../hooks/useHaptics.js'
 import { container } from '../../infrastructure/di/container.js'
 
@@ -106,6 +107,8 @@ export function Layout({ children }) {
         menuOpen={sidebarOpen}
         onOpenMenu={() => setSidebarOpen(true)}
       />
+
+      <InstallHint />
     </div>
   )
 }

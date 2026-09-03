@@ -54,7 +54,7 @@ export default function PlaylistsModule() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto pt-14 pb-28 px-4">
+    <div className="max-w-4xl mx-auto pt-14 pb-6 px-4">
       <ModuleHeader
         icon={DuckPlaylists}
         eyebrow="Nuestra banda sonora"

@@ -2,7 +2,8 @@ import { Component } from 'react'
 
 /**
  * Error boundary para producción: evita pantalla en blanco si un componente lanza.
- * Muestra un mensaje amigable y opción de recargar.
+ * Muestra un mensaje amigable y opción de recargar, dentro del mismo lenguaje
+ * visual de la app para que un fallo no parezca otra aplicación.
  */
 export class ErrorBoundary extends Component {
   state = { hasError: false, error: null }
@@ -18,18 +19,28 @@ export class ErrorBoundary extends Component {
   render() {
     if (this.state.hasError) {
       return (
-        <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-pato-butter text-pato-ink">
-          <p className="text-lg font-medium mb-2">Algo salió mal</p>
-          <p className="text-sm text-pato-muted mb-4 text-center max-w-md">
-            Recarga la página para intentar de nuevo. Si el problema sigue, prueba más tarde.
-          </p>
-          <button
-            type="button"
-            onClick={() => window.location.reload()}
-            className="px-4 py-2 rounded-xl bg-pato-peach text-pato-ink font-medium hover:opacity-90"
-          >
-            Recargar
-          </button>
+        <div
+          className="min-h-[100dvh] flex flex-col items-center justify-center p-6 text-pato-charcoal"
+          style={{
+            background: 'var(--app-bg)',
+            paddingTop: 'max(1.5rem, var(--safe-top))',
+            paddingBottom: 'max(1.5rem, var(--safe-bottom))',
+          }}
+        >
+          <div className="glass-3 rounded-3xl px-6 py-8 max-w-sm w-full text-center">
+            <img src="/icons/icon-192.png" alt="" className="w-16 h-16 rounded-2xl mx-auto mb-4 shadow-soft" />
+            <p className="font-display text-2xl mb-2">Algo salió mal</p>
+            <p className="font-body text-sm text-pato-smoke mb-6">
+              Recarga la página para intentar de nuevo. Si el problema sigue, prueba más tarde.
+            </p>
+            <button
+              type="button"
+              onClick={() => window.location.reload()}
+              className="w-full px-6 py-3 rounded-2xl bg-pato-coral text-white font-body font-medium hover:bg-pato-terra transition-colors tappable"
+            >
+              Recargar
+            </button>
+          </div>
         </div>
       )
     }
