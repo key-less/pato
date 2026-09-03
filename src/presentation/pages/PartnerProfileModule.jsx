@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { container } from '../../infrastructure/di/container.js'
 import { API_BASE } from '../../infrastructure/api/playlistApi.js'
 import { DuckProfile } from '../components/icons/Ducks.jsx'
-import GlassPanel from '../components/GlassPanel.jsx'
+import Panel from '../components/Panel.jsx'
 import ModuleHeader from '../components/ModuleHeader.jsx'
 
 const LABELS = {
@@ -58,9 +58,9 @@ export default function PartnerProfileModule() {
       />
 
       {saved && (
-        <GlassPanel className="mb-6 px-4 py-2 text-center">
+        <Panel className="mb-6 px-4 py-2 text-center">
           <p className="font-body text-sm text-pato-charcoal">✓ Guardado correctamente.</p>
-        </GlassPanel>
+        </Panel>
       )}
 
       <div className="grid md:grid-cols-2 gap-6">
@@ -141,7 +141,7 @@ function ProfileCard({ title, index, profile, onSave, onReset, apiBase }) {
   }
 
   return (
-    <GlassPanel className="p-6">
+    <Panel className="p-6">
       <h3 className="font-display text-2xl text-pato-charcoal mb-5 text-center"><span className="italic font-light">{title}</span></h3>
 
       <div className="mb-5 flex flex-col items-center gap-2">
@@ -237,17 +237,17 @@ function ProfileCard({ title, index, profile, onSave, onReset, apiBase }) {
           Restablecer datos
         </button>
       </div>
-    </GlassPanel>
+    </Panel>
   )
 }
 
 function ProfileSummary({ title, profile, onClear }) {
   if (!profile || !profile.nombre) {
     return (
-      <GlassPanel className="p-5">
+      <Panel className="p-5">
         <h4 className="font-display text-lg text-pato-charcoal mb-2"><span className="italic font-light">{title}</span></h4>
         <p className="font-body italic text-sm text-pato-smoke">Sin datos aún.</p>
-      </GlassPanel>
+      </Panel>
     )
   }
 
@@ -263,7 +263,7 @@ function ProfileSummary({ title, profile, onClear }) {
   ].filter(([, v]) => v)
 
   return (
-    <GlassPanel className="p-5">
+    <Panel className="p-5">
       <div className="flex items-start justify-between gap-2 mb-3">
         <h4 className="font-display text-lg text-pato-charcoal"><span className="italic font-light">{title}</span></h4>
         {onClear && (
@@ -296,6 +296,6 @@ function ProfileSummary({ title, profile, onClear }) {
           </dl>
         </div>
       </div>
-    </GlassPanel>
+    </Panel>
   )
 }

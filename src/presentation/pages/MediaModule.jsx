@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { container } from '../../infrastructure/di/container.js'
 import { useAppState } from '../hooks/useAppState'
 import { DuckPhotos } from '../components/icons/Ducks.jsx'
-import GlassPanel, { glassStyle } from '../components/GlassPanel.jsx'
+import Panel, { paperStyle } from '../components/Panel.jsx'
 import ModuleHeader from '../components/ModuleHeader.jsx'
 import EmptyState from '../components/EmptyState.jsx'
 
@@ -89,7 +89,7 @@ export default function MediaModule() {
           onClick={() => fileInputRef.current?.click()}
           disabled={uploading}
           className="px-6 py-3 rounded-2xl font-body font-medium text-pato-charcoal disabled:opacity-60 transition-transform hover:scale-[1.02]"
-          style={glassStyle}
+          style={paperStyle}
         >
           {uploading ? 'Subiendo…' : '+ Agregar fotos o videos'}
         </button>
@@ -129,7 +129,7 @@ function MediaCard({ item, statuses, onUpdate, onDelete, onToggleShowOnLanding }
   }
 
   return (
-    <GlassPanel className="overflow-hidden">
+    <Panel className="overflow-hidden">
       <div className="aspect-square relative bg-pato-shell/40">
         {item.type === 'photo' ? (
           <img src={item.src} alt="" className="w-full h-full object-cover" />
@@ -190,7 +190,7 @@ function MediaCard({ item, statuses, onUpdate, onDelete, onToggleShowOnLanding }
           </button>
         )}
       </div>
-    </GlassPanel>
+    </Panel>
   )
 }
 

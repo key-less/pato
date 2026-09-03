@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { container } from '../../infrastructure/di/container.js'
 import { MODULE_ICONS } from '../config/assets.js'
 import ModuleHeader from '../components/ModuleHeader.jsx'
-import { glassStyle } from '../components/GlassPanel.jsx'
+import { paperStyle } from '../components/Panel.jsx'
 import ActionButton from '../components/ActionButton.jsx'
 import Field from '../components/Field.jsx'
 import EmptyState from '../components/EmptyState.jsx'
@@ -66,7 +66,7 @@ function CitaForm({ onAdded }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="rounded-3xl p-6 space-y-4" style={glassStyle}>
+    <form onSubmit={handleSubmit} className="rounded-3xl p-6 space-y-4" style={paperStyle}>
       <div className="grid sm:grid-cols-2 gap-3">
         <Field
           label="Fecha de la cita"
@@ -117,7 +117,7 @@ function CitaCard({ cita, onRemoved, index = 0 }) {
   return (
     <li
       className="rounded-3xl px-5 py-4 flex items-start justify-between gap-3 animate-slide-up hover:-translate-y-0.5 transition-transform duration-200"
-      style={{ ...glassStyle, animationDelay: `${Math.min(index * 60, 400)}ms` }}
+      style={{ ...paperStyle, animationDelay: `${Math.min(index * 60, 400)}ms` }}
     >
       <div className="min-w-0">
         <div className="font-body font-medium text-pato-charcoal">{formatDate(cita.date)}</div>

@@ -15,11 +15,17 @@ export default {
           peach: '#f8d7c4',
           rose: '#f2c4c4',
           blush: '#e8b4b4',
-          coral: '#d4897a',
+          coral: '#D4664F',
           sage: '#c4d4c4',
           ink: '#5c4a4a',
           muted: '#7a6565',
-          // New tokens for glass redesign
+          // Ancla fría. Toda la paleta era cálida —crema, miel, melocotón, coral— así que
+          // nada tenía contra qué leerse como cálido y el conjunto se aplanaba en un rosa
+          // uniforme. Este es además el color del texto: el negro puro sobre crema es
+          // duro, y esta app no debería tener nada duro. Ver «Aguas tranquilas».
+          agua: '#1F3A3D',
+          'agua-clara': '#2B514D',
+
           ivory: '#fbf5ec',
           // Borde/divisor con suficiente valor para leerse tanto sobre la crema
           // clara como sobre el rosa del final del degradado. `rose` no lo lograba:
@@ -28,13 +34,15 @@ export default {
           shell: '#f1e3d7',
           terra: '#b87560',
           plum: '#8b5a6b',
-          charcoal: '#2d2424',
-          smoke: '#6a5a5a',
+          charcoal: '#1F3A3D',
+          smoke: '#8A7A72',
         },
       },
       fontFamily: {
-        display: ['"Cormorant Garamond"', '"Playfair Display"', 'serif'],
-        body: ['"Geist"', '"DM Sans"', 'sans-serif'],
+        // Fraunces para lo que emociona (contador, títulos, fechas, citas);
+        // Karla para lo que se usa (botones, etiquetas, formularios, texto corrido).
+        display: ['"Fraunces"', 'Georgia', 'serif'],
+        body: ['"Karla"', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
       },
       backgroundImage: {
         'glass-romantic': 'linear-gradient(135deg, #fbf5ec 0%, #f3e0d4 40%, #f0c8c4 100%)',

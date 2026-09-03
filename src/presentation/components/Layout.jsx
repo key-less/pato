@@ -65,11 +65,11 @@ export function Layout({ children }) {
             onClick={() => setSidebarOpen(true)}
             className="p-3 min-w-[44px] min-h-[44px] rounded-2xl text-pato-charcoal hover:scale-105 active:scale-95 transition-all touch-manipulation"
             style={{
-              background: 'rgba(255, 255, 255, 0.65)',
-              backdropFilter: 'blur(16px)',
-              WebkitBackdropFilter: 'blur(16px)',
-              border: '1px solid rgba(255, 255, 255, 0.7)',
-              boxShadow: '0 8px 24px -8px rgba(184, 117, 96, 0.18), inset 0 1px 0 rgba(255,255,255,0.6)',
+              // El botón flota sobre contenido que se desplaza, así que tiene que
+              // taparlo: opaco lo hace mejor que translúcido, y sin coste de blur.
+              background: '#FFFCF8',
+              border: '1px solid rgba(31, 58, 61, 0.08)',
+              boxShadow: '0 2px 6px -2px rgba(31, 58, 61, 0.14), 0 12px 28px -16px rgba(31, 58, 61, 0.26)',
             }}
             aria-label="Abrir menú"
           >

@@ -130,16 +130,21 @@ conectada y ejecutando checks.
    desconéctalo en el dashboard de Cloudflare y borra `wrangler.jsonc`; mientras siga
    conectado, el archivo debe quedarse o todos los PR saldrán en rojo.
 
-**Plan de trabajo:** las etapas siguientes están definidas, numeradas y con alcance
-escrito en **[docs/ROADMAP.md](docs/ROADMAP.md)**. Resumen:
+**Plan de trabajo:** las fases y la dirección visual salen de los artefactos del
+proyecto, no de una numeración propia — ver **[docs/ROADMAP.md](docs/ROADMAP.md)**.
 
 | Fase | Qué resuelve |
 |---|---|
-| ~~1 — Tests automatizados~~ | **COMPLETADA** — 125 tests, CI, 3 bugs corregidos |
-| 2 — Límite de almacenamiento | Un fallo silencioso que rompe **hoy** |
-| 3 — Supabase | Que la pareja comparta datos de verdad (la fase que cambia el producto) |
-| 4 — Tokens OAuth persistidos | Spotify deja de desconectarse en cada reinicio |
-| 5 — Tiempo real y pulido | Feed vivo entre los dos teléfonos |
+| 0 — Frenar la pérdida | Escrituras que fallan en silencio, media a IndexedDB |
+| 1 — Hacerlo compartido | Supabase: que la pareja comparta datos de verdad |
+| 2 — Envolver para iOS | Capacitor |
+| 3 — Que se sienta nativa | Widget, push, Face ID |
+| 4 — Cerrar la deuda | Tests (hecho), contratos (hecho), TypeScript |
+
+**Error corregido:** una versión anterior del roadmap declaró huérfana la numeración de
+fases mirando solo el repositorio, sin saber que el plan existía en los artefactos, y
+creó cinco fases distintas. También reforzó el glassmorphism justo cuando «Aguas
+tranquilas» pedía quitarlo. Ambas cosas están revertidas y alineadas.
 
 **Los tres problemas estructurales** que justifican ese orden (verificados en el código,
 detallados en el roadmap):

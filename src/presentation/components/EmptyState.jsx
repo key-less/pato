@@ -2,7 +2,7 @@
  * Estado vacío del sistema.
  *
  * Cada módulo resolvía el suyo por su cuenta: unos con un párrafo en cursiva suelto
- * sobre el degradado, otro dentro de un GlassPanel, otro con una tarjeta de color.
+ * sobre el degradado, otro dentro de un panel, otro con una tarjeta de color.
  * Seis pantallas, seis tratamientos distintos para exactamente la misma situación.
  *
  * El contorno punteado comunica "aquí va a haber algo" en lugar de parecer una tarjeta
@@ -13,8 +13,8 @@ export default function EmptyState({ title, hint, className = '' }) {
     <div
       className={`rounded-3xl px-6 py-10 text-center ${className}`}
       style={{
-        border: '1px dashed rgba(217, 179, 168, 0.75)',
-        background: 'rgba(255,255,255,0.28)',
+        border: '1px dashed rgba(31, 58, 61, 0.18)',
+        background: 'rgba(255, 252, 248, 0.45)',
       }}
     >
       <p className="font-display text-lg text-pato-charcoal/80 italic">{title}</p>

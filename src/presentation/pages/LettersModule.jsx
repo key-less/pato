@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { container } from '../../infrastructure/di/container.js'
 import { sendEmailViaApi, isEmailApiConfigured } from '../../infrastructure/api/sendEmailApi.js'
 import { DuckLetters } from '../components/icons/Ducks.jsx'
-import GlassPanel from '../components/GlassPanel.jsx'
+import Panel from '../components/Panel.jsx'
 import ModuleHeader from '../components/ModuleHeader.jsx'
 import EmptyState from '../components/EmptyState.jsx'
 
@@ -97,7 +97,7 @@ export default function LettersModule() {
       />
 
       {sendResult && (
-        <GlassPanel
+        <Panel
           role="alert"
           className="mb-4 px-5 py-4"
           style={sendResult.ok
@@ -112,10 +112,10 @@ export default function LettersModule() {
               ? 'El mensaje llegará a la bandeja de entrada del destinatario (revisa también spam si no lo ve).'
               : sendResult.error}
           </p>
-        </GlassPanel>
+        </Panel>
       )}
 
-      <GlassPanel className="p-6 mb-8">
+      <Panel className="p-6 mb-8">
         <h2 className="font-display text-xl text-pato-charcoal mb-4">
           {editingId ? 'Editar carta' : 'Nueva carta'}
         </h2>
@@ -158,7 +158,7 @@ export default function LettersModule() {
             </button>
           )}
         </div>
-      </GlassPanel>
+      </Panel>
 
       <section>
         <div className="flex items-center gap-4 mb-5">
@@ -169,7 +169,7 @@ export default function LettersModule() {
         <ul className="space-y-4">
           {letters.map((letter) => (
             <li key={letter.id}>
-              <GlassPanel className="p-5">
+              <Panel className="p-5">
                 <div className="font-body font-medium text-pato-charcoal mb-1">{letter.subject || '(Sin asunto)'}</div>
                 <p className="font-body text-sm text-pato-smoke line-clamp-2 mb-3">{letter.body || '(Vacía)'}</p>
                 <div className="flex flex-wrap gap-2">
@@ -205,7 +205,7 @@ export default function LettersModule() {
                     Eliminar
                   </button>
                 </div>
-              </GlassPanel>
+              </Panel>
             </li>
           ))}
         </ul>

@@ -11,16 +11,16 @@
  */
 const VARIANTS = {
   primary: {
-    background: 'linear-gradient(150deg, #d4897a 0%, #b87560 100%)',
+    background: 'linear-gradient(150deg, #D4664F 0%, #B8503C 100%)',
     color: '#fffaf6',
     border: '1px solid rgba(255,255,255,0.28)',
-    boxShadow: '0 1px 2px -1px rgba(160, 84, 64, 0.35), 0 8px 20px -8px rgba(180, 100, 78, 0.45)',
+    boxShadow: '0 1px 2px -1px rgba(160, 62, 44, 0.30), 0 8px 20px -8px rgba(180, 80, 60, 0.38)',
   },
   secondary: {
-    background: 'linear-gradient(150deg, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.6) 100%)',
-    color: '#5c4a4a',
-    border: '1px solid rgba(255,255,255,0.85)',
-    boxShadow: '0 1px 3px -1px rgba(122, 74, 60, 0.14), 0 4px 12px -6px rgba(122, 74, 60, 0.16)',
+    background: '#FFFCF8',
+    color: '#1F3A3D',
+    border: '1px solid rgba(31, 58, 61, 0.10)',
+    boxShadow: '0 1px 2px -1px rgba(31, 58, 61, 0.10), 0 6px 16px -12px rgba(31, 58, 61, 0.16)',
   },
 }
 

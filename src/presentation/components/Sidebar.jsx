@@ -19,18 +19,19 @@ export function Sidebar({ open, onClose, currentPath }) {
     <>
       <div
         className="fixed inset-0 z-40 animate-fade-in"
-        style={{ background: 'rgba(45, 36, 36, 0.28)', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)' }}
+        style={{ background: 'rgba(31, 58, 61, 0.32)', backdropFilter: 'blur(6px)', WebkitBackdropFilter: 'blur(6px)' }}
         onClick={onClose}
         aria-hidden="true"
       />
       <aside
         className="fixed left-0 top-0 bottom-0 w-72 z-50 flex flex-col animate-fade-in"
         style={{
-          background: 'linear-gradient(180deg, rgba(255,255,255,0.86) 0%, rgba(251,245,236,0.92) 100%)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          borderRight: '1px solid rgba(255,255,255,0.7)',
-          boxShadow: '24px 0 60px -20px rgba(184, 117, 96, 0.15)',
+          // Papel, no vidrio. El menú es una superficie grande y opaca sobre un velo
+          // que ya oscurece lo de detrás: el esmerilado no aportaba nada que se viera
+          // y era el `blur` más caro de la app.
+          background: '#FFFCF8',
+          borderRight: '1px solid rgba(31, 58, 61, 0.08)',
+          boxShadow: '24px 0 60px -24px rgba(31, 58, 61, 0.22)',
         }}
         aria-label="Menú principal"
       >

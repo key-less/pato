@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { container } from '../../infrastructure/di/container.js'
 import { DuckHistory } from '../components/icons/Ducks.jsx'
-import GlassPanel from '../components/GlassPanel.jsx'
+import Panel from '../components/Panel.jsx'
 import ModuleHeader from '../components/ModuleHeader.jsx'
 import EmptyState from '../components/EmptyState.jsx'
 
@@ -69,7 +69,7 @@ function ActivityEventCard({ event, profiles, onRemoved, index = 0 }) {
       className="animate-slide-up"
       style={{ animationDelay: `${Math.min(index * 50, 400)}ms` }}
     >
-      <GlassPanel className="px-4 py-3 flex items-start gap-3 hover:-translate-y-0.5 hover:shadow-glass transition-all duration-200">
+      <Panel className="px-4 py-3 flex items-start gap-3 hover:-translate-y-0.5 hover:shadow-glass transition-all duration-200">
         <div className="shrink-0 w-9 h-9 rounded-full overflow-hidden border border-white/60 bg-pato-shell flex items-center justify-center">
           {photoUrl ? (
             <img src={photoUrl} alt="" className="w-full h-full object-cover" />
@@ -90,7 +90,7 @@ function ActivityEventCard({ event, profiles, onRemoved, index = 0 }) {
         >
           Quitar
         </button>
-      </GlassPanel>
+      </Panel>
     </li>
   )
 }

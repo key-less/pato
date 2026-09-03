@@ -26,11 +26,11 @@ export default function Field({ label, hint, id, className = '', ...rest }) {
         className={
           'w-full min-h-[44px] rounded-2xl px-4 py-2.5 ' +
           'font-body text-sm text-pato-charcoal placeholder-pato-smoke/60 ' +
-          'bg-white/75 border border-white/85 ' +
-          'shadow-[inset_0_1px_2px_rgba(122,74,60,0.06)] ' +
+          'bg-white border border-pato-agua/12 ' +
+          'shadow-[inset_0_1px_2px_rgba(31,58,61,0.05)] ' +
           'transition-shadow duration-200 ' +
-          'focus:outline-none focus:border-pato-terra/45 ' +
-          'focus:shadow-[inset_0_1px_2px_rgba(122,74,60,0.06),0_0_0_3px_rgba(184,117,96,0.16)]'
+          'focus:outline-none focus:border-pato-coral/50 ' +
+          'focus:shadow-[inset_0_1px_2px_rgba(31,58,61,0.05),0_0_0_3px_rgba(212,102,79,0.16)]'
         }
         {...rest}
       />

@@ -6,11 +6,26 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Pato** — a couples web app with shared memories, a relationship counter, dates log, photo/video gallery, letters, partner profiles, playlists, and a "now playing" widget (Spotify + YouTube Music). Pastel design (cream, honey, peach, coral), optimized for mobile.
 
-## Roadmap
+## Roadmap and design direction
 
-Planned work is defined in `docs/ROADMAP.md` (5 numbered phases with written scope).
+`docs/ROADMAP.md` follows the phases (0–4) and the design direction set out in the
+project's artifacts — «Ruta de Pato a iOS», «Aguas tranquilas» and «Señales en el agua».
+Do not invent a competing phase numbering; an earlier version of the roadmap did, and it
+produced two meanings for "Fase 1".
+
 The V2 plan under `docs/superpowers/plans/` is **complete** — do not treat its unchecked
 boxes as pending work; its header records what was verified.
+
+**Surfaces:** matte paper (`Panel.jsx`), not frosted glass. `backdrop-filter` is reserved
+for `NowPlayingWidget`, the one element that genuinely floats over scrolling content, plus
+the sidebar scrim. Repeating it on every card meant nothing read as floating, and it
+halves scroll fps inside the WKWebView the app is heading for.
+
+**Type:** two families. Fraunces (`font-display`) for what carries feeling — counter,
+titles, dates, quotes. Karla (`font-body`) for what gets used.
+
+**Colour:** `pato-agua` #1F3A3D is the cold anchor and the text colour. The warm palette
+had nothing to be warm against, and pure black on cream is harsh.
 
 ## Commands
 

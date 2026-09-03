@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { container } from '../../infrastructure/di/container.js'
 import { fetchPlaylistByUrl } from '../../infrastructure/api/playlistApi.js'
 import { DuckPlaylists } from '../components/icons/Ducks.jsx'
-import GlassPanel, { glassStyle } from '../components/GlassPanel.jsx'
+import Panel, { paperStyle } from '../components/Panel.jsx'
 import ModuleHeader from '../components/ModuleHeader.jsx'
 import EmptyState from '../components/EmptyState.jsx'
 import ActionButton from '../components/ActionButton.jsx'
@@ -69,7 +69,7 @@ export default function PlaylistsModule() {
       {/* El formulario va en un panel, como el de Citas: antes el input y el botón
           flotaban sueltos sobre el degradado mientras el resto de la app agrupaba sus
           controles en tarjetas. */}
-      <form onSubmit={handleAdd} className="mb-8 rounded-3xl p-6 space-y-4" style={glassStyle}>
+      <form onSubmit={handleAdd} className="mb-8 rounded-3xl p-6 space-y-4" style={paperStyle}>
         <Field
           label="Enlace de la playlist"
           type="url"
@@ -83,14 +83,14 @@ export default function PlaylistsModule() {
       </form>
 
       {error && (
-        <GlassPanel className="mb-4 px-4 py-3" style={{ borderColor: 'rgba(212,137,122,0.4)' }}>
+        <Panel className="mb-4 px-4 py-3" style={{ borderColor: 'rgba(212,137,122,0.4)' }}>
           <p className="font-body text-sm text-pato-charcoal">{error}</p>
-        </GlassPanel>
+        </Panel>
       )}
 
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
         {playlists.map((p) => (
-          <GlassPanel key={p.id} className="overflow-hidden">
+          <Panel key={p.id} className="overflow-hidden">
             <a href={p.url} target="_blank" rel="noopener noreferrer" className="block aspect-square bg-pato-shell/40">
               {p.imageUrl ? (
                 <img src={p.imageUrl} alt="" className="w-full h-full object-cover" />
@@ -110,7 +110,7 @@ export default function PlaylistsModule() {
                 </button>
               </div>
             </div>
-          </GlassPanel>
+          </Panel>
         ))}
       </div>
 

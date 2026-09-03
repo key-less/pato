@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useAppState } from '../hooks/useAppState'
 import { DuckSettings } from '../components/icons/Ducks.jsx'
-import GlassPanel from '../components/GlassPanel.jsx'
+import Panel from '../components/Panel.jsx'
 import ModuleHeader from '../components/ModuleHeader.jsx'
 import { DEFAULT_STATUSES } from '../../domain/entities/RelationshipStatus.js'
 import { container } from '../../infrastructure/di/container.js'
@@ -82,7 +82,7 @@ export default function SettingsModule() {
       />
 
       <div className="space-y-6">
-        <GlassPanel className="p-6">
+        <Panel className="p-6">
           <h2 className="font-display text-xl text-pato-charcoal mb-4">Fecha en que se conocieron</h2>
           <input
             type="date"
@@ -90,9 +90,9 @@ export default function SettingsModule() {
             onChange={(e) => setMetSince(e.target.value)}
             className="w-full rounded-2xl border border-white/70 bg-white/85 px-4 py-3 font-body text-pato-charcoal focus:outline-none focus:ring-2 focus:ring-pato-coral/40"
           />
-        </GlassPanel>
+        </Panel>
 
-        <GlassPanel className="p-6">
+        <Panel className="p-6">
           <h2 className="font-display text-xl text-pato-charcoal mb-4">Estado actual de la relación</h2>
           <select
             value={currentStatusId}
@@ -104,9 +104,9 @@ export default function SettingsModule() {
               <option key={s.id} value={s.id}>{s.label}</option>
             ))}
           </select>
-        </GlassPanel>
+        </Panel>
 
-        <GlassPanel className="p-6">
+        <Panel className="p-6">
           <h2 className="font-display text-xl text-pato-charcoal mb-2">Estados personalizados</h2>
           <p className="font-body text-sm text-pato-smoke mb-4">Puedes agregar más estados además de los predefinidos.</p>
           <ul className="space-y-1 mb-4">
@@ -142,7 +142,7 @@ export default function SettingsModule() {
               Agregar
             </button>
           </div>
-        </GlassPanel>
+        </Panel>
 
         <button
           type="button"

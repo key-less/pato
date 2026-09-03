@@ -6,7 +6,7 @@ import { container } from '../../infrastructure/di/container.js'
 import { getQuoteOfTheDay } from '../config/romanticQuotes.js'
 import { FloatingPhotos } from '../components/FloatingPhotos'
 import { FloatingVideos } from '../components/FloatingVideos'
-import { glassStyle } from '../components/GlassPanel.jsx'
+import { paperStyle } from '../components/Panel.jsx'
 
 export default function LandingPage() {
   const { state, loading, update: updateAppState } = useAppState()
@@ -72,11 +72,7 @@ export default function LandingPage() {
             <div
               className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full text-pato-charcoal text-sm"
               style={{
-                background: 'rgba(255,255,255,0.55)',
-                backdropFilter: 'blur(16px)',
-                WebkitBackdropFilter: 'blur(16px)',
-                border: '1px solid rgba(255,255,255,0.7)',
-                boxShadow: '0 4px 18px -8px rgba(184,117,96,0.18)',
+                ...paperStyle,
               }}
             >
               <span className="w-2 h-2 rounded-full bg-pato-coral animate-pulse" />
@@ -121,7 +117,7 @@ export default function LandingPage() {
           ) : (
             <ul className="space-y-3 mb-5">
               {citas.map((c) => (
-                <li key={c.id} className="rounded-2xl px-5 py-4 text-pato-charcoal text-sm" style={glassStyle}>
+                <li key={c.id} className="rounded-2xl px-5 py-4 text-pato-charcoal text-sm" style={paperStyle}>
                   <div className="font-medium font-body">{formatDate(c.date)}</div>
                   {(c.lugar || c.horaEncuentro) && (
                     <div className="text-pato-muted text-xs mt-1 font-body">
@@ -150,7 +146,7 @@ export default function LandingPage() {
 
 function GlassCard({ children, className = '' }) {
   return (
-    <div className={`rounded-3xl px-7 py-6 ${className}`} style={glassStyle}>
+    <div className={`rounded-3xl px-7 py-6 ${className}`} style={paperStyle}>
       {children}
     </div>
   )
@@ -210,7 +206,7 @@ function CoupleSummary({ profiles, onHide }) {
   if (!hasAny) return null
 
   return (
-    <section className="relative rounded-3xl px-7 py-6" style={glassStyle}>
+    <section className="relative rounded-3xl px-7 py-6" style={paperStyle}>
       <button
         type="button"
         onClick={onHide}
