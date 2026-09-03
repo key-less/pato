@@ -39,6 +39,16 @@ correcto del aviso de instalación, `overscroll-behavior-y: none` activo y campo
 resolviendo a 16px en puntero grueso (iOS no hará zoom al enfocar). El build de
 producción pasa limpio.
 
+El modo sin conexión se probó de extremo a extremo sobre el build de producción,
+no solo comprobando que `sw.js` se emitía:
+
+- El service worker registra y queda activo; llena dos cachés (shell y estáticos).
+- Con la red cortada del todo, `/` sigue pintando con su contenido real.
+- Con la red cortada, una ruta profunda como `/citas` también sale del shell
+  cacheado, con su cabecera y su pestaña activa correctas.
+- Ninguna respuesta de `/api/` acaba en caché, como estaba previsto: cartas,
+  OAuth y «ahora suena» siempre van a la red.
+
 ### Rediseño visual
 
 El rediseño en cristal estaba **a medias** y nadie lo había registrado. La
@@ -150,7 +160,12 @@ Reglas que aplico a partir de ahora en este proyecto:
    blanco, barra de pestañas por encima del indicador de inicio, sin rebote
    elástico, sin zoom al enfocar un campo, y que abra en modo avión.
 2. Confirmar que en producción `/sw.js` y `/manifest.webmanifest` se sirven como
-   ficheros y no los captura el rewrite de la SPA.
+   ficheros y no los captura el rewrite de la SPA. **No se pudo verificar desde
+   fuera:** el preview de Vercel está detrás de protección de despliegue y
+   devuelve 403 a cualquier petición sin autenticar, incluidas las rutas normales.
+   Comprobarlo tras el merge sobre el dominio de producción, o desactivando la
+   protección para ese preview. Si el rewrite se los tragara, la capa sin conexión
+   no arrancaría en producción pese a funcionar en local.
 
 **Después, por orden de valor:**
 
