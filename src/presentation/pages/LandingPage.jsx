@@ -91,7 +91,7 @@ export default function LandingPage() {
             <span className="italic">{quote.text}</span>
             <span className="font-display italic font-light text-pato-coral text-3xl leading-none ml-1 align-text-bottom">”</span>
           </p>
-          <footer className="text-sm text-pato-muted mt-3 font-body tracking-wide">— {quote.author}</footer>
+          <footer className="text-sm text-pato-smoke mt-3 font-body tracking-wide">— {quote.author}</footer>
         </GlassCard>
 
         {hasAnyProfile && (showCoupleSummary ? (
@@ -114,20 +114,20 @@ export default function LandingPage() {
             <h2 className="font-display text-2xl font-medium text-pato-charcoal tracking-tight">Citas</h2>
             <div className="flex-1 h-px bg-gradient-to-r from-transparent via-pato-rose/50 to-transparent" />
           </div>
-          <p className="text-sm text-pato-muted font-body text-center mb-5">Las últimas citas registradas.</p>
+          <p className="text-sm text-pato-smoke font-body text-center mb-5">Las últimas citas registradas.</p>
           {citas.length === 0 ? (
-            <p className="text-sm text-pato-muted font-body text-center italic mb-5">Aún no hay citas registradas.</p>
+            <p className="text-sm text-pato-smoke font-body text-center italic mb-5">Aún no hay citas registradas.</p>
           ) : (
             <ul className="space-y-3 mb-5">
               {citas.map((c) => (
                 <li key={c.id} className="rounded-2xl px-5 py-4 text-pato-charcoal text-sm" style={glassStyle}>
                   <div className="font-medium font-body">{formatDate(c.date)}</div>
                   {(c.lugar || c.horaEncuentro) && (
-                    <div className="text-pato-muted text-xs mt-1 font-body">
+                    <div className="text-pato-smoke text-xs mt-1 font-body">
                       {[c.lugar, c.horaEncuentro].filter(Boolean).join(' · ')}
                     </div>
                   )}
-                  {c.note && <p className="text-pato-muted mt-2 text-xs font-body italic">{c.note}</p>}
+                  {c.note && <p className="text-pato-smoke mt-2 text-xs font-body italic">{c.note}</p>}
                 </li>
               ))}
             </ul>
@@ -172,19 +172,19 @@ function TimeCounterCard({ parts, sublabel }) {
   return (
     <div className="sm:col-span-2">
       <GlassCard className="h-full">
-        <p className="font-body text-[10px] uppercase tracking-[0.25em] text-pato-muted mb-4">Tiempo juntos</p>
+        <p className="font-body text-[10px] uppercase tracking-[0.25em] text-pato-smoke mb-4">Tiempo juntos</p>
         <div className="grid grid-cols-4 gap-2">
           {units.map(({ key, label, value }) => (
             <div key={key} className="text-center">
               <div className="font-display text-3xl md:text-4xl font-medium text-pato-charcoal tabular-nums leading-none">
                 {String(value).padStart(2, '0')}
               </div>
-              <div className="text-[10px] uppercase tracking-wider text-pato-muted mt-2 font-body">{label}</div>
+              <div className="text-[10px] uppercase tracking-wider text-pato-smoke mt-2 font-body">{label}</div>
             </div>
           ))}
         </div>
         {sublabel && (
-          <p className="text-xs text-pato-muted mt-4 font-display italic">desde {sublabel}</p>
+          <p className="text-xs text-pato-smoke mt-4 font-display italic">desde {sublabel}</p>
         )}
       </GlassCard>
     </div>
@@ -197,7 +197,7 @@ function CounterCard({ value, label }) {
       <div className="font-display text-5xl md:text-6xl font-light text-pato-charcoal leading-none">
         {value != null ? value.toLocaleString('es') : '—'}
       </div>
-      <div className="text-pato-muted font-body text-xs mt-3 uppercase tracking-[0.25em]">{label}</div>
+      <div className="text-pato-smoke font-body text-xs mt-3 uppercase tracking-[0.25em]">{label}</div>
     </GlassCard>
   )
 }
@@ -248,7 +248,7 @@ function SummaryCard({ title, profile }) {
         )}
         <div>
           <h3 className="font-display text-lg font-medium text-pato-charcoal">{title}</h3>
-          <p className="text-sm text-pato-muted font-body italic">Sin datos aún.</p>
+          <p className="text-sm text-pato-smoke font-body italic">Sin datos aún.</p>
         </div>
       </div>
     )
@@ -271,13 +271,13 @@ function SummaryCard({ title, profile }) {
         />
       )}
       <div className="min-w-0">
-        <p className="text-[10px] uppercase tracking-widest text-pato-muted font-body mb-1">{title}</p>
+        <p className="text-[10px] uppercase tracking-widest text-pato-smoke font-body mb-1">{title}</p>
         <h3 className="text-pato-charcoal font-medium font-body">{fullName}</h3>
         {profile.fechaNacimiento && (
-          <p className="text-xs text-pato-muted mt-0.5 font-body">{profile.fechaNacimiento}</p>
+          <p className="text-xs text-pato-smoke mt-0.5 font-body">{profile.fechaNacimiento}</p>
         )}
         {highlights.length > 0 && (
-          <p className="text-sm text-pato-muted mt-2 line-clamp-2 font-body">{highlights.join(' · ')}</p>
+          <p className="text-sm text-pato-smoke mt-2 line-clamp-2 font-body">{highlights.join(' · ')}</p>
         )}
         {profile.queLosHaceUnicos && (
           <p className="text-sm text-pato-charcoal mt-2 font-display italic">“{profile.queLosHaceUnicos}”</p>

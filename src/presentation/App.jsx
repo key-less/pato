@@ -14,7 +14,7 @@ const CitasModule = lazy(() => import('./pages/CitasModule'))
 function PageFallback() {
   return (
     <div className="flex items-center justify-center min-h-[40vh]">
-      <span className="text-pato-muted">Cargando…</span>
+      <span className="text-pato-smoke">Cargando…</span>
     </div>
   )
 }
