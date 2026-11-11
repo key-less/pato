@@ -1,0 +1,86 @@
+name: Pato
+options:
+  bundleIdPrefix: com.keyless
+  deploymentTarget:
+    iOS: "17.0"
+  createIntermediateGroups: true
+  developmentLanguage: es
+configFiles:
+  Debug: Config/Pato.xcconfig
+  Release: Config/Pato.xcconfig
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    MARKETING_VERSION: "2.0.0"
+    CURRENT_PROJECT_VERSION: "1"
+    TARGETED_DEVICE_FAMILY: "1"
+packages:
+  PatoCore:
+    path: PatoCore
+  Supabase:
+    url: https://github.com/supabase/supabase-swift
+    from: "2.20.0"
+targets:
+  Pato:
+    type: application
+    platform: iOS
+    sources:
+      - Pato
+      - Shared
+    dependencies:
+      - package: PatoCore
+      - package: Supabase
+        product: Supabase
+      - target: PatoWidgets
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.keyless.pato
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+    info:
+      path: Pato/Info.plist
+      properties:
+        CFBundleDisplayName: Pato
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
+        ITSAppUsesNonExemptEncryption: false
+        UIBackgroundModes: [location]
+        NSLocationWhenInUseUsageDescription: Pato usa tu ubicación para mostrarle a tu pareja qué tan lejos están, solo si tú lo activas.
+        NSLocationAlwaysAndWhenInUseUsageDescription: Pato actualiza la distancia con tu pareja aunque la app esté cerrada. Puedes pausarlo cuando quieras.
+        NSHealthShareUsageDescription: Pato puede leer las fechas de tu periodo desde Salud para estimar tu ciclo. Tú decides qué se comparte con tu pareja.
+        SupabaseHost: $(SUPABASE_HOST)
+        SupabaseAnonKey: $(SUPABASE_ANON_KEY)
+        SpotifyClientID: $(SPOTIFY_CLIENT_ID)
+    entitlements:
+      path: Pato/Pato.entitlements
+      properties:
+        com.apple.security.application-groups: [group.com.keyless.pato]
+        com.apple.developer.healthkit: true
+  PatoWidgets:
+    type: app-extension
+    platform: iOS
+    sources:
+      - PatoWidgets
+      - Shared
+      - path: Pato/Resources/Assets.xcassets
+    dependencies:
+      - package: PatoCore
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.keyless.pato.widgets
+    info:
+      path: PatoWidgets/Info.plist
+      properties:
+        CFBundleDisplayName: Pato
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    entitlements:
+      path: PatoWidgets/PatoWidgets.entitlements
+      properties:
+        com.apple.security.application-groups: [group.com.keyless.pato]
+schemes:
+  Pato:
+    build:
+      targets:
+        Pato: all
+    run:
+      config: Debug
