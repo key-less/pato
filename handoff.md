@@ -34,7 +34,7 @@ _Última actualización: 2026-11-11_
 ## Próximos pasos
 
 1. Dejar el CI en verde (corregir errores de compilación que aparezcan).
-2. Kevin: crear proyecto Supabase, correr la migración, poner `{{ .Token }}` en la plantilla de correo, y decidir si paga Apple Developer (99 USD/año) — sin eso no hay instalación en iPhone, TestFlight ni push.
+2. Kevin confirmó (2026-11-16) que el proyecto de Supabase es `yphmwxhcwwhjlmwpnsab` (ya conectado al repo; el host quedó en `ios/Config/Pato.xcconfig`). Falta: la anon key, aplicar la migración, poner `{{ .Token }}` en la plantilla de correo, y decidir si paga Apple Developer (99 USD/año) — sin eso no hay instalación en iPhone, TestFlight ni push.
 3. Con cuenta de pago: firma automática + TestFlight desde Actions (fastlane/App Store Connect API key como secrets).
 4. Pendiente de producto: notificaciones push ("cuac" y avisos de ánimo), videos en el álbum, widget que se actualice solo desde el servidor (hoy depende de que la app despierte), música en segundo plano vía Edge Function, Apple Music, importar datos desde la web (localStorage), modo oscuro, widget de pantalla de bloqueo.
 5. Revisión de App Store: la guía 5.1.3 restringe compartir datos de HealthKit con terceros; el resumen de ciclo a la pareja se comparte por decisión explícita de la persona, pero hay que redactar la política de privacidad antes de enviar a revisión.

@@ -42,9 +42,9 @@ cd ios && xcodegen generate && open Pato.xcodeproj
 
 Sin configuración la app funciona en **modo local** (todo se guarda en el teléfono). Para vincular dos teléfonos:
 
-1. Crea un proyecto en Supabase y ejecuta `supabase/migrations/20261111000000_pato_ios.sql` en el SQL Editor.
+1. El proyecto de Supabase ya está definido (`yphmwxhcwwhjlmwpnsab`, el conectado a este repo). Aplica `supabase/migrations/20261111000000_pato_ios.sql`: en el SQL Editor, o automáticamente al fusionar a `main` si la integración de GitHub de Supabase tiene activado el despliegue de migraciones.
 2. En *Authentication → Email Templates → Magic Link*, incluye `{{ .Token }}` en el correo: la app pide el código de 6 dígitos, no un enlace.
-3. Copia `Config/Secrets.example.xcconfig` como `Config/Secrets.xcconfig` y completa host y anon key.
+3. Copia `Config/Secrets.example.xcconfig` como `Config/Secrets.xcconfig` y pon la anon key (*Project Settings → API*).
 
 Spotify (opcional): crea una app en el dashboard de Spotify, registra el redirect `pato://spotify-callback` y pon el Client ID en `Secrets.xcconfig`. No hace falta client secret (se usa PKCE).
 

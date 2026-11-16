@@ -1,7 +1,8 @@
-// Valores por defecto (vacíos = la app corre en "modo local", sin sincronizar).
-// Para conectar tu proyecto, crea Config/Secrets.xcconfig (no se sube a git)
-// copiando Secrets.example.xcconfig.
-SUPABASE_HOST =
+// Proyecto de Supabase de Pato (el mismo que está conectado a este repo).
+// Falta la anon key: mientras esté vacía, la app corre en "modo local", sin
+// sincronizar. Ponla en Config/Secrets.xcconfig (no se sube a git), copiando
+// Secrets.example.xcconfig.
+SUPABASE_HOST = yphmwxhcwwhjlmwpnsab.supabase.co
 SUPABASE_ANON_KEY =
 SPOTIFY_CLIENT_ID =
 
