@@ -120,14 +120,14 @@ final class Backend {
         let updated_at: Double
     }
 
-    func publish(_ presence: Presence, coupleID: UUID) async throws {
+    func publish(_ presence: PatoCore.Presence, coupleID: UUID) async throws {
         guard let userID else { return }
         let data = try JSONDecoder().decode(AnyJSON.self, from: PatoJSON.encoder.encode(presence))
         let row = PresenceRow(user_id: userID, couple_id: coupleID, data: data, updated_at: Date().timeIntervalSince1970)
         try await client.from("presence").upsert(row).execute()
     }
 
-    func partnerPresence(coupleID: UUID) async throws -> Presence? {
+    func partnerPresence(coupleID: UUID) async throws -> PatoCore.Presence? {
         guard let userID else { return nil }
         let rows: [PresenceRow] = try await client.from("presence")
             .select()
@@ -136,7 +136,7 @@ final class Backend {
             .execute()
             .value
         guard let row = rows.first else { return nil }
-        return try PatoJSON.decoder.decode(Presence.self, from: JSONEncoder().encode(row.data))
+        return try PatoJSON.decoder.decode(PatoCore.Presence.self, from: JSONEncoder().encode(row.data))
     }
 
     /// Emite cada vez que cambia la presencia de alguien de la pareja
