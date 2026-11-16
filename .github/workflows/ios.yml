@@ -1,0 +1,44 @@
+name: iOS
+
+on:
+  push:
+    branches: [main]
+    paths: ['ios/**', '.github/workflows/ios.yml']
+  pull_request:
+    paths: ['ios/**', '.github/workflows/ios.yml']
+
+concurrency:
+  group: ios-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  core-tests:
+    name: PatoCore (pruebas)
+    runs-on: ubuntu-latest
+    container: swift:6.0
+    steps:
+      - uses: actions/checkout@v4
+      - name: swift test
+        run: swift test --package-path ios/PatoCore
+
+  app-build:
+    name: App + widgets (simulador)
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Instalar XcodeGen
+        run: brew install xcodegen
+      - name: Generar proyecto
+        working-directory: ios
+        run: xcodegen generate
+      - name: Compilar
+        working-directory: ios
+        run: |
+          set -o pipefail
+          xcodebuild build \
+            -project Pato.xcodeproj \
+            -scheme Pato \
+            -destination 'generic/platform=iOS Simulator' \
+            -skipPackagePluginValidation \
+            -quiet \
+            CODE_SIGNING_ALLOWED=NO

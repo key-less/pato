@@ -1,0 +1,10 @@
+*.xcodeproj
+Config/Secrets.xcconfig
+Pato/Info.plist
+Pato/Pato.entitlements
+PatoWidgets/Info.plist
+PatoWidgets/PatoWidgets.entitlements
+PatoCore/.build
+.build
+DerivedData
+tools/preview.html
